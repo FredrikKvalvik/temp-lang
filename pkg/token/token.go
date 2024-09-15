@@ -51,21 +51,21 @@ const (
 )
 
 type Token struct {
-	Line      int       // what line the token i parsed from the input text
-	TokenType TokenType // the number of characters from the start of the line to the start of the token
-	Lexeme    string    // the string that was parsed as this token
-	Literal   any       // the literal value of the token. int/string/bool/nil
+	Line    int       // what line the token i parsed from the input text
+	Type    TokenType // the number of characters from the start of the line to the start of the token
+	Lexeme  string    // the string that was parsed as this token
+	Literal any       // the literal value of the token. int/string/bool/nil
 }
 
 func NewToken(tokenType TokenType, lexeme string, literal any, line, col int) Token {
 	return Token{
-		Line:      line,
-		TokenType: tokenType,
-		Lexeme:    lexeme,
-		Literal:   literal,
+		Line:    line,
+		Type:    tokenType,
+		Lexeme:  lexeme,
+		Literal: literal,
 	}
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("[%d] %s: %s", t.Line, t.TokenType, t.Lexeme)
+	return fmt.Sprintf("[%d] %s: %s", t.Line, t.Type, t.Lexeme)
 }

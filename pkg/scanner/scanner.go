@@ -50,6 +50,7 @@ func (s *Scanner) scanToken() token.Token {
 
 	s.whitespace()
 
+	fmt.Printf("position: %d\n", s.position)
 	switch s.ch {
 	case '(':
 		tok = s.getToken(token.LPAREN, string(s.ch), nil)
@@ -59,8 +60,10 @@ func (s *Scanner) scanToken() token.Token {
 		tok = s.getToken(token.LBRACE, string(s.ch), nil)
 	case '}':
 		tok = s.getToken(token.RBRACE, string(s.ch), nil)
-	case '!':
-		tok = s.getToken(token.BANG, string(s.ch), nil)
+	case '[':
+		tok = s.getToken(token.LBRACKET, string(s.ch), nil)
+	case ']':
+		tok = s.getToken(token.RBRACKET, string(s.ch), nil)
 	case '+':
 		tok = s.getToken(token.PLUS, string(s.ch), nil)
 	case '-':
@@ -75,14 +78,38 @@ func (s *Scanner) scanToken() token.Token {
 		tok = s.getToken(token.COLON, string(s.ch), nil)
 	case ';':
 		tok = s.getToken(token.SEMICOLON, string(s.ch), nil)
-
-	case '/':
-		tok = s.getToken(token.SLASH, string(s.ch), nil)
-
 	case '<':
 		tok = s.getToken(token.LT, string(s.ch), nil)
 	case '>':
 		tok = s.getToken(token.GT, string(s.ch), nil)
+
+	case '/':
+
+		tok = s.getToken(token.SLASH, string(s.ch), nil)
+
+	case '=':
+		if s.peek() == '=' {
+			s.advance()
+			tok = s.getToken(token.EQ, "==", nil)
+		} else {
+			tok = s.getToken(token.ASSIGN, string(s.ch), nil)
+		}
+
+	case '!':
+		if s.peek() == '=' {
+			ch := s.ch
+			s.advance()
+			tok = s.getToken(token.NOT_EQ, string(ch)+string(s.ch), nil)
+		} else {
+			tok = s.getToken(token.BANG, string(s.ch), nil)
+		}
+
+	case '"':
+		tok.Type = token.STRING
+		lexeme, literal := s.readString()
+		tok.Lexeme = lexeme
+		tok.Literal = literal
+		tok.Line = s.line
 
 	case 0:
 		tok = s.getToken(token.EOF, string(s.ch), nil)
@@ -97,7 +124,7 @@ func (s *Scanner) scanToken() token.Token {
 }
 
 func (s *Scanner) getToken(t token.TokenType, lexeme string, literal any) token.Token {
-	tok := token.NewToken(t, string(s.ch), literal, s.line, s.readPosition)
+	tok := token.NewToken(t, lexeme, literal, s.line, s.readPosition)
 
 	return tok
 }
@@ -111,6 +138,14 @@ func (s *Scanner) advance() {
 
 	s.position = s.readPosition
 	s.readPosition += 1
+}
+
+func (s *Scanner) peek() byte {
+	if s.atEnd() {
+		return 0
+	}
+
+	return s.source[s.readPosition]
 }
 
 func (s *Scanner) whitespace() {
@@ -131,6 +166,23 @@ func (s *Scanner) whitespace() {
 
 		break
 	}
+}
+
+// returns the lexeme and the literal value of the string
+func (s *Scanner) readString() (string, string) {
+	for {
+		if s.peek() != '"' {
+			s.readPosition += 1
+		} else {
+			// consume the ending quote
+			s.readPosition += 1
+			break
+		}
+	}
+	lexeme := s.source[s.position:s.readPosition]
+	literal := lexeme[1 : len(lexeme)-1]
+
+	return lexeme, literal
 }
 
 func (s *Scanner) atEnd() bool {
