@@ -11,7 +11,7 @@ const (
 
 	// Identifiers + literals
 	IDENT
-	INT
+	NUMBER
 	STRING
 
 	// Operators
@@ -49,6 +49,24 @@ const (
 	ELSE
 	RETURN
 )
+
+var keywords = map[string]TokenType{
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+}
+
+func LookupIdent(ident string) TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+
+	return IDENT
+}
 
 type Token struct {
 	Line    int       // what line the token i parsed from the input text

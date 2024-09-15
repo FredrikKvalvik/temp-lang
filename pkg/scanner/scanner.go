@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -50,7 +51,6 @@ func (s *Scanner) scanToken() token.Token {
 
 	s.whitespace()
 
-	fmt.Printf("position: %d\n", s.position)
 	switch s.ch {
 	case '(':
 		tok = s.getToken(token.LPAREN, string(s.ch), nil)
@@ -105,18 +105,33 @@ func (s *Scanner) scanToken() token.Token {
 		}
 
 	case '"':
-		tok.Type = token.STRING
+		tokType := token.STRING
 		lexeme, literal := s.readString()
-		tok.Lexeme = lexeme
-		tok.Literal = literal
-		tok.Line = s.line
+		tok = s.getToken(tokType, lexeme, literal)
 
 	case 0:
 		tok = s.getToken(token.EOF, string(s.ch), nil)
 
 	default:
-		tok = s.getToken(token.ILLEGAL, string(s.ch), nil)
-		s.error(fmt.Errorf("Unexpected character"))
+		if isLetter(s.ch) {
+			// can be identier or reserved word
+			lexeme := s.readIdentifier()
+			tokType := token.LookupIdent(lexeme)
+			tok = s.getToken(tokType, lexeme, nil)
+
+		} else if isDigit(s.ch) {
+			lexeme, literal, err := s.readNumber()
+			if err != nil {
+				tok = s.getToken(token.ILLEGAL, "", nil)
+				s.error(err)
+				break
+			}
+			tok = s.getToken(token.NUMBER, lexeme, literal)
+
+		} else {
+			tok = s.getToken(token.ILLEGAL, string(s.ch), nil)
+			s.error(fmt.Errorf("Unexpected character"))
+		}
 	}
 
 	s.advance()
@@ -185,10 +200,63 @@ func (s *Scanner) readString() (string, string) {
 	return lexeme, literal
 }
 
+func (s *Scanner) readNumber() (string, float64, error) {
+	for {
+		if !isDigit(s.peek()) {
+			break
+		}
+
+		s.readPosition += 1
+		continue
+	}
+	if s.peek() == '.' {
+		// consume .
+		s.readPosition += 1
+
+		// if the next char is not a number, then the token is invalid
+		if isDigit(s.peek()) {
+			return "", 0, nil
+		}
+		// parse decimal digits
+		for {
+			if !isDigit(s.peek()) {
+				break
+			}
+
+			s.readPosition += 1
+			continue
+		}
+	}
+
+	lexeme := s.source[s.position:s.readPosition]
+	literal, err := strconv.ParseFloat(lexeme, 64)
+	if err != nil {
+		return "", 0, err
+	}
+
+	return lexeme, literal, nil
+}
+
+func (s *Scanner) readIdentifier() string {
+	for !s.atEnd() && (isLetter(s.peek()) || isDigit(s.peek())) {
+		s.readPosition += 1
+	}
+
+	return s.source[s.position:s.readPosition]
+}
+
 func (s *Scanner) atEnd() bool {
 	return s.readPosition >= len(s.source)
 }
 
 func (s *Scanner) error(err error) {
 	s.errors = append(s.errors, err)
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
