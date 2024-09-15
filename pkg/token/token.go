@@ -1,5 +1,5 @@
 //go:generate go run golang.org/x/tools/cmd/stringer -type=TokenType
-package scanner
+package token
 
 import "fmt"
 
@@ -29,6 +29,7 @@ const (
 
 	// Delimiters
 	COMMA
+	DOT
 	SEMICOLON
 	COLON
 
@@ -50,22 +51,15 @@ const (
 )
 
 type Token struct {
-	// what line the token i parsed from the input text
-	Line int
-	// the number of characters from the start of the line to the start of the token
-	Col int
-	// the type of token
-	TokenType TokenType
-	// the string that was parsed as this token
-	Lexeme string
-	// the literal value of the token. int/string/bool/nil
-	Literal any
+	Line      int       // what line the token i parsed from the input text
+	TokenType TokenType // the number of characters from the start of the line to the start of the token
+	Lexeme    string    // the string that was parsed as this token
+	Literal   any       // the literal value of the token. int/string/bool/nil
 }
 
 func NewToken(tokenType TokenType, lexeme string, literal any, line, col int) Token {
 	return Token{
 		Line:      line,
-		Col:       col,
 		TokenType: tokenType,
 		Lexeme:    lexeme,
 		Literal:   literal,
@@ -73,5 +67,5 @@ func NewToken(tokenType TokenType, lexeme string, literal any, line, col int) To
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("[%d:%d] %s: %s", t.Line, t.Col, t.TokenType, t.Lexeme)
+	return fmt.Sprintf("[%d] %s: %s", t.Line, t.TokenType, t.Lexeme)
 }

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/fredrikkvalvik/temp-lang/pkg/scanner"
+	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
 func main() {
@@ -21,15 +24,35 @@ func main() {
 }
 
 func repl(in io.Reader, out io.Writer) {
-	scanner := bufio.NewScanner(in)
+	s := bufio.NewScanner(in)
 	fmt.Printf("INSIDE REPL\n")
 	for {
 		fmt.Print("> ")
-		scanned := scanner.Scan()
+		scanned := s.Scan()
 		if !scanned {
 			return
 		}
-		line := scanner.Bytes()
-		fmt.Fprintf(out, "%s\n", line)
+		line := s.Text()
+		ts := scanner.New(line)
+		var tokens []token.Token
+		for {
+			tok := ts.NextToken()
+			tokens = append(tokens, tok)
+			if tok.TokenType == token.EOF {
+				break
+			}
+		}
+
+		fmt.Printf("input: %s\n", line)
+
+		for _, tok := range tokens {
+			fmt.Println(tok.String())
+		}
+
+		if ts.DidError() {
+			for _, err := range ts.Errors() {
+				fmt.Println(err)
+			}
+		}
 	}
 }
