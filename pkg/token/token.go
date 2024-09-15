@@ -1,6 +1,8 @@
 //go:generate go run golang.org/x/tools/cmd/stringer -type=TokenType
 package scanner
 
+import "fmt"
+
 type TokenType int
 
 const (
@@ -68,4 +70,8 @@ func NewToken(tokenType TokenType, lexeme string, literal any, line, col int) To
 		Lexeme:    lexeme,
 		Literal:   literal,
 	}
+}
+
+func (t *Token) String() string {
+	return fmt.Sprintf("[%d:%d] %s: %s", t.Line, t.Col, t.TokenType, t.Lexeme)
 }
