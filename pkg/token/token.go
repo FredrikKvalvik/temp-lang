@@ -27,6 +27,9 @@ const (
 	LT
 	GT
 
+	AND
+	OR
+
 	// Delimiters
 	COMMA
 	DOT
@@ -58,6 +61,8 @@ var keywords = map[string]TokenType{
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,
+	"and":    AND,
+	"or":     OR,
 }
 
 func LookupIdent(ident string) TokenType {
