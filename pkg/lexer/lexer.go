@@ -7,6 +7,9 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
+// TODO: add implicit semi-colon with automatic insertion
+// ref: https://go.dev/doc/effective_go#semicolons
+
 type Lexer struct {
 	source string
 	tokens []token.Token
@@ -15,6 +18,8 @@ type Lexer struct {
 	readPosition int  // nexh char to be read
 	ch           byte // current ch
 	line         int  // current line in source
+
+	previousToken *token.Token
 
 	errors []error
 }
@@ -43,13 +48,20 @@ func (l *Lexer) DidError() bool {
 
 // pull tokens when needed
 func (l *Lexer) NextToken() token.Token {
-	return l.scanToken()
+	tok := l.scanToken()
+	l.previousToken = &tok
+	return tok
 }
 
 func (l *Lexer) scanToken() token.Token {
 	var tok token.Token
 
-	l.whitespace()
+	// redo label for comments. instead of doing a new loop, we go back to the top and start from the top again
+REDO:
+	// return semicolon
+	if terminal := l.whitespace(); terminal != nil {
+		return *terminal
+	}
 
 	switch l.ch {
 	case '(':
@@ -84,8 +96,15 @@ func (l *Lexer) scanToken() token.Token {
 		tok = l.getToken(token.GT, string(l.ch), nil)
 
 	case '/':
+		if l.peek() == '/' {
+			for l.ch != '\n' {
+				l.advance()
+			}
+			goto REDO
 
-		tok = l.getToken(token.SLASH, string(l.ch), nil)
+		} else {
+			tok = l.getToken(token.SLASH, string(l.ch), nil)
+		}
 
 	case '=':
 		if l.peek() == '=' {
@@ -122,7 +141,7 @@ func (l *Lexer) scanToken() token.Token {
 		} else if isDigit(l.ch) {
 			lexeme, literal, err := l.readNumber()
 			if err != nil {
-				tok = l.getToken(token.ILLEGAL, "", nil)
+				tok = l.getToken(token.ILLEGAL, lexeme, nil)
 				l.error(err)
 				break
 			}
@@ -167,23 +186,32 @@ func (l *Lexer) atEnd() bool {
 	return l.readPosition >= len(l.source)
 }
 
-func (l *Lexer) whitespace() {
-	for {
-		if l.atEnd() {
-			break
-		}
-
-		if l.ch == ' ' || l.ch == '\t' || l.ch == '\r' {
-			l.advance()
-			continue
-		}
+func (l *Lexer) whitespace() *token.Token {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\r' || l.ch == '\n' {
 		if l.ch == '\n' {
+			if t := l.newline(); t != nil {
+				return t
+			}
+		} else {
 			l.advance()
-			l.line += 1
-			continue
 		}
+	}
 
-		break
+	return nil
+}
+
+// handles newline for linenumber and returns a semicolon if the conditions are correct
+func (l *Lexer) newline() *token.Token {
+	if l.newlineIsTerminal() {
+		tok := l.getToken(token.SEMICOLON, string(l.ch), nil)
+		l.line += 1
+		l.advance()
+		return &tok
+
+	} else {
+		l.advance()
+		l.line += 1
+		return nil
 	}
 }
 
@@ -247,6 +275,34 @@ func (l *Lexer) readIdentifier() string {
 	}
 
 	return l.source[l.position:l.readPosition]
+}
+
+// returns true if the previous token followed by a new line satisifies automatic insertion of semicolon
+func (l *Lexer) newlineIsTerminal() bool {
+	if l.previousToken == nil {
+		return false
+	}
+
+	switch l.previousToken.Type {
+	case token.IDENT:
+		return true
+	case token.STRING:
+		return true
+	case token.NUMBER:
+		return true
+	case token.RPAREN:
+		return true
+	case token.RBRACKET:
+		return true
+	case token.FALSE:
+		return true
+	case token.TRUE:
+		return true
+	case token.RETURN:
+		return true
+	}
+
+	return false
 }
 
 func (l *Lexer) error(err error) {
