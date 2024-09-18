@@ -100,6 +100,9 @@ REDO:
 			for l.ch != '\n' {
 				l.advance()
 			}
+			// use goto to jump back to the top to parse next token.
+			// this also works with the whitespace call at the start of the function. It will check the newline and see if
+			// it satisfies automatic ';' insertion
 			goto REDO
 
 		} else {
