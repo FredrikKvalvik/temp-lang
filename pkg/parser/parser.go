@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
@@ -32,7 +30,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 	program.Statements = make([]ast.Stmt, 0)
 
 	for p.curToken.Type != token.EOF {
-		fmt.Printf("%s\n", p.curToken.String())
 		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
@@ -48,6 +45,10 @@ func (p *Parser) ParseProgram() *ast.Program {
 func (p *Parser) advance() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
+}
+
+func (p *Parser) atEnd() bool {
+	return p.curToken.Type == token.EOF
 }
 
 func (p *Parser) curTokenIs(typ token.TokenType) bool {

@@ -24,18 +24,17 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 		return nil
 	}
 
-	ident := &ast.IdentifierExpr{
+	letStmt.Name = &ast.IdentifierExpr{
 		Token: p.curToken,
 		Value: p.curToken.Lexeme,
 	}
-	letStmt.Name = ident
 
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
 
 	// TODO: skipping expression for now
-	for p.curTokenIs(token.SEMICOLON) {
+	for p.curTokenIs(token.SEMICOLON) || !p.atEnd() {
 		p.advance()
 	}
 

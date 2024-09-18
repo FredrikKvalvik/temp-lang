@@ -74,7 +74,7 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
-		f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
+		// f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
 		for key, value := range s.props {
 			f.WriteString(fmt.Sprintf("\t%s %s\n", key, value))
 		}
