@@ -5,7 +5,6 @@ package ast
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type IdentifierExpr struct {
-	Expr
 	Token token.Token
 	Value string
 }
