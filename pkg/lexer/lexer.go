@@ -58,7 +58,7 @@ func (l *Lexer) scanToken() token.Token {
 
 	// redo label for comments. instead of doing a new loop, we go back to the top and start from the top again
 REDO:
-	// return semicolon
+	// might return semicolon token
 	if terminal := l.whitespace(); terminal != nil {
 		return *terminal
 	}
