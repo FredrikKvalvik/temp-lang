@@ -46,6 +46,26 @@ func (l *Lexer) DidError() bool {
 	return len(l.errors) > 0
 }
 
+// used for error messages
+func (l *Lexer) GetTokenColumn(tok token.Token) int {
+	col := 1
+
+	position := 0
+	// increment col for each loop.
+	// when we see a '\n', reset col and keep moving
+	// return col at end
+	for position < tok.Offset {
+		if l.source[position] == '\n' {
+			col = 1
+		} else {
+			col += 1
+		}
+		position += 1
+	}
+
+	return col
+}
+
 // pull tokens when needed
 func (l *Lexer) NextToken() token.Token {
 	tok := l.scanToken()
@@ -132,7 +152,11 @@ REDO:
 		tok = l.getToken(tokType, lexeme, literal)
 
 	case 0:
-		tok = l.getToken(token.EOF, string(l.ch), nil)
+		if l.newlineIsTerminal() {
+			tok = l.getToken(token.SEMICOLON, string(l.ch), nil)
+		} else {
+			tok = l.getToken(token.EOF, string(l.ch), nil)
+		}
 
 	default:
 		if isLetter(l.ch) {
@@ -177,10 +201,9 @@ func (l *Lexer) advance() {
 		l.ch = 0
 	} else {
 		l.ch = l.source[l.readPosition]
+		l.position = l.readPosition
+		l.readPosition += 1
 	}
-
-	l.position = l.readPosition
-	l.readPosition += 1
 }
 
 func (l *Lexer) peek() byte {

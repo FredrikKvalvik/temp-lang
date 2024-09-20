@@ -59,6 +59,15 @@ func (l *LetStmt) String() string {
 	return str.String()
 }
 
+func (e *ExpressionStmt) String() string {
+	var str strings.Builder
+
+	// TODO: update String when let is is fully implemented
+	fmt.Fprintf(&str, "%s;\n", e.Expression.String())
+
+	return str.String()
+}
+
 func (i *IdentifierExpr) String() string {
 	var str strings.Builder
 

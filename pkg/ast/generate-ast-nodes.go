@@ -32,12 +32,10 @@ var stmts = []template{
 		},
 	},
 	{
-		name: "If",
+		name: "Expression",
 		props: map[string]string{
-			"Token":       "token.Token",
-			"Condition":   expr,
-			"Consequence": stmt,
-			"Alternative": stmt,
+			"Token":      "token.Token",
+			"Expression": expr,
 		},
 	},
 }
@@ -73,6 +71,13 @@ var exprs = []template{
 	},
 	{
 		name: "Prefix",
+		props: map[string]string{
+			"Token":   "token.Token",
+			"Operand": expr,
+		},
+	},
+	{
+		name: "Infix",
 		props: map[string]string{
 			"Token":   "token.Token",
 			"Operand": expr,

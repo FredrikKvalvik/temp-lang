@@ -1,7 +1,9 @@
 //go:generate go run golang.org/x/tools/cmd/stringer -type=TokenType
 package token
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TokenType int
 

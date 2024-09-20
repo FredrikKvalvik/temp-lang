@@ -14,6 +14,7 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseLetStatment()
 
 	default:
+		p.parseExpressionStatement()
 		return nil
 	}
 
@@ -42,10 +43,22 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 
 	// standing on "expression"
 	if !p.expectPeek(token.SEMICOLON) {
-		p.errors = append(p.errors, fmt.Errorf("expected ';', got=%s\n", p.peekToken.Type))
+		return nil
 	}
 
 	return letStmt
+}
+
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
+	exprStmt := &ast.ExpressionStmt{}
+
+	exprStmt.Expression = p.parseExpression(LOWEST)
+
+	if p.expectPeek(token.SEMICOLON) {
+		return nil
+	}
+
+	return exprStmt
 }
 
 // advances one token and tries to parse an expression based on curToken
@@ -60,6 +73,16 @@ func (p *Parser) parseExpression(precedence int) ast.Expr {
 	}
 
 	left := prefix()
+
+	infix, ok := p.infixParselets[p.curToken.Type]
+	if !ok {
+		return left
+	}
+
+	p.advance()
+	for p.curToken.Type != token.SEMICOLON && precedence < p.peekStickiness() {
+		left = infix(left)
+	}
 
 	return left
 }

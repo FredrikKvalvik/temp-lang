@@ -9,14 +9,32 @@ import (
 const (
 	_ int = iota
 	LOWEST
+	ASSIGN      // =
+	OR          // or
+	AND         // and
 	EQUALS      // ==
 	LESSGREATER // > or <
-	SUM         //+
-	PRODUCT     //*
+	SUM         //+ -
+	PRODUCT     //* /
 	PREFIX      //-X or !X
 	CALL        // myFunction(X)
 	INDEX       // array[index]
 )
+
+var stickinessMap = map[token.TokenType]int{
+	token.OR:       OR,
+	token.AND:      AND,
+	token.EQ:       EQUALS,
+	token.NOT_EQ:   EQUALS,
+	token.LT:       LESSGREATER,
+	token.GT:       LESSGREATER,
+	token.PLUS:     SUM,
+	token.MINUS:    SUM,
+	token.SLASH:    PRODUCT,
+	token.ASTERISK: PRODUCT,
+	token.LPAREN:   CALL,
+	token.LBRACKET: INDEX,
+}
 
 type Parser struct {
 	l *lexer.Lexer
@@ -44,11 +62,13 @@ func New(l *lexer.Lexer) *Parser {
 	p.advance()
 	p.advance()
 
-	p.registerPrefix(token.BANG, p.parsePrefix)
-	p.registerPrefix(token.MINUS, p.parsePrefix)
-
 	p.registerPrefix(token.NUMBER, p.parseNumberLiteral)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
+	p.registerPrefix(token.TRUE, p.parseBooleanLiteral)
+	p.registerPrefix(token.FALSE, p.parseBooleanLiteral)
+
+	p.registerPrefix(token.BANG, p.parsePrefix)
+	p.registerPrefix(token.MINUS, p.parsePrefix)
 
 	return p
 }
@@ -77,6 +97,20 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
+func (p *Parser) peekStickiness() int {
+	if s, ok := stickinessMap[p.peekToken.Type]; ok {
+		return s
+	}
+	return LOWEST
+}
+
+func (p *Parser) curStickiness() int {
+	if s, ok := stickinessMap[p.curToken.Type]; ok {
+		return s
+	}
+	return LOWEST
+}
+
 // consume current token
 func (p *Parser) advance() {
 	p.curToken = p.peekToken
@@ -101,6 +135,8 @@ func (p *Parser) expect(typ token.TokenType) bool {
 		p.advance()
 		return true
 	}
+
+	p.expectCurError(typ)
 	return false
 }
 
@@ -110,5 +146,7 @@ func (p *Parser) expectPeek(typ token.TokenType) bool {
 		p.advance()
 		return true
 	}
+
+	p.expectPeekError(typ)
 	return false
 }

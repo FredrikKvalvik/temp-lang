@@ -14,13 +14,11 @@ func (n *LetStmt) StmtNode()      {}
 func (n *LetStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *LetStmt) Literal() any   { return n.Token.Literal }
 
-type IfStmt struct {
-	Token       token.Token
-	Condition   Expr
-	Consequence Stmt
-	Alternative Stmt
+type ExpressionStmt struct {
+	Token      token.Token
+	Expression Expr
 }
 
-func (n *IfStmt) StmtNode()      {}
-func (n *IfStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *IfStmt) Literal() any   { return n.Token.Literal }
+func (n *ExpressionStmt) StmtNode()      {}
+func (n *ExpressionStmt) Lexeme() string { return n.Token.Lexeme }
+func (n *ExpressionStmt) Literal() any   { return n.Token.Literal }

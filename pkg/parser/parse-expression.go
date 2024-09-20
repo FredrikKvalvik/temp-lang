@@ -47,3 +47,16 @@ func (p *Parser) parseStringLiteral() ast.Expr {
 
 	return stringLiteral
 }
+
+func (p *Parser) parseBooleanLiteral() ast.Expr {
+	booleanLiteral := &ast.BooleanLiteralExpr{
+		Token: p.curToken,
+	}
+	if p.curToken.Lexeme == "true" {
+		booleanLiteral.Value = true
+	} else {
+		booleanLiteral.Value = false
+	}
+
+	return booleanLiteral
+}
