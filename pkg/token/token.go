@@ -75,14 +75,16 @@ func LookupIdent(ident string) TokenType {
 
 type Token struct {
 	Line    int       // what line the token i parsed from the input text
+	Offset  int       // offset from the start of the source file
 	Type    TokenType // the number of characters from the start of the line to the start of the token
 	Lexeme  string    // the string that was parsed as this token
 	Literal any       // the literal value of the token. int/string/bool/nil
 }
 
-func NewToken(tokenType TokenType, lexeme string, literal any, line, col int) Token {
+func NewToken(tokenType TokenType, lexeme string, literal any, line, offset int) Token {
 	return Token{
 		Line:    line,
+		Offset:  offset,
 		Type:    tokenType,
 		Lexeme:  lexeme,
 		Literal: literal,

@@ -161,7 +161,13 @@ REDO:
 }
 
 func (l *Lexer) getToken(t token.TokenType, lexeme string, literal any) token.Token {
-	tok := token.NewToken(t, lexeme, literal, l.line, l.readPosition)
+	tok := token.Token{
+		Type:    t,
+		Lexeme:  lexeme,
+		Literal: literal,
+		Line:    l.line,
+		Offset:  l.position,
+	}
 
 	return tok
 }
