@@ -15,10 +15,10 @@ func (n *LetStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *LetStmt) Literal() any   { return n.Token.Literal }
 
 type IfStmt struct {
-	Token     token.Token
-	Condition Expr
-	Success   Stmt
-	Failed    Stmt
+	Token       token.Token
+	Condition   Expr
+	Consequence Stmt
+	Alternative Stmt
 }
 
 func (n *IfStmt) StmtNode()      {}

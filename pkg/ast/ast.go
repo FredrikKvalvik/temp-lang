@@ -54,7 +54,7 @@ func (l *LetStmt) String() string {
 	var str strings.Builder
 
 	// TODO: update String when let is is fully implemented
-	fmt.Fprintf(&str, "let %s = %s\n", l.Name.String(), "_EXPR_")
+	fmt.Fprintf(&str, "let %s = %s;\n", l.Name.String(), l.Value.String())
 
 	return str.String()
 }
@@ -65,4 +65,26 @@ func (i *IdentifierExpr) String() string {
 	fmt.Fprintf(&str, "%s", i.Value)
 
 	return str.String()
+}
+
+func (p *PrefixExpr) String() string {
+	var s strings.Builder
+
+	s.WriteString("(")
+	s.WriteString(p.Lexeme() + p.Operand.String())
+	s.WriteString(")")
+
+	return s.String()
+}
+
+func (n *NumberLiteralExpr) String() string {
+	return n.Lexeme()
+}
+
+func (s *StringLiteralExpr) String() string {
+	return s.Lexeme()
+}
+
+func (s *BooleanLiteralExpr) String() string {
+	return s.Lexeme()
 }

@@ -7,7 +7,8 @@ import (
 )
 
 func TestNextTokoen(t *testing.T) {
-	input := `let five = 5
+	input := `
+let five = 5
 let ten = 10;
 	let add = fn(x, y) {
      x + y;
@@ -15,11 +16,11 @@ let ten = 10;
 
 // comment
 
-let result = add(five, ten);
+let    result = add(five,   ten);
   !-/*5;
 5 < 10 > 5;
 
-if (5 < 10) {
+if 5 < 10 {
    return true;
 } else {
    return false;
@@ -88,11 +89,9 @@ true or false
 		{token.NUMBER, "5"},
 		{token.SEMICOLON, ";"},
 		{token.IF, "if"},
-		{token.LPAREN, "("},
 		{token.NUMBER, "5"},
 		{token.LT, "<"},
 		{token.NUMBER, "10"},
-		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
 		{token.RETURN, "return"},
 		{token.TRUE, "true"},

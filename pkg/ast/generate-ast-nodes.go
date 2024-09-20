@@ -34,10 +34,10 @@ var stmts = []template{
 	{
 		name: "If",
 		props: map[string]string{
-			"Token":     "token.Token",
-			"Condition": expr,
-			"Success":   stmt,
-			"Failed":    stmt,
+			"Token":       "token.Token",
+			"Condition":   expr,
+			"Consequence": stmt,
+			"Alternative": stmt,
 		},
 	},
 }
@@ -48,6 +48,34 @@ var exprs = []template{
 		props: map[string]string{
 			"Token": "token.Token",
 			"Value": "string",
+		},
+	},
+	{
+		name: "NumberLiteral",
+		props: map[string]string{
+			"Token": "token.Token",
+			"Value": "float64",
+		},
+	},
+	{
+		name: "StringLiteral",
+		props: map[string]string{
+			"Token": "token.Token",
+			"Value": "string",
+		},
+	},
+	{
+		name: "BooleanLiteral",
+		props: map[string]string{
+			"Token": "token.Token",
+			"Value": "bool",
+		},
+	},
+	{
+		name: "Prefix",
+		props: map[string]string{
+			"Token":   "token.Token",
+			"Operand": expr,
 		},
 	},
 }

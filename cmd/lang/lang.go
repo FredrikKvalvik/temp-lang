@@ -6,7 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/fredrikkvalvik/temp-lang/pkg/scanner"
+	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
+	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
@@ -26,6 +27,7 @@ func main() {
 func repl(in io.Reader, out io.Writer) {
 	s := bufio.NewScanner(in)
 	fmt.Printf("INSIDE REPL\n")
+	fmt.Printf("%s\n", token.SEMICOLON)
 	for {
 		fmt.Print("> ")
 		scanned := s.Scan()
@@ -33,26 +35,25 @@ func repl(in io.Reader, out io.Writer) {
 			return
 		}
 		line := s.Text()
-		ts := scanner.New(line)
-		var tokens []token.Token
-		for {
-			tok := ts.NextToken()
-			tokens = append(tokens, tok)
-			if tok.TokenType == token.EOF {
-				break
+		l := lexer.New(line)
+		if l.DidError() {
+			for _, err := range l.Errors() {
+				fmt.Fprintf(out, "%s\n", err)
 			}
+			continue
 		}
 
-		fmt.Printf("input: %s\n", line)
+		p := parser.New(l)
 
-		for _, tok := range tokens {
-			fmt.Println(tok.String())
-		}
+		_, err := fmt.Printf("%s", p.ParseProgram())
 
-		if ts.DidError() {
-			for _, err := range ts.Errors() {
-				fmt.Println(err)
+		if p.DidError() {
+			for _, err := range p.Errors() {
+				fmt.Println(err.Error())
 			}
+		} else {
+			fmt.Fprint(out, err)
 		}
+
 	}
 }

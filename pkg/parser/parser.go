@@ -6,23 +6,59 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
+const (
+	_ int = iota
+	LOWEST
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         //+
+	PRODUCT     //*
+	PREFIX      //-X or !X
+	CALL        // myFunction(X)
+	INDEX       // array[index]
+)
+
 type Parser struct {
 	l *lexer.Lexer
 
 	curToken  token.Token
 	peekToken token.Token
+
+	infixParselets  map[token.TokenType]infixFn
+	prefixParselets map[token.TokenType]prefixFn
+
+	errors []error
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l: l,
+
+		errors: make([]error, 0),
+
+		infixParselets:  map[token.TokenType]infixFn{},
+		prefixParselets: map[token.TokenType]prefixFn{},
 	}
 
 	// prepare curToken and peekToken
 	p.advance()
 	p.advance()
 
+	p.registerPrefix(token.BANG, p.parsePrefix)
+	p.registerPrefix(token.MINUS, p.parsePrefix)
+
+	p.registerPrefix(token.NUMBER, p.parseNumberLiteral)
+	p.registerPrefix(token.STRING, p.parseStringLiteral)
+
 	return p
+}
+
+func (p *Parser) DidError() bool {
+	return len(p.errors) > 0
+}
+
+func (p *Parser) Errors() []error {
+	return p.errors
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
@@ -57,6 +93,15 @@ func (p *Parser) curTokenIs(typ token.TokenType) bool {
 
 func (p *Parser) peekTokenIs(typ token.TokenType) bool {
 	return p.peekToken.Type == typ
+}
+
+// consume cur token if cur token == typ
+func (p *Parser) expect(typ token.TokenType) bool {
+	if p.curToken.Type == typ {
+		p.advance()
+		return true
+	}
+	return false
 }
 
 // consume cur token if peek token == typ
