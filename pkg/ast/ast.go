@@ -64,7 +64,7 @@ func (l *LetStmt) String() string {
 func (e *ExpressionStmt) String() string {
 	var s strings.Builder
 
-	fmt.Fprintf(&s, "(%s)", e.Expression.String())
+	fmt.Fprintf(&s, "%s", e.Expression.String())
 
 	return s.String()
 }

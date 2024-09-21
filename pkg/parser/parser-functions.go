@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -57,24 +55,17 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
-	fmt.Println("PARSING EXPRESSION STATEMENT")
 	exprStmt := &ast.ExpressionStmt{
 		Token: p.curToken,
 	}
 
 	expr := p.parseExpression(LOWEST)
-	if expr == nil {
-
-		return nil
-	}
 
 	exprStmt.Expression = expr
 
-	if p.expectPeek(token.SEMICOLON) {
+	if !p.expectPeek(token.SEMICOLON) {
 		return nil
 	}
-
-	fmt.Println("DONE PARSING EXPRESSION STATEMENT")
 
 	return exprStmt
 }
@@ -96,9 +87,9 @@ func (p *Parser) parseExpression(stickiness int) ast.Expr {
 	for stickiness < p.peekStickiness() {
 		//   2      +     2
 		//   left   op    right
-		//          ^peeking op
+		//   ^      ^peeking op
 		// standing at end of prefix
-		// peek next token to see if we continue
+		// peek next token to see if we can continue
 		infix, ok := p.infixParselets[p.peekToken.Type]
 
 		if !ok {
