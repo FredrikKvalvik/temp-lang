@@ -14,21 +14,22 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseLetStatment()
 
 	default:
-		p.parseExpressionStatement()
-		return nil
+		return p.parseExpressionStatement()
 	}
 
 }
 
 func (p *Parser) parseLetStatment() *ast.LetStmt {
+	// let   ident    =    "hei"
+	// ^
 	letStmt := &ast.LetStmt{Token: p.curToken}
 
-	// standing on "let"
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
 
-	// standing on "ident"
+	// let   ident    =    "hei"
+	//       ^
 	letStmt.Name = &ast.IdentifierExpr{
 		Token: p.curToken,
 		Value: p.curToken.Lexeme,
@@ -37,11 +38,17 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
+	// let   ident    =    "hei"
+	//                ^
 
-	// standing on assign
+	// consume '=' to prepare parseExpression
+	p.advance()
+
+	// let   ident    =    "hei"
+	//                     ^
 	letStmt.Value = p.parseExpression(LOWEST)
 
-	// standing on "expression"
+	// standing at end of "expression"
 	if !p.expectPeek(token.SEMICOLON) {
 		return nil
 	}
@@ -50,37 +57,59 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
-	exprStmt := &ast.ExpressionStmt{}
+	fmt.Println("PARSING EXPRESSION STATEMENT")
+	exprStmt := &ast.ExpressionStmt{
+		Token: p.curToken,
+	}
 
-	exprStmt.Expression = p.parseExpression(LOWEST)
+	expr := p.parseExpression(LOWEST)
+	if expr == nil {
+
+		return nil
+	}
+
+	exprStmt.Expression = expr
 
 	if p.expectPeek(token.SEMICOLON) {
 		return nil
 	}
 
+	fmt.Println("DONE PARSING EXPRESSION STATEMENT")
+
 	return exprStmt
 }
 
 // advances one token and tries to parse an expression based on curToken
-func (p *Parser) parseExpression(precedence int) ast.Expr {
-	p.advance()
+func (p *Parser) parseExpression(stickiness int) ast.Expr {
+	//   2      +     2
+	//   left   op    right
+	//   ^
+	prefix, ok := p.prefixParselets[p.curToken.Type]
 
-	prefix := p.prefixParselets[p.curToken.Type]
-
-	if prefix == nil {
-		p.errors = append(p.errors, fmt.Errorf("No prefix parslet for tokenType=%s\n", p.curToken.Type))
+	if !ok {
+		p.noParsletError(&p.curToken)
 		return nil
 	}
 
 	left := prefix()
 
-	infix, ok := p.infixParselets[p.curToken.Type]
-	if !ok {
-		return left
-	}
+	for stickiness < p.peekStickiness() {
+		//   2      +     2
+		//   left   op    right
+		//          ^peeking op
+		// standing at end of prefix
+		// peek next token to see if we continue
+		infix, ok := p.infixParselets[p.peekToken.Type]
 
-	p.advance()
-	for p.curToken.Type != token.SEMICOLON && precedence < p.peekStickiness() {
+		if !ok {
+			return left
+		}
+
+		p.advance()
+		//   2      +     2
+		//   left   op    right
+		//          ^
+		// parse op as infix
 		left = infix(left)
 	}
 

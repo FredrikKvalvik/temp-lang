@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
@@ -22,6 +24,7 @@ const (
 )
 
 var stickinessMap = map[token.TokenType]int{
+	token.ASSIGN:   ASSIGN,
 	token.OR:       OR,
 	token.AND:      AND,
 	token.EQ:       EQUALS,
@@ -70,6 +73,12 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.BANG, p.parsePrefix)
 	p.registerPrefix(token.MINUS, p.parsePrefix)
 
+	p.registerInfix(token.PLUS, p.parseBinary)
+	p.registerInfix(token.MINUS, p.parseBinary)
+	p.registerInfix(token.ASTERISK, p.parseBinary)
+	p.registerInfix(token.SLASH, p.parseBinary)
+	p.registerInfix(token.AND, p.parseBinary)
+	p.registerInfix(token.OR, p.parseBinary)
 	return p
 }
 
@@ -89,10 +98,15 @@ func (p *Parser) ParseProgram() *ast.Program {
 		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
+		} else {
+			p.recover()
+			program.Statements = append(program.Statements, stmt)
 		}
 
 		p.advance()
 	}
+
+	fmt.Printf("len statements: %d\n", len(program.Statements))
 
 	return program
 }
@@ -129,18 +143,8 @@ func (p *Parser) peekTokenIs(typ token.TokenType) bool {
 	return p.peekToken.Type == typ
 }
 
-// consume cur token if cur token == typ
-func (p *Parser) expect(typ token.TokenType) bool {
-	if p.curToken.Type == typ {
-		p.advance()
-		return true
-	}
-
-	p.expectCurError(typ)
-	return false
-}
-
-// consume cur token if peek token == typ
+// advances if the typ == peekToken.Type and return true
+// if not, return false and stay
 func (p *Parser) expectPeek(typ token.TokenType) bool {
 	if p.peekToken.Type == typ {
 		p.advance()

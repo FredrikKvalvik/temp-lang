@@ -47,7 +47,7 @@ func (l *Lexer) DidError() bool {
 }
 
 // used for error messages
-func (l *Lexer) GetTokenColumn(tok token.Token) int {
+func (l *Lexer) GetTokenColumn(tok *token.Token) int {
 	col := 1
 
 	position := 0

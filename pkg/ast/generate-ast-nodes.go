@@ -70,17 +70,19 @@ var exprs = []template{
 		},
 	},
 	{
-		name: "Prefix",
+		name: "Unary",
 		props: map[string]string{
 			"Token":   "token.Token",
 			"Operand": expr,
 		},
 	},
 	{
-		name: "Infix",
+		name: "Binary",
 		props: map[string]string{
 			"Token":   "token.Token",
-			"Operand": expr,
+			"Operand": "token.TokenType",
+			"Left":    expr,
+			"Right":   expr,
 		},
 	},
 }

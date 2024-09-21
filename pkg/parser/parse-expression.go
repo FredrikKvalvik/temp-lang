@@ -16,16 +16,36 @@ func (p *Parser) registerInfix(tok token.TokenType, fun infixFn) {
 	p.infixParselets[tok] = fun
 }
 
-func (p *Parser) precedence() int {
-	return 0
-}
-
 func (p *Parser) parsePrefix() ast.Expr {
-	expr := &ast.PrefixExpr{
+	expr := &ast.UnaryExpr{
 		Token: p.curToken,
 	}
 
-	expr.Operand = p.parseExpression(p.precedence())
+	expr.Operand = p.parseExpression(p.peekStickiness())
+
+	return expr
+}
+
+func (p *Parser) parseBinary(left ast.Expr) ast.Expr {
+	//   2      +     2
+	//   left   op    right
+	//          ^
+	expr := &ast.BinaryExpr{
+		Token:   p.curToken,
+		Operand: p.curToken.Type,
+		Left:    left,
+	}
+
+	// we care about how sticky this operator is
+	stickiness := p.curStickiness()
+
+	// moving to next operand
+	p.advance()
+	//   2      +     2
+	//   left   op    right
+	//                ^
+
+	expr.Right = p.parseExpression(stickiness)
 
 	return expr
 }

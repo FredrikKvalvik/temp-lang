@@ -32,11 +32,13 @@ type Program struct {
 }
 
 func (p *Program) TokenLiteral() string {
-	if len(p.Statements) > 0 {
-		return p.Statements[0].Lexeme()
-	} else {
-		return ""
-	}
+	return "PROGRAM"
+
+	// if len(p.Statements) > 0 {
+	// 	return p.Statements[0].Lexeme()
+	// } else {
+	// 	return ""
+	// }
 }
 
 func (p *Program) String() string {
@@ -51,21 +53,20 @@ func (p *Program) String() string {
 
 // / =========
 func (l *LetStmt) String() string {
-	var str strings.Builder
+	var s strings.Builder
 
 	// TODO: update String when let is is fully implemented
-	fmt.Fprintf(&str, "let %s = %s;\n", l.Name.String(), l.Value.String())
+	fmt.Fprintf(&s, "let %s = %s;\n", l.Name.String(), l.Value.String())
 
-	return str.String()
+	return s.String()
 }
 
 func (e *ExpressionStmt) String() string {
-	var str strings.Builder
+	var s strings.Builder
 
-	// TODO: update String when let is is fully implemented
-	fmt.Fprintf(&str, "%s;\n", e.Expression.String())
+	fmt.Fprintf(&s, "(%s)", e.Expression.String())
 
-	return str.String()
+	return s.String()
 }
 
 func (i *IdentifierExpr) String() string {
@@ -76,7 +77,7 @@ func (i *IdentifierExpr) String() string {
 	return str.String()
 }
 
-func (p *PrefixExpr) String() string {
+func (p *UnaryExpr) String() string {
 	var s strings.Builder
 
 	s.WriteString("(")
@@ -84,6 +85,19 @@ func (p *PrefixExpr) String() string {
 	s.WriteString(")")
 
 	return s.String()
+}
+
+func (b *BinaryExpr) String() string {
+	var s strings.Builder
+
+	s.WriteString("(")
+	s.WriteString(b.Left.String())
+	s.WriteString(" " + b.Lexeme() + " ")
+	s.WriteString(b.Right.String())
+	s.WriteString(")")
+
+	return s.String()
+
 }
 
 func (n *NumberLiteralExpr) String() string {

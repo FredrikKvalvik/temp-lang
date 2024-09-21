@@ -14,8 +14,8 @@ func (n *IdentifierExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *IdentifierExpr) Literal() any   { return n.Token.Literal }
 
 type NumberLiteralExpr struct {
-	Value float64
 	Token token.Token
+	Value float64
 }
 
 func (n *NumberLiteralExpr) ExprNode()      {}
@@ -40,20 +40,22 @@ func (n *BooleanLiteralExpr) ExprNode()      {}
 func (n *BooleanLiteralExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *BooleanLiteralExpr) Literal() any   { return n.Token.Literal }
 
-type PrefixExpr struct {
+type UnaryExpr struct {
 	Token   token.Token
 	Operand Expr
 }
 
-func (n *PrefixExpr) ExprNode()      {}
-func (n *PrefixExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *PrefixExpr) Literal() any   { return n.Token.Literal }
+func (n *UnaryExpr) ExprNode()      {}
+func (n *UnaryExpr) Lexeme() string { return n.Token.Lexeme }
+func (n *UnaryExpr) Literal() any   { return n.Token.Literal }
 
-type InfixExpr struct {
-	Operand Expr
+type BinaryExpr struct {
 	Token   token.Token
+	Operand token.TokenType
+	Left    Expr
+	Right   Expr
 }
 
-func (n *InfixExpr) ExprNode()      {}
-func (n *InfixExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *InfixExpr) Literal() any   { return n.Token.Literal }
+func (n *BinaryExpr) ExprNode()      {}
+func (n *BinaryExpr) Lexeme() string { return n.Token.Lexeme }
+func (n *BinaryExpr) Literal() any   { return n.Token.Literal }
