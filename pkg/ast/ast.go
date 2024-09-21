@@ -64,9 +64,17 @@ func (l *LetStmt) String() string {
 func (e *ExpressionStmt) String() string {
 	var s strings.Builder
 
-	fmt.Fprintf(&s, "%s", e.Expression.String())
+	fmt.Fprintf(&s, "%s\n", e.Expression.String())
 
 	return s.String()
+}
+
+func (i *IfStmt) String() string {
+	return "IF_STMT_STR_NOT_IMPLEMENTED"
+}
+
+func (b *BlockStmt) String() string {
+	return "BLOCK_STMT_STR_NOT_IMPLEMENTED"
 }
 
 func (i *IdentifierExpr) String() string {
@@ -80,9 +88,7 @@ func (i *IdentifierExpr) String() string {
 func (p *UnaryExpr) String() string {
 	var s strings.Builder
 
-	s.WriteString("(")
-	s.WriteString(p.Lexeme() + p.Operand.String())
-	s.WriteString(")")
+	fmt.Fprintf(&s, "(%s)", p.Lexeme()+p.Operand.String())
 
 	return s.String()
 }
@@ -90,11 +96,7 @@ func (p *UnaryExpr) String() string {
 func (b *BinaryExpr) String() string {
 	var s strings.Builder
 
-	s.WriteString("(")
-	s.WriteString(b.Left.String())
-	s.WriteString(" " + b.Lexeme() + " ")
-	s.WriteString(b.Right.String())
-	s.WriteString(")")
+	fmt.Fprintf(&s, "(%s %s %s)", b.Left.String(), b.Lexeme(), b.Right.String())
 
 	return s.String()
 

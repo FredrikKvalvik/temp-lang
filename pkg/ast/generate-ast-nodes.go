@@ -38,6 +38,22 @@ var stmts = []template{
 			"Expression": expr,
 		},
 	},
+	{
+		name: "If",
+		props: map[string]string{
+			"Token":     "token.Token",
+			"Condition": expr,
+			"Then":      "*Block" + stmt,
+			"Else":      stmt,
+		},
+	},
+	{
+		name: "Block",
+		props: map[string]string{
+			"Token":      "token.Token",
+			"Statements": "[]" + stmt,
+		},
+	},
 }
 
 var exprs = []template{
@@ -122,6 +138,15 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 		// create space for next struct
 		f.WriteString("\n")
 	}
+
+	fmt.Fprint(&f, "// this is gives us a compile time check to see of all the interafaces has ben properly implemented\n")
+	fmt.Fprintf(&f, "func typecheck%s() {\n", interfaceName)
+	for _, s := range tmpl {
+		name := s.name + interfaceName
+
+		fmt.Fprintf(&f, "_ = %s(&%s{})\n", interfaceName, name)
+	}
+	fmt.Fprint(&f, "}")
 
 	return f.String()
 }

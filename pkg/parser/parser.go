@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
@@ -79,6 +77,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.SLASH, p.parseBinary)
 	p.registerInfix(token.AND, p.parseBinary)
 	p.registerInfix(token.OR, p.parseBinary)
+
 	return p
 }
 
@@ -100,13 +99,9 @@ func (p *Parser) ParseProgram() *ast.Program {
 			program.Statements = append(program.Statements, stmt)
 		} else {
 			p.recover()
-			program.Statements = append(program.Statements, stmt)
 		}
-
 		p.advance()
 	}
-
-	fmt.Printf("len statements: %d\n", len(program.Statements))
 
 	return program
 }
@@ -146,7 +141,8 @@ func (p *Parser) peekTokenIs(typ token.TokenType) bool {
 // advances if the typ == peekToken.Type and return true
 // if not, return false and stay
 func (p *Parser) expectPeek(typ token.TokenType) bool {
-	if p.peekToken.Type == typ {
+
+	if p.peekTokenIs(typ) {
 		p.advance()
 		return true
 	}

@@ -278,7 +278,7 @@ func (l *Lexer) readNumber() (string, float64, error) {
 		l.readPosition += 1
 
 		// if the next char is not a number, then the token is invalid
-		if isDigit(l.peek()) {
+		if !isDigit(l.peek()) {
 			return "", 0, nil
 		}
 		// parse decimal digits
@@ -293,6 +293,7 @@ func (l *Lexer) readNumber() (string, float64, error) {
 	}
 
 	lexeme := l.source[l.position:l.readPosition]
+
 	literal, err := strconv.ParseFloat(lexeme, 64)
 	if err != nil {
 		return "", 0, err
