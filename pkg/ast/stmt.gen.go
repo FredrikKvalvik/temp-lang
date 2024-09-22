@@ -6,43 +6,47 @@ import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type LetStmt struct {
 	Token token.Token
-	Name *IdentifierExpr
+	Name  *IdentifierExpr
 	Value Expr
 }
-func (n *LetStmt) StmtNode() {}
+
+func (n *LetStmt) StmtNode()      {}
 func (n *LetStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *LetStmt) Literal() any { return n.Token.Literal }
+func (n *LetStmt) Literal() any   { return n.Token.Literal }
 
 type ExpressionStmt struct {
 	Expression Expr
-	Token token.Token
+	Token      token.Token
 }
-func (n *ExpressionStmt) StmtNode() {}
+
+func (n *ExpressionStmt) StmtNode()      {}
 func (n *ExpressionStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *ExpressionStmt) Literal() any { return n.Token.Literal }
+func (n *ExpressionStmt) Literal() any   { return n.Token.Literal }
 
 type IfStmt struct {
-	Token token.Token
+	Token     token.Token
 	Condition Expr
-	Then *BlockStmt
-	Else Stmt
+	Then      *BlockStmt
+	Else      Stmt
 }
-func (n *IfStmt) StmtNode() {}
+
+func (n *IfStmt) StmtNode()      {}
 func (n *IfStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *IfStmt) Literal() any { return n.Token.Literal }
+func (n *IfStmt) Literal() any   { return n.Token.Literal }
 
 type BlockStmt struct {
-	Token token.Token
+	Token      token.Token
 	Statements []Stmt
 }
-func (n *BlockStmt) StmtNode() {}
+
+func (n *BlockStmt) StmtNode()      {}
 func (n *BlockStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *BlockStmt) Literal() any { return n.Token.Literal }
+func (n *BlockStmt) Literal() any   { return n.Token.Literal }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckStmt() {
-_ = Stmt(&LetStmt{})
-_ = Stmt(&ExpressionStmt{})
-_ = Stmt(&IfStmt{})
-_ = Stmt(&BlockStmt{})
+	_ = Stmt(&LetStmt{})
+	_ = Stmt(&ExpressionStmt{})
+	_ = Stmt(&IfStmt{})
+	_ = Stmt(&BlockStmt{})
 }

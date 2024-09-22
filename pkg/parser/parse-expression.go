@@ -50,6 +50,26 @@ func (p *Parser) parseBinary(left ast.Expr) ast.Expr {
 	return expr
 }
 
+func (p *Parser) parseParenPrefix() ast.Expr {
+	// ( 1 + 2 ) * 3
+	// ^
+	paren := &ast.ParenExpr{
+		Token: p.curToken,
+	}
+
+	p.advance()
+	// ( 1 + 2 ) * 3
+	//   ^
+
+	paren.Expression = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return paren
+}
+
 func (p *Parser) parseNumberLiteral() ast.Expr {
 	numberLiteral := &ast.NumberLiteralExpr{
 		Token: p.curToken,

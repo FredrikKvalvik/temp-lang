@@ -102,6 +102,15 @@ func (b *BinaryExpr) String() string {
 
 }
 
+func (p *ParenExpr) String() string {
+	var s strings.Builder
+
+	fmt.Fprint(&s, p.Expression.String())
+
+	return s.String()
+
+}
+
 func (n *NumberLiteralExpr) String() string {
 	return n.Lexeme()
 }

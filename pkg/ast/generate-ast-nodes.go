@@ -101,6 +101,13 @@ var exprs = []template{
 			"Right":   expr,
 		},
 	},
+	{
+		name: "Paren",
+		props: map[string]string{
+			"Token":      "token.Token",
+			"Expression": expr,
+		},
+	},
 }
 
 // This will generate a file for statements and expressions

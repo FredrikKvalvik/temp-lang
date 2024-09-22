@@ -48,13 +48,19 @@ func (l *Lexer) DidError() bool {
 
 // used for error messages
 func (l *Lexer) GetTokenColumn(tok *token.Token) int {
+	offset := tok.Offset
+
+	return l.getColFromOffset(offset)
+}
+
+func (l *Lexer) getColFromOffset(offset int) int {
 	col := 1
 
 	position := 0
 	// increment col for each loop.
 	// when we see a '\n', reset col and keep moving
 	// return col at end
-	for position < tok.Offset {
+	for position < offset {
 		if l.source[position] == '\n' {
 			col = 1
 		} else {
@@ -264,6 +270,7 @@ func (l *Lexer) readString() (string, string) {
 	return lexeme, literal
 }
 
+// returns the lexeme and literal of string.
 func (l *Lexer) readNumber() (string, float64, error) {
 	for {
 		if !isDigit(l.peek()) {
@@ -279,7 +286,12 @@ func (l *Lexer) readNumber() (string, float64, error) {
 
 		// if the next char is not a number, then the token is invalid
 		if !isDigit(l.peek()) {
-			return "", 0, nil
+			err := fmt.Errorf("[%d:%d]: expected digit, got=%s\n",
+				l.line,
+				l.getColFromOffset(l.readPosition-1),
+				string(l.peek()))
+			return "", 0, err
+
 		}
 		// parse decimal digits
 		for {
@@ -294,10 +306,7 @@ func (l *Lexer) readNumber() (string, float64, error) {
 
 	lexeme := l.source[l.position:l.readPosition]
 
-	literal, err := strconv.ParseFloat(lexeme, 64)
-	if err != nil {
-		return "", 0, err
-	}
+	literal, _ := strconv.ParseFloat(lexeme, 64)
 
 	return lexeme, literal, nil
 }

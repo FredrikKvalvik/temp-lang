@@ -63,20 +63,28 @@ func New(l *lexer.Lexer) *Parser {
 	p.advance()
 	p.advance()
 
+	// literals
 	p.registerPrefix(token.NUMBER, p.parseNumberLiteral)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.TRUE, p.parseBooleanLiteral)
 	p.registerPrefix(token.FALSE, p.parseBooleanLiteral)
 
+	// prefix
 	p.registerPrefix(token.BANG, p.parsePrefix)
 	p.registerPrefix(token.MINUS, p.parsePrefix)
+	p.registerPrefix(token.LPAREN, p.parseParenPrefix)
 
+	// binary
 	p.registerInfix(token.PLUS, p.parseBinary)
 	p.registerInfix(token.MINUS, p.parseBinary)
 	p.registerInfix(token.ASTERISK, p.parseBinary)
 	p.registerInfix(token.SLASH, p.parseBinary)
 	p.registerInfix(token.AND, p.parseBinary)
 	p.registerInfix(token.OR, p.parseBinary)
+	p.registerInfix(token.LT, p.parseBinary)
+	p.registerInfix(token.GT, p.parseBinary)
+	p.registerInfix(token.EQ, p.parseBinary)
+	p.registerInfix(token.NOT_EQ, p.parseBinary)
 
 	return p
 }
