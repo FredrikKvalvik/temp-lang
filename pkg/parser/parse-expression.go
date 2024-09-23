@@ -66,8 +66,18 @@ func (p *Parser) parseParenPrefix() ast.Expr {
 	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}
-
+	// ( 1 + 2 ) * 3
+	//         ^
 	return paren
+}
+
+func (p *Parser) parseIdent() ast.Expr {
+	ident := &ast.IdentifierExpr{
+		Token: p.curToken,
+		Value: p.curToken.Lexeme,
+	}
+
+	return ident
 }
 
 func (p *Parser) parseNumberLiteral() ast.Expr {

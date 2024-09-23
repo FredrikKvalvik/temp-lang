@@ -22,12 +22,12 @@ no-dirty:
 ## test: run all tests
 .PHONY: test
 test:
-	go test -v ./...
+	go test ./...
 
 ## test/watch: run all tests. rerun on filechange
 .PHONY: test/watch
 test/watch:
-	watch -n 2 go test ./...
+	watch -n 3 go test ./...
  
 
 # ==================================================================================== #

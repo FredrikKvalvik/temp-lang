@@ -19,7 +19,7 @@ func TestLetStatements(t *testing.T) {
 		{`let a = ""`, "a", ""},
 		{"let ident = true", "ident", true},
 		{`let fre = "hei"`, "fre", "hei"},
-		{`let hei_ha = "hei"`, "hei_ha", "hei"},
+		{`let      hei_ha         = "hei"`, "hei_ha", "hei"},
 		{`let ___hei = "hei"`, "___hei", "hei"},
 	}
 
@@ -41,8 +41,70 @@ func TestLetStatements(t *testing.T) {
 		}
 	}
 }
+func testLetStatement(t *testing.T, i int, stmt ast.Stmt, expectedName string) bool {
+	let, ok := stmt.(*ast.LetStmt)
+	if !ok {
+		t.Fatalf("[t: %d] could not assert stmt as *ast.LetStmt\n", i)
+		return false
+	}
 
-func TestExpressionStickiness(t *testing.T) {
+	if let.Name.Value != expectedName {
+		t.Errorf("[t: %d] expected name='%+s', got='%+s'\n", i, expectedName, let.Name.Value)
+		return false
+	}
+
+	if let.Name.Lexeme() != expectedName {
+		t.Errorf("[t: %d] expected lexeme='%s', got='%s'\n", i, expectedName, let.Name.Lexeme())
+		return false
+	}
+
+	return true
+}
+
+// TODO: finish implementing test
+func TestIfStatement(t *testing.T) {
+	input := `if x { y; }`
+
+	p := testParseProgram(input)
+
+	if len(p.Statements) != 1 {
+		t.Fatalf("exptected len(p.Statements)=1, got=%d\n", len(p.Statements))
+	}
+
+	ifStmt, ok := p.Statements[0].(*ast.IfStmt)
+	if !ok {
+		t.Fatalf("could not assert stmt type=ast.IfStmt\n")
+	}
+
+	x, ok := ifStmt.Condition.(*ast.IdentifierExpr)
+	if !ok {
+		t.Fatalf("could not assert condition type=ast.IdentifierExpr\n")
+	}
+
+	if x.Value != "x" {
+		t.Fatalf("x.value expected='x', got='%s'", x.Value)
+	}
+
+	if len(ifStmt.Then.Statements) != 1 {
+		t.Fatalf("len(IfStmt.Then.Statements) expected=1, got=%d\n", len(ifStmt.Then.Statements))
+	}
+
+	exprStmt, ok := ifStmt.Then.Statements[0].(*ast.ExpressionStmt)
+	if !ok {
+		t.Fatalf("could not assert condition type=ast.ExpressionStatment\n")
+	}
+
+	y, ok := exprStmt.Expression.(*ast.IdentifierExpr)
+	if !ok {
+		t.Fatalf("could not assert condition type=ast.IdentifierExpr\n")
+	}
+
+	if y.Value != "y" {
+		t.Fatalf("x.value expected='x', got='%s'", y.Value)
+	}
+}
+
+func TestExpressions(t *testing.T) {
 
 	tests := []struct {
 		input    string
@@ -56,6 +118,8 @@ func TestExpressionStickiness(t *testing.T) {
 			"((true and false) or true)"},
 		{"true or false and true",
 			"(true or (false and true))"},
+		{"true and false and true",
+			"((true and false) and true)"},
 		{"1 < 2 > 3",
 			"((1 < 2) > 3)"},
 		{"(1 + 2) * 3",
@@ -134,26 +198,6 @@ func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, 
 
 	if !testLiteralExpression(t, i, expr.Right, eRight) {
 		t.Errorf("[t: %d] Right: expected=%v, got=%v\n", i, eRight, expr.Right.Literal())
-		return false
-	}
-
-	return true
-}
-
-func testLetStatement(t *testing.T, i int, stmt ast.Stmt, expectedName string) bool {
-	let, ok := stmt.(*ast.LetStmt)
-	if !ok {
-		t.Fatalf("[t: %d] could not assert stmt as *ast.LetStmt\n", i)
-		return false
-	}
-
-	if let.Name.Value != expectedName {
-		t.Errorf("[t: %d] expected name='%+s', got='%+s'\n", i, expectedName, let.Name.Value)
-		return false
-	}
-
-	if let.Name.Lexeme() != expectedName {
-		t.Errorf("[t: %d] expected lexeme='%s', got='%s'\n", i, expectedName, let.Name.Lexeme())
 		return false
 	}
 

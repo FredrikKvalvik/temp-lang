@@ -12,6 +12,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseLetStatment()
 	case token.IF:
 		return p.parseIfStatement()
+	case token.LBRACE:
+		return p.parseBlockStatement()
 
 	default:
 		return p.parseExpressionStatement()
@@ -64,18 +66,27 @@ func (p *Parser) parseBlockStatement() *ast.BlockStmt {
 		Statements: make([]ast.Stmt, 0),
 	}
 
+	// { ... }
+	// ^
+
 	// consunme '{'
 	p.advance()
+	// { ... }
+	//   ^
 
-	for !p.curTokenIs(token.RBRACE) {
+	for !p.curTokenIs(token.RBRACE) && !p.atEnd() {
 		stmt := p.parseStatement()
 		block.Statements = append(block.Statements, stmt)
+
+		p.advance()
 	}
 
 	return block
 }
 
 func (p *Parser) parseIfStatement() *ast.IfStmt {
+	// if expr { ... } else { ... }
+	// ^
 	ifstmt := &ast.IfStmt{
 		Token: p.curToken,
 	}
@@ -83,27 +94,42 @@ func (p *Parser) parseIfStatement() *ast.IfStmt {
 	// advance past 'if'
 	p.advance()
 
+	// if expr { ... } else { ... }
+	//    ^
 	ifstmt.Condition = p.parseExpression(LOWEST)
 
+	// if expr { ... } else { ... }
+	//       ^
 	if !p.expectPeek(token.LBRACE) {
 		return nil
 	}
 
+	// if expr { ... } else { ... }
+	//         ^
 	ifstmt.Then = p.parseBlockStatement()
 
-	if !p.expectPeek(token.RBRACE) {
+	// if expr { ... } else { ... }
+	//               ^
+	if !p.curTokenIs(token.RBRACE) {
 		p.recover()
 		return nil
 	}
 
-	if p.peekTokenIs(token.ELSE) || p.peekTokenIs(token.IF) {
-		// consume 'else'
+	if p.peekTokenIs(token.ELSE) {
 		p.advance()
-		switch p.curToken.Type {
-		case token.IF:
-			ifstmt.Else = ast.Stmt(p.parseIfStatement())
-		case token.LBRACE:
-			ifstmt.Else = ast.Stmt(p.parseBlockStatement())
+		// if expr { ... } else { ... }
+		//                 ^
+
+		p.advance()
+		// if expr { ... } else { ... }
+		//                      ^
+		ifstmt.Else = ast.Stmt(p.parseBlockStatement())
+
+		// if expr { ... } else { ... }
+		//                            ^
+		if !p.curTokenIs(token.RBRACE) {
+			p.recover()
+			return nil
 		}
 	}
 

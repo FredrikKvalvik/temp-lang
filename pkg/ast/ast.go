@@ -70,11 +70,29 @@ func (e *ExpressionStmt) String() string {
 }
 
 func (i *IfStmt) String() string {
-	return "IF_STMT_STR_NOT_IMPLEMENTED"
+	var s strings.Builder
+
+	fmt.Fprintf(&s, "if %s ", i.Condition.String())
+	fmt.Fprint(&s, i.Then.String())
+
+	if i.Else != nil {
+		fmt.Fprintf(&s, " else ")
+		fmt.Fprint(&s, i.Else.String())
+
+	}
+	return s.String()
 }
 
 func (b *BlockStmt) String() string {
-	return "BLOCK_STMT_STR_NOT_IMPLEMENTED"
+	var s strings.Builder
+
+	s.WriteString("{\n")
+	for _, stmt := range b.Statements {
+		s.WriteString(stmt.String())
+	}
+	s.WriteString("}")
+
+	return s.String()
 }
 
 func (i *IdentifierExpr) String() string {
@@ -121,4 +139,17 @@ func (s *StringLiteralExpr) String() string {
 
 func (s *BooleanLiteralExpr) String() string {
 	return s.Lexeme()
+}
+
+// HELPERS
+
+func indent(input string, indent int) string {
+	lines := strings.Split(input, "\n")
+
+	for i, l := range lines {
+		newStr := strings.Repeat(" ", indent) + l
+		lines[i] = newStr
+	}
+
+	return strings.Join(lines, "\n")
 }
