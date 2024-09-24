@@ -15,8 +15,8 @@ func (n *LetStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *LetStmt) Literal() any   { return n.Token.Literal }
 
 type ExpressionStmt struct {
-	Expression Expr
 	Token      token.Token
+	Expression Expr
 }
 
 func (n *ExpressionStmt) StmtNode()      {}

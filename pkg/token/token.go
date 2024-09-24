@@ -50,6 +50,7 @@ const (
 	LET
 	TRUE
 	FALSE
+	NIL
 	IF
 	ELSE
 	RETURN

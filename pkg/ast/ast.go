@@ -143,13 +143,13 @@ func (s *BooleanLiteralExpr) String() string {
 
 // HELPERS
 
-func indent(input string, indent int) string {
-	lines := strings.Split(input, "\n")
+// func indent(input string, indent int) string {
+// 	lines := strings.Split(input, "\n")
 
-	for i, l := range lines {
-		newStr := strings.Repeat(" ", indent) + l
-		lines[i] = newStr
-	}
+// 	for i, l := range lines {
+// 		newStr := strings.Repeat(" ", indent) + l
+// 		lines[i] = newStr
+// 	}
 
-	return strings.Join(lines, "\n")
-}
+// 	return strings.Join(lines, "\n")
+// }
