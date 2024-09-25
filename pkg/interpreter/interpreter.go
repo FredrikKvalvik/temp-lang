@@ -12,24 +12,10 @@ var TRUE = &object.Boolean{Value: true}
 var FALSE = &object.Boolean{Value: false}
 var NIL = &object.Nil{}
 
-type Interpreter struct {
-	globalEnv *Environment
-	program   *ast.Program
-
-	errors []error
-}
-
-func New(program *ast.Program, env *Environment) *Interpreter {
-	return &Interpreter{
-		program:   program,
-		globalEnv: env,
-	}
-}
-
-func (i *Interpreter) EvalProgram(env *Environment) object.Object {
+func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
 	var result object.Object
-	for _, stmt := range i.program.Statements {
-		result = i.Eval(stmt, env)
+	for _, stmt := range stmts {
+		result = Eval(stmt, env)
 
 		if isError(result) {
 			return result
@@ -41,28 +27,30 @@ func (i *Interpreter) EvalProgram(env *Environment) object.Object {
 
 // TODO: implement program representation of values
 // TODO: implement eval funcs for the different ast.Nodes
-func (i *Interpreter) Eval(node ast.Node, env *Environment) object.Object {
+func Eval(node ast.Node, env *Environment) object.Object {
 	// TODO: use assigned value form type
 	switch n := node.(type) {
+	case *ast.Program:
+		return evalProgram(n.Statements, env)
 	// case *ast.LetStmt:
 	case *ast.ExpressionStmt:
-		return i.Eval(n.Expression, env)
+		return Eval(n.Expression, env)
 	// case *ast.IfStmt:
 	// case *ast.BlockStmt:
 
 	// case *ast.UnaryExpr:
 	case *ast.BinaryExpr:
-		left := i.Eval(n.Left, env)
+		left := Eval(n.Left, env)
 		if isError(left) {
 			return left
 		}
-		right := i.Eval(n.Right, env)
+		right := Eval(n.Right, env)
 		if isError(right) {
 			return right
 		}
-		return i.evalBinaryExpression(left, right, n.Operand)
+		return evalBinaryExpression(left, right, n.Operand)
 	case *ast.ParenExpr:
-		return i.Eval(n.Expression, env)
+		return Eval(n.Expression, env)
 
 	case *ast.BooleanLiteralExpr:
 		return boolObject(n.Value)
@@ -72,28 +60,19 @@ func (i *Interpreter) Eval(node ast.Node, env *Environment) object.Object {
 
 	case *ast.StringLiteralExpr:
 		return &object.String{Value: n.Value}
-
 	default:
-		i.errors = append(i.errors, fmt.Errorf("unknown node. Could not eval"))
 		return unknownNodeError(node)
 	}
 }
 
-func (i *Interpreter) DidError() bool {
-	return len(i.errors) > 0
-}
-func (i *Interpreter) Errors() []error {
-	return i.errors
-}
-
-func (i *Interpreter) evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
+func evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
 
 	switch {
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return i.evalStringBinaryExpression(left.(*object.String), op, right.(*object.String))
+		return evalStringBinaryExpression(left.(*object.String), op, right.(*object.String))
 
 	case left.Type() == object.NUMBER_OBJ && right.Type() == object.NUMBER_OBJ:
-		return i.evalNumberBinaryExpression(left.(*object.Number), op, right.(*object.Number))
+		return evalNumberBinaryExpression(left.(*object.Number), op, right.(*object.Number))
 
 	case op == token.EQ:
 		// this comparison works because TRUE and FALSE are pointers to singletons
@@ -110,7 +89,7 @@ func (i *Interpreter) evalBinaryExpression(left, right object.Object, op token.T
 }
 
 // only allow + op on string. all else i illegal
-func (i *Interpreter) evalStringBinaryExpression(left *object.String, op token.TokenType, right *object.String) object.Object {
+func evalStringBinaryExpression(left *object.String, op token.TokenType, right *object.String) object.Object {
 	switch op {
 	// string returns
 	case token.PLUS:
@@ -127,7 +106,7 @@ func (i *Interpreter) evalStringBinaryExpression(left *object.String, op token.T
 }
 
 // only allow + op on string. all else i illegal
-func (i *Interpreter) evalNumberBinaryExpression(left *object.Number, op token.TokenType, right *object.Number) object.Object {
+func evalNumberBinaryExpression(left *object.Number, op token.TokenType, right *object.Number) object.Object {
 
 	switch op {
 	// Number return

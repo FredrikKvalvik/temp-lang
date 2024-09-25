@@ -31,16 +31,8 @@ type Program struct {
 	Statements []Stmt
 }
 
-func (p *Program) TokenLiteral() string {
-	return "PROGRAM"
-
-	// if len(p.Statements) > 0 {
-	// 	return p.Statements[0].Lexeme()
-	// } else {
-	// 	return ""
-	// }
-}
-
+func (p *Program) Literal() any   { return "PROGRAM" }
+func (p *Program) Lexeme() string { return "PROGRAM" }
 func (p *Program) String() string {
 	var str strings.Builder
 

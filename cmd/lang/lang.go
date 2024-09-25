@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
 )
@@ -25,6 +26,8 @@ func main() {
 
 func repl(in io.Reader, out io.Writer) {
 	s := bufio.NewScanner(in)
+
+	env := interpreter.NewEnv(nil)
 	for {
 		fmt.Print("> ")
 		scanned := s.Scan()
@@ -48,7 +51,12 @@ func repl(in io.Reader, out io.Writer) {
 			for _, err := range p.Errors() {
 				fmt.Println(err.Error())
 			}
+			continue
+		} else {
+			fmt.Printf("%s\n", program.String())
 		}
 
+		result := interpreter.Eval(program, env)
+		fmt.Printf("%s\n", result.Inspect())
 	}
 }
