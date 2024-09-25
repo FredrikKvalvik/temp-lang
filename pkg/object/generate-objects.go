@@ -12,8 +12,6 @@ import (
 
 const packageName = "object"
 
-// const tokenPkg = "github.com/fredrikkvalvik/temp-lang/pkg/token"
-
 type template struct {
 	name  string
 	typ   object.ObjectType
@@ -29,15 +27,15 @@ var objects = []template{
 		},
 	},
 	{
-		name:  "Null",
-		typ:   object.NULL_OBJ,
+		name:  "Nil",
+		typ:   object.NIL_OBJ,
 		props: map[string]string{},
 	},
 	{
 		name: "Number",
 		typ:  object.NUMBER_OBJ,
 		props: map[string]string{
-			"Value": "string",
+			"Value": "float64",
 		},
 	},
 	{
@@ -47,17 +45,24 @@ var objects = []template{
 			"Value": "string",
 		},
 	},
+	{
+		name: "Error",
+		typ:  object.ERROR_OBJ,
+		props: map[string]string{
+			"Message": "string",
+		},
+	},
 }
 
 // This will generate a file for statements and expressions
 // the only unique part of the structs are the fields and the String method
 func main() {
-	objectFile := generateNodes(objects)
+	objectFile := generateObjects(objects)
 
 	os.WriteFile("objects.gen.go", []byte(objectFile), 0646)
 }
 
-func generateNodes(tmpl []template) string {
+func generateObjects(tmpl []template) string {
 	var f strings.Builder
 
 	f.WriteString("// THIS FILE IS GENERATED. DO NOT EDIT\n\n")

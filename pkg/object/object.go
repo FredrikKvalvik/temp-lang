@@ -3,6 +3,8 @@
 
 package object
 
+import "fmt"
+
 // object represents runtime values.
 // Object can be any value thats valid in the program
 type Object interface {
@@ -14,12 +16,14 @@ type ObjectType int
 
 const (
 	BOOL_OBJ ObjectType = iota
-	NULL_OBJ
+	NIL_OBJ
 	NUMBER_OBJ
 	STRING_OBJ
+	ERROR_OBJ
 )
 
-func (n *Null) Inspect() string    { return "NOT IMPLEMENTED" }
-func (b *Boolean) Inspect() string { return "NOT IMPLEMENTED" }
-func (b *String) Inspect() string  { return "NOT IMPLEMENTED" }
-func (b *Number) Inspect() string  { return "NOT IMPLEMENTED" }
+func (n *Nil) Inspect() string     { return "nil" }
+func (b *Boolean) Inspect() string { return fmt.Sprintf("%v", b.Value) }
+func (b *String) Inspect() string  { return b.Value }
+func (b *Number) Inspect() string  { return fmt.Sprintf("%f", b.Value) }
+func (b *Error) Inspect() string   { return "Error: " + b.Message }

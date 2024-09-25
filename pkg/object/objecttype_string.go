@@ -9,14 +9,15 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[BOOL_OBJ-0]
-	_ = x[NULL_OBJ-1]
+	_ = x[NIL_OBJ-1]
 	_ = x[NUMBER_OBJ-2]
 	_ = x[STRING_OBJ-3]
+	_ = x[ERROR_OBJ-4]
 }
 
-const _ObjectType_name = "BOOL_OBJNULL_OBJNUMBER_OBJSTRING_OBJ"
+const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJERROR_OBJ"
 
-var _ObjectType_index = [...]uint8{0, 8, 16, 26, 36}
+var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 44}
 
 func (i ObjectType) String() string {
 	if i < 0 || i >= ObjectType(len(_ObjectType_index)-1) {

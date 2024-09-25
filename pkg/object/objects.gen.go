@@ -8,13 +8,13 @@ type Boolean struct {
 
 func (n *Boolean) Type() ObjectType { return BOOL_OBJ }
 
-type Null struct {
+type Nil struct {
 }
 
-func (n *Null) Type() ObjectType { return NULL_OBJ }
+func (n *Nil) Type() ObjectType { return NIL_OBJ }
 
 type Number struct {
-	Value string
+	Value float64
 }
 
 func (n *Number) Type() ObjectType { return NUMBER_OBJ }
@@ -25,10 +25,17 @@ type String struct {
 
 func (n *String) Type() ObjectType { return STRING_OBJ }
 
-// this is gives us a compile time check to see of all the interafaces has ben properly implemented
+type Error struct {
+	Message string
+}
+
+func (n *Error) Type() ObjectType { return ERROR_OBJ }
+
+// this is gives us a compile time check to see of all the interafaces has been properly implemented
 func typecheck() {
 	_ = Object(&Boolean{})
-	_ = Object(&Null{})
+	_ = Object(&Nil{})
 	_ = Object(&Number{})
 	_ = Object(&String{})
+	_ = Object(&Error{})
 }

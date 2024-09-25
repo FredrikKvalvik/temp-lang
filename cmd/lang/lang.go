@@ -48,8 +48,6 @@ func repl(in io.Reader, out io.Writer) {
 			for _, err := range p.Errors() {
 				fmt.Println(err.Error())
 			}
-		} else {
-			fmt.Fprintf(out, "%s\n", program.String())
 		}
 
 	}
