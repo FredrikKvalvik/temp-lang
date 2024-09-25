@@ -14,8 +14,7 @@ var TRUE = &object.Boolean{Value: true}
 var FALSE = &object.Boolean{Value: false}
 var NIL = &object.Nil{}
 
-// TODO: implement program representation of values
-// TODO: implement eval funcs for the different ast.Nodes
+// main func for interpreter. Recursively evaluate ast and return a value at the end
 func Eval(node ast.Node, env *Environment) object.Object {
 	// TODO: use assigned value form type
 	switch n := node.(type) {
