@@ -8,22 +8,11 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
+// SENTINEL VALUES
+
 var TRUE = &object.Boolean{Value: true}
 var FALSE = &object.Boolean{Value: false}
 var NIL = &object.Nil{}
-
-func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
-	var result object.Object
-	for _, stmt := range stmts {
-		result = Eval(stmt, env)
-
-		if isError(result) {
-			return result
-		}
-	}
-
-	return result
-}
 
 // TODO: implement program representation of values
 // TODO: implement eval funcs for the different ast.Nodes
@@ -86,6 +75,18 @@ func evalBinaryExpression(left, right object.Object, op token.TokenType) object.
 	}
 
 	return illegalOpError(left, op, right)
+}
+func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
+	var result object.Object
+	for _, stmt := range stmts {
+		result = Eval(stmt, env)
+
+		if isError(result) {
+			return result
+		}
+	}
+
+	return result
 }
 
 // only allow + op on string. all else i illegal
