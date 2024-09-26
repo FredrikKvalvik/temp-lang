@@ -30,6 +30,7 @@ about how programming languages are made.
 ## about
 
 everything is written by hand, without the use of any other library than the go std lib.
+This is mosty based on the books written by Robert Nystrom and Thorsten Ball (links at the bottom).
 
 ### Lexer
 
