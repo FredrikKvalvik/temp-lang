@@ -20,7 +20,15 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	switch n := node.(type) {
 	case *ast.Program:
 		return evalProgram(n.Statements, env)
-	// case *ast.LetStmt:
+	case *ast.LetStmt:
+		key := n.Name.Value
+		if env.has(key) {
+			return illegalAssignmentError(key)
+		}
+		value := Eval(n.Value, env)
+		env.set(key, value)
+		return nil
+
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
 	// case *ast.IfStmt:
@@ -141,6 +149,10 @@ func typeMismatchError(left object.Object, op token.TokenType, right object.Obje
 }
 func unknownNodeError(node ast.Node) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Unknown node: %s", node.Lexeme())}
+}
+
+func illegalAssignmentError(key string) *object.Error {
+	return &object.Error{Message: fmt.Sprintf("Illegal assignment, var %s has already been assign", key)}
 }
 
 func isError(obj object.Object) bool {

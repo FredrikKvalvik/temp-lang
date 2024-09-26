@@ -54,9 +54,9 @@ func TestBinaryExpression(t *testing.T) {
 	}
 
 	for index, tt := range tests {
-		result, _ := testEvalProgram(t, tt.input)
-
 		tr.SetName(fmt.Sprint(index))
+
+		result, _ := testEvalProgram(tr, tt.input)
 
 		tr.AssertEqual(result.Type(), tt.expectedType)
 
@@ -75,15 +75,32 @@ func TestBinaryExpression(t *testing.T) {
 	}
 }
 
-func testEvalProgram(t *testing.T, input string) (object.Object, *Environment) {
-	t.Helper()
+func TestLetStatement(t *testing.T) {
+
+	input := "let ident = 10"
+
+	tr := tester.New(t, input)
+
+	res, e := testEvalProgram(tr, input)
+
+	value := e.get("ident")
+
+	tr.AssertNil(res)
+	tr.AssertNotNil(value)
+	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(value.(*object.Number).Value, float64(10))
+}
+
+func testEvalProgram(tr *tester.Tester, input string) (object.Object, *Environment) {
+	tr.T.Helper()
+
 	l := lexer.New(input)
 	p := parser.New(l)
 
 	program := p.ParseProgram()
 	if p.DidError() {
 		for _, err := range p.Errors() {
-			t.Error(err, "\n")
+			tr.T.Error(err, "\n")
 		}
 		return nil, nil
 	}
