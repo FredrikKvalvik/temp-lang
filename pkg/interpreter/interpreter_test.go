@@ -180,6 +180,7 @@ func TestIfStatement(t *testing.T) {
 	tr.AssertEqual(res.(*object.Boolean).Value, true)
 
 }
+
 func TestElseStatement(t *testing.T) {
 	input := `
 	let a = 10

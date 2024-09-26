@@ -62,15 +62,40 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	return letStmt
 }
 
+// FIX: does not parse the last element in the list
 func (p *Parser) parsePrintStatement() *ast.PrintStmt {
 	print := &ast.PrintStmt{
 		Token: p.curToken,
 	}
 
-	// consunme 'print'
+	// print expr1, expr2 ;
+	// ^
 	p.advance()
 
-	print.Expression = p.parseExpression(LOWEST)
+	// print expr1, expr2 ;
+	//       ^
+	exprs := []ast.Expr{}
+	for {
+		e := p.parseExpression(LOWEST)
+		exprs = append(exprs, e)
+
+		// print expr1, expr2 ;
+		//           ^
+		// if peekToken == ',' do another iteration and add to list
+		if p.peekTokenIs(token.COMMA) {
+			p.advance()
+			// print expr1, expr2 ;
+			//            ^
+			p.advance()
+			// print expr1, expr2 ;
+			//              ^
+			continue
+		} else {
+			break
+		}
+	}
+
+	print.Expressions = exprs
 
 	if !p.expectPeek(token.SEMICOLON) {
 		return nil

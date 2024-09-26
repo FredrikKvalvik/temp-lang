@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
@@ -31,11 +32,7 @@ func Eval(node ast.Node, env *Environment) object.Object {
 		return Eval(n.Expression, env)
 
 	case *ast.PrintStmt:
-		value := Eval(n.Expression, env)
-		if !isError(value) {
-			fmt.Println(value.Inspect())
-		}
-		return value
+		return evalPrintStatment(n, env)
 	case *ast.IfStmt:
 		condition := Eval(n.Condition, env)
 		if isError(condition) {
@@ -90,6 +87,22 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	default:
 		return unknownNodeError(node)
 	}
+}
+
+func evalPrintStatment(n *ast.PrintStmt, env *Environment) object.Object {
+	var str strings.Builder
+	for idx, expr := range n.Expressions {
+		val := Eval(expr, env)
+		if isError(val) {
+			return val
+		}
+		str.WriteString(val.Inspect())
+		if len(n.Expressions) != idx+1 {
+			str.WriteString(", ")
+		}
+	}
+	fmt.Println(str.String())
+	return NIL
 }
 
 func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {

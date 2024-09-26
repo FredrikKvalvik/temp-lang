@@ -57,8 +57,8 @@ var stmts = []template{
 	{
 		name: "Print",
 		props: map[string]string{
-			"Token":      "token.Token",
-			"Expression": expr,
+			"Token":       "token.Token",
+			"Expressions": "[]" + expr,
 		},
 	},
 }

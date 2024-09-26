@@ -64,7 +64,9 @@ func (e *ExpressionStmt) String() string {
 func (e *PrintStmt) String() string {
 	var s strings.Builder
 
-	fmt.Fprintf(&s, "print %s\n", e.Expression.String())
+	for _, expr := range e.Expressions {
+		fmt.Fprintf(&s, "print %s ", expr.String())
+	}
 
 	return s.String()
 }
