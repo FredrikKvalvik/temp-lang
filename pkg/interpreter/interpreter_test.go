@@ -77,7 +77,7 @@ func TestBinaryExpression(t *testing.T) {
 
 func TestLetStatement(t *testing.T) {
 
-	input := "let ident = 10"
+	input := "let ident = 5 + 5"
 
 	tr := tester.New(t, input)
 
@@ -85,7 +85,7 @@ func TestLetStatement(t *testing.T) {
 
 	value := e.get("ident")
 
-	tr.AssertNil(res)
+	tr.AssertEqual(res, NIL)
 	tr.AssertNotNil(value)
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(value.(*object.Number).Value, float64(10))

@@ -27,7 +27,7 @@ func Eval(node ast.Node, env *Environment) object.Object {
 		}
 		value := Eval(n.Value, env)
 		env.set(key, value)
-		return nil
+		return NIL
 
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
@@ -45,6 +45,15 @@ func Eval(node ast.Node, env *Environment) object.Object {
 			return right
 		}
 		return evalBinaryExpression(left, right, n.Operand)
+
+	case *ast.IdentifierExpr:
+		key := n.Value
+		value := env.get(key)
+		if value == nil {
+			return useOfUnassignVariableError(key)
+		}
+		return value
+
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
 
@@ -59,6 +68,19 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	default:
 		return unknownNodeError(node)
 	}
+}
+
+func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
+	var result object.Object
+	for _, stmt := range stmts {
+		result = Eval(stmt, env)
+
+		if isError(result) {
+			return result
+		}
+	}
+
+	return result
 }
 
 func evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
@@ -82,18 +104,6 @@ func evalBinaryExpression(left, right object.Object, op token.TokenType) object.
 	}
 
 	return illegalOpError(left, op, right)
-}
-func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
-	var result object.Object
-	for _, stmt := range stmts {
-		result = Eval(stmt, env)
-
-		if isError(result) {
-			return result
-		}
-	}
-
-	return result
 }
 
 // only allow + op on string. all else i illegal
@@ -152,7 +162,10 @@ func unknownNodeError(node ast.Node) *object.Error {
 }
 
 func illegalAssignmentError(key string) *object.Error {
-	return &object.Error{Message: fmt.Sprintf("Illegal assignment, var %s has already been assign", key)}
+	return &object.Error{Message: fmt.Sprintf("Illegal assignment, var `%s` has already been assign", key)}
+}
+func useOfUnassignVariableError(key string) *object.Error {
+	return &object.Error{Message: fmt.Sprintf("Use of unassign var `%s`", key)}
 }
 
 func isError(obj object.Object) bool {

@@ -52,8 +52,6 @@ func repl(in io.Reader, out io.Writer) {
 				fmt.Println(err.Error())
 			}
 			continue
-		} else {
-			fmt.Printf("%s\n", program.String())
 		}
 
 		result := interpreter.Eval(program, env)
