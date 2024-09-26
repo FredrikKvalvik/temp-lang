@@ -20,7 +20,7 @@ func (e *Environment) declareVar(key string, value object.Object) object.Object 
 		return illegalDeclarationError(key)
 	}
 	e.setVar(key, value)
-	return NIL
+	return value
 }
 
 func (e *Environment) setVar(key string, value object.Object) {

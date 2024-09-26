@@ -37,7 +37,8 @@ func Eval(node ast.Node, env *Environment) object.Object {
 		}
 		return value
 	// case *ast.IfStmt:
-	// case *ast.BlockStmt:
+	case *ast.BlockStmt:
+		return evalBlockStatment(n, env)
 
 	case *ast.UnaryExpr:
 		right := Eval(n.Right, env)
@@ -91,6 +92,21 @@ func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
 	}
 
 	return result
+}
+
+func evalBlockStatment(b *ast.BlockStmt, env *Environment) object.Object {
+	scope := NewEnv(env)
+
+	var res object.Object = NIL
+
+	for _, stmt := range b.Statements {
+		res = Eval(stmt, scope)
+		if isError(res) {
+			return res
+		}
+	}
+
+	return res
 }
 
 func evalUnaryExpression(right object.Object, op token.TokenType) object.Object {

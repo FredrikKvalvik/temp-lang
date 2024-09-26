@@ -130,10 +130,36 @@ func TestLetStatement(t *testing.T) {
 
 	value := e.getVar("ident")
 
-	tr.AssertEqual(res, NIL)
+	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertNotNil(value)
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(value.(*object.Number).Value, float64(10))
+}
+
+func TestBlockStatement(t *testing.T) {
+	input := `
+	let a = 10
+	{
+		let a = 5
+	}
+	`
+	tr := tester.New(t, "")
+
+	inner, env := testEvalProgram(tr, input)
+	tr.AssertNotNil(env)
+
+	outer := env.getVar("a")
+
+	tr.SetName("testing outer")
+	tr.AssertNotNil(outer)
+	tr.AssertEqual(outer.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(outer.(*object.Number).Value, float64(10))
+
+	tr.SetName("testing inner")
+	tr.AssertNotNil(inner)
+	tr.AssertEqual(inner.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(inner.(*object.Number).Value, float64(5))
+
 }
 
 func TestIdentifer(t *testing.T) {
