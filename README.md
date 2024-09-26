@@ -14,8 +14,9 @@ about how programming languages are made.
 - [x] `print`-statement (temporary until a print function is implemented in std)
 - [x] Infix expressions
 - [x] prefix expression
+- [x] lexical scoping
 
-### upcomming freatures
+### upcomming freatures / TODOs
 
 - [ ] functions
 - [ ] first class function
@@ -24,7 +25,6 @@ about how programming languages are made.
 - [ ] if/else control flow
 - [ ] iteration (for statement)
 - [ ] complex data structures (array and map)
-- [ ] lexical scoping
 - [ ] _
 
 ## about
