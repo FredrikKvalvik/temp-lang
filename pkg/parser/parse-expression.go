@@ -18,10 +18,11 @@ func (p *Parser) registerInfix(tok token.TokenType, fun infixFn) {
 
 func (p *Parser) parsePrefix() ast.Expr {
 	expr := &ast.UnaryExpr{
-		Token: p.curToken,
+		Token:   p.curToken,
+		Operand: p.curToken.Type,
 	}
 
-	expr.Operand = p.parseExpression(p.peekStickiness())
+	expr.Right = p.parseExpression(p.peekStickiness())
 
 	return expr
 }

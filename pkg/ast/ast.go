@@ -106,7 +106,7 @@ func (i *IdentifierExpr) String() string {
 func (p *UnaryExpr) String() string {
 	var s strings.Builder
 
-	fmt.Fprintf(&s, "(%s)", p.Lexeme()+p.Operand.String())
+	fmt.Fprintf(&s, "(%s)", p.Lexeme()+p.Right.String())
 
 	return s.String()
 }

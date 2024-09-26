@@ -96,7 +96,8 @@ var exprs = []template{
 		name: "Unary",
 		props: map[string]string{
 			"Token":   "token.Token",
-			"Operand": expr,
+			"Operand": "token.TokenType",
+			"Right":   expr,
 		},
 	},
 	{

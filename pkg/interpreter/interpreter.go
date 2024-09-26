@@ -9,10 +9,12 @@ import (
 )
 
 // SENTINEL VALUES
+// these should only exist as singleton values. That way,
+// we can easily compare the values by pointer
 
-var TRUE = &object.Boolean{Value: true}
-var FALSE = &object.Boolean{Value: false}
-var NIL = &object.Nil{}
+var TRUE = &object.Boolean{Value: true}   // Sentinel value: true
+var FALSE = &object.Boolean{Value: false} // Sentinel value: false
+var NIL = &object.Nil{}                   // Sentinal value: nil
 
 // main func for interpreter. Recursively evaluate ast and return a value at the end
 func Eval(node ast.Node, env *Environment) object.Object {

@@ -42,7 +42,8 @@ func (n *BooleanLiteralExpr) Literal() any   { return n.Token.Literal }
 
 type UnaryExpr struct {
 	Token   token.Token
-	Operand Expr
+	Operand token.TokenType
+	Right   Expr
 }
 
 func (n *UnaryExpr) ExprNode()      {}

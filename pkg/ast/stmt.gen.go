@@ -5,9 +5,9 @@ package ast
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type LetStmt struct {
+	Token token.Token
 	Name  *IdentifierExpr
 	Value Expr
-	Token token.Token
 }
 
 func (n *LetStmt) StmtNode()      {}
