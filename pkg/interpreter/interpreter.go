@@ -30,8 +30,10 @@ func Eval(node ast.Node, env *Environment) object.Object {
 
 	case *ast.PrintStmt:
 		value := Eval(n.Expression, env)
-		fmt.Println(value.Inspect())
-		return NIL
+		if !isError(value) {
+			fmt.Println(value.Inspect())
+		}
+		return value
 	// case *ast.IfStmt:
 	// case *ast.BlockStmt:
 
