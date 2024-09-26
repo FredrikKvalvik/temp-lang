@@ -24,6 +24,6 @@ const (
 
 func (n *Nil) Inspect() string     { return "nil" }
 func (b *Boolean) Inspect() string { return fmt.Sprintf("%v", b.Value) }
-func (b *String) Inspect() string  { return b.Value }
-func (b *Number) Inspect() string  { return fmt.Sprintf("%f", b.Value) }
-func (b *Error) Inspect() string   { return "Error: " + b.Message }
+func (b *String) Inspect() string  { return fmt.Sprintf(`"%s"`, b.Value) }
+func (b *Number) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
+func (b *Error) Inspect() string   { return b.Message }
