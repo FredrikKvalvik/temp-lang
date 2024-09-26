@@ -20,8 +20,7 @@ func main() {
 	} else if len(args) == 1 {
 		path := args[0]
 		file := readFile(path)
-		res := runProgram(file)
-		fmt.Println(res.Inspect())
+		_ = runProgram(file)
 
 	} else {
 		env := interpreter.NewEnv(nil)
