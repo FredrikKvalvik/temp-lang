@@ -83,7 +83,7 @@ func TestLetStatement(t *testing.T) {
 
 	res, e := testEvalProgram(tr, input)
 
-	value := e.get("ident")
+	value := e.getVar("ident")
 
 	tr.AssertEqual(res, NIL)
 	tr.AssertNotNil(value)
@@ -102,8 +102,8 @@ func TestIdentifer(t *testing.T) {
 
 	res, e := testEvalProgram(tr, input)
 
-	a := e.get("a")
-	b := e.get("b")
+	a := e.getVar("a")
+	b := e.getVar("b")
 	tr.AssertNotNil(b)
 
 	tr.SetName("testing value `a`")

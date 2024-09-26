@@ -20,12 +20,8 @@ func Eval(node ast.Node, env *Environment) object.Object {
 		return evalProgram(n.Statements, env)
 	case *ast.LetStmt:
 		key := n.Name.Value
-		if env.has(key) {
-			return illegalAssignmentError(key)
-		}
 		value := Eval(n.Value, env)
-		env.set(key, value)
-		return NIL
+		return env.declareVar(key, value)
 
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
@@ -46,7 +42,7 @@ func Eval(node ast.Node, env *Environment) object.Object {
 
 	case *ast.IdentifierExpr:
 		key := n.Value
-		value := env.get(key)
+		value := env.getVar(key)
 		if value == nil {
 			return useOfUnassignVariableError(key)
 		}

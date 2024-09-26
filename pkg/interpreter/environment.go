@@ -15,20 +15,29 @@ func NewEnv(parent *Environment) *Environment {
 	}
 }
 
-func (e *Environment) set(key string, value object.Object) {
+func (e *Environment) declareVar(key string, value object.Object) object.Object {
+	if e.hasVar(key) {
+		return illegalDeclarationError(key)
+	}
+	e.setVar(key, value)
+	return NIL
+}
+
+func (e *Environment) setVar(key string, value object.Object) {
 	e.vars[key] = value
 }
 
-func (e *Environment) get(key string) object.Object {
+// walks up the env tree to find the first var with name=key
+func (e *Environment) getVar(key string) object.Object {
 	val, ok := e.vars[key]
 	if !ok && e.parent != nil {
-		val = e.parent.get(key)
+		val = e.parent.getVar(key)
 	}
 
 	return val
 }
 
-func (e *Environment) has(key string) bool {
+func (e *Environment) hasVar(key string) bool {
 	_, ok := e.vars[key]
 	return ok
 }
