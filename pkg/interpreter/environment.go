@@ -41,3 +41,8 @@ func (e *Environment) hasVar(key string) bool {
 	_, ok := e.vars[key]
 	return ok
 }
+
+// might be useful?
+func (e *Environment) isGlobalEnv() bool {
+	return e.parent == nil
+}
