@@ -131,6 +131,23 @@ func (p *ParenExpr) String() string {
 
 }
 
+func (p *FunctionLiteralExpr) String() string {
+	var s strings.Builder
+
+	s.WriteString("fn(")
+	for idx, arg := range p.Arguments {
+		s.WriteString(arg.Value)
+
+		if len(p.Arguments) != idx+1 {
+			s.WriteString(", ")
+		}
+	}
+	s.WriteString(")")
+
+	return s.String()
+
+}
+
 func (n *NumberLiteralExpr) String() string {
 	return n.Lexeme()
 }

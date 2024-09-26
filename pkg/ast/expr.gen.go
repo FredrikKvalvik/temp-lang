@@ -32,8 +32,8 @@ func (n *StringLiteralExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *StringLiteralExpr) Literal() any   { return n.Token.Literal }
 
 type BooleanLiteralExpr struct {
-	Value bool
 	Token token.Token
+	Value bool
 }
 
 func (n *BooleanLiteralExpr) ExprNode()      {}
@@ -41,9 +41,9 @@ func (n *BooleanLiteralExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *BooleanLiteralExpr) Literal() any   { return n.Token.Literal }
 
 type UnaryExpr struct {
+	Operand token.TokenType
 	Right   Expr
 	Token   token.Token
-	Operand token.TokenType
 }
 
 func (n *UnaryExpr) ExprNode()      {}
@@ -62,13 +62,23 @@ func (n *BinaryExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *BinaryExpr) Literal() any   { return n.Token.Literal }
 
 type ParenExpr struct {
-	Expression Expr
 	Token      token.Token
+	Expression Expr
 }
 
 func (n *ParenExpr) ExprNode()      {}
 func (n *ParenExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *ParenExpr) Literal() any   { return n.Token.Literal }
+
+type FunctionLiteralExpr struct {
+	Token     token.Token
+	Arguments []*IdentifierExpr
+	Body      *BlockStmt
+}
+
+func (n *FunctionLiteralExpr) ExprNode()      {}
+func (n *FunctionLiteralExpr) Lexeme() string { return n.Token.Lexeme }
+func (n *FunctionLiteralExpr) Literal() any   { return n.Token.Literal }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckExpr() {
@@ -79,4 +89,5 @@ func typecheckExpr() {
 	_ = Expr(&UnaryExpr{})
 	_ = Expr(&BinaryExpr{})
 	_ = Expr(&ParenExpr{})
+	_ = Expr(&FunctionLiteralExpr{})
 }

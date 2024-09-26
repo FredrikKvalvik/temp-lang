@@ -5,6 +5,7 @@ import (
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
+	"github.com/fredrikkvalvik/temp-lang/pkg/tester"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
@@ -186,7 +187,42 @@ func TestBinaryExpression(t *testing.T) {
 
 }
 
+func TestFunctionLiterals(t *testing.T) {
+	tr := tester.New(t, "")
+
+	input := "fn() { 10; }"
+
+	res := testParseProgram(input)
+
+	tr.AssertNotNil(res)
+	tr.AssertEqual(len(res.Statements), 1)
+
+	tr.SetName("is expression")
+	expr, ok := res.Statements[0].(*ast.ExpressionStmt)
+	tr.AssertEqual(ok, true)
+	tr.AssertNotNil(expr)
+
+	tr.SetName("is functionLiteral")
+	fun, ok := expr.Expression.(*ast.FunctionLiteralExpr)
+	tr.AssertTrue(ok)
+
+	tr.SetName("test function args")
+	tr.AssertEqual(len(fun.Arguments), 0)
+
+	tr.SetName("test function body")
+	tr.AssertNotNil(fun.Body)
+	tr.AssertEqual(len(fun.Body.Statements), 1)
+
+	expr, ok = fun.Body.Statements[0].(*ast.ExpressionStmt)
+	tr.AssertTrue(ok)
+	tr.AssertNotNil(expr)
+	num, ok := expr.Expression.(*ast.NumberLiteralExpr)
+	tr.AssertTrue(ok)
+	tr.AssertEqual(num.Value, float64(10))
+}
+
 func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, op token.TokenType, eRight any) bool {
+	t.Helper()
 	if !testLiteralExpression(t, i, expr.Left, eLeft) {
 		t.Errorf("[t: %d] Left: expected=%v, got=%v\n", i, eLeft, expr.Left.Literal())
 		return false
@@ -205,6 +241,7 @@ func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, 
 }
 
 func testLiteralExpression(t *testing.T, i int, expr ast.Expr, expectedValue any) bool {
+	t.Helper()
 
 	switch val := expectedValue.(type) {
 	case float64:
@@ -220,6 +257,7 @@ func testLiteralExpression(t *testing.T, i int, expr ast.Expr, expectedValue any
 }
 
 func testStringLiteral(t *testing.T, i int, expr ast.Expr, expectedValue string) bool {
+	t.Helper()
 	strLit, ok := expr.(*ast.StringLiteralExpr)
 	if !ok {
 		t.Errorf("[t: %d] expr is not *ast.StringLiteralExpr\n", i)
@@ -233,6 +271,7 @@ func testStringLiteral(t *testing.T, i int, expr ast.Expr, expectedValue string)
 	return true
 }
 func testNumberLiteral(t *testing.T, i int, expr ast.Expr, expectedValue float64) bool {
+	t.Helper()
 	numLit, ok := expr.(*ast.NumberLiteralExpr)
 	if !ok {
 		t.Errorf("[t: %d] expr is not *ast.NumberLiteralExpr\n", i)
@@ -246,6 +285,7 @@ func testNumberLiteral(t *testing.T, i int, expr ast.Expr, expectedValue float64
 	return true
 }
 func testBooleanLiteral(t *testing.T, i int, expr ast.Expr, expectedValue bool) bool {
+	t.Helper()
 	boolLit, ok := expr.(*ast.BooleanLiteralExpr)
 	if !ok {
 		t.Errorf("[t: %d] expr is not *ast.BooleanLiteralExpr\n", i)

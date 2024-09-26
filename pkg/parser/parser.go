@@ -33,6 +33,7 @@ var stickinessMap = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
+	token.FUNCTION: PREFIX,
 	token.LPAREN:   CALL,
 	token.LBRACKET: INDEX,
 }
@@ -71,6 +72,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.TRUE, p.parseBooleanLiteral)
 	p.registerPrefix(token.FALSE, p.parseBooleanLiteral)
 	p.registerPrefix(token.IDENT, p.parseIdent)
+	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 
 	// prefix
 	p.registerPrefix(token.BANG, p.parsePrefix)

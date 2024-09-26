@@ -74,6 +74,38 @@ func (p *Parser) parseParenPrefix() ast.Expr {
 	return paren
 }
 
+func (p *Parser) parseFunctionLiteral() ast.Expr {
+	// fn ( arg1, arg2 ) { ... }
+	// ^
+	fun := &ast.FunctionLiteralExpr{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	args := []*ast.IdentifierExpr{}
+	fun.Arguments = args
+	// TODO: implement args
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	// fn ( arg1, arg2 ) { ... }
+	//                 ^
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+	// fn ( arg1, arg2 ) { ... }
+	//                   ^
+
+	fun.Body = p.parseBlockStatement()
+	// fn ( arg1, arg2 ) { ... }
+	//                         ^
+
+	return fun
+}
+
 func (p *Parser) parseIdent() ast.Expr {
 	ident := &ast.IdentifierExpr{
 		Token: p.curToken,

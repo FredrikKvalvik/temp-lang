@@ -116,6 +116,14 @@ var exprs = []template{
 			"Expression": expr,
 		},
 	},
+	{
+		name: "FunctionLiteral",
+		props: map[string]string{
+			"Token":     "token.Token",
+			"Arguments": "[]*Identifier" + expr,
+			"Body":      "*Block" + stmt,
+		},
+	},
 }
 
 // This will generate a file for statements and expressions

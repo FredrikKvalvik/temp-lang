@@ -20,7 +20,6 @@ func (p *Parser) parseStatement() ast.Stmt {
 	default:
 		return p.parseExpressionStatement()
 	}
-
 }
 
 func (p *Parser) parseLetStatment() *ast.LetStmt {
@@ -53,10 +52,9 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	//                     ^
 	letStmt.Value = p.parseExpression(LOWEST)
 
-	// standing at end of "expression"
-	if !p.expectPeek(token.SEMICOLON) {
-		p.recover()
-		return nil
+	// consume ';' if present. Some expressions dont naturally end with ';'
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.advance()
 	}
 
 	return letStmt
@@ -186,9 +184,9 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
 		Expression: p.parseExpression(LOWEST),
 	}
 
-	if !p.expectPeek(token.SEMICOLON) {
-		p.recover()
-		return nil
+	// consume ';' if present. Some expressions dont naturally end with ';'
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.advance()
 	}
 
 	return exprStmt
