@@ -5,7 +5,7 @@ _Name pending_
 Templang is a dynamically typed scripting language made created for me to learn
 about how programming languages are made.
 
-## Language features
+## (Current) Language features
 
 - [x] C-like syntax
 - [x] mutable variables
@@ -23,7 +23,7 @@ about how programming languages are made.
 - [ ] higher order function
 - [ ] closures
 - [ ] if/else control flow
-- [ ] iteration (for statement)
+- [ ] iteration (for loops and such)
 - [ ] complex data structures (array and map)
 - [ ] _
 
