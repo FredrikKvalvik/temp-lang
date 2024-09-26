@@ -26,6 +26,13 @@ func (tt *Tester) AssertEqual(in, expect any) {
 		tt.T.Fatalf("%s: Assert failed: %v != %v", tt.name, in, expect)
 	}
 }
+func (tt *Tester) AssertNotEqual(in, expect any) {
+	tt.T.Helper()
+
+	if in == expect {
+		tt.T.Fatalf("%s: Assert failed: %v == %v", tt.name, in, expect)
+	}
+}
 
 func (tt *Tester) AssertNotNil(v any) {
 	tt.T.Helper()

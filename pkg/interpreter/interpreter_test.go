@@ -90,6 +90,38 @@ func TestLetStatement(t *testing.T) {
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(value.(*object.Number).Value, float64(10))
 }
+func TestIdentifer(t *testing.T) {
+
+	input := `
+	let a = 10
+	let b = 20
+	a + b
+	`
+
+	tr := tester.New(t, input)
+
+	res, e := testEvalProgram(tr, input)
+
+	a := e.get("a")
+	b := e.get("b")
+	tr.AssertNotNil(b)
+
+	tr.SetName("test value `a`")
+	tr.AssertNotNil(a)
+	tr.AssertEqual(a.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(a.(*object.Number).Value, float64(10))
+
+	tr.SetName("test value `b`")
+	tr.AssertNotNil(b)
+	tr.AssertEqual(b.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(b.(*object.Number).Value, float64(20))
+
+	tr.SetName(`test result`)
+	tr.AssertNotEqual(res, NIL)
+	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(res.(*object.Number).Value, float64(30))
+
+}
 
 func testEvalProgram(tr *tester.Tester, input string) (object.Object, *Environment) {
 	tr.T.Helper()
