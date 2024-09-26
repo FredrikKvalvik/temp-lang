@@ -106,17 +106,17 @@ func TestIdentifer(t *testing.T) {
 	b := e.get("b")
 	tr.AssertNotNil(b)
 
-	tr.SetName("test value `a`")
+	tr.SetName("testing value `a`")
 	tr.AssertNotNil(a)
 	tr.AssertEqual(a.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(a.(*object.Number).Value, float64(10))
 
-	tr.SetName("test value `b`")
+	tr.SetName("testing value `b`")
 	tr.AssertNotNil(b)
 	tr.AssertEqual(b.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(b.(*object.Number).Value, float64(20))
 
-	tr.SetName(`test result`)
+	tr.SetName(`testing result`)
 	tr.AssertNotEqual(res, NIL)
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(res.(*object.Number).Value, float64(30))
