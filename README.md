@@ -15,6 +15,7 @@ about how programming languages are made.
 - [x] Infix expressions
 - [x] prefix expression
 - [x] lexical scoping
+- [x] if/else control flow
 
 ### upcomming freatures / TODOs
 
@@ -22,7 +23,6 @@ about how programming languages are made.
 - [ ] first class function
 - [ ] higher order function
 - [ ] closures
-- [ ] if/else control flow
 - [ ] iteration (for loops and such)
 - [ ] complex data structures (array and map)
 - [ ] _
