@@ -75,6 +75,51 @@ func TestBinaryExpression(t *testing.T) {
 	}
 }
 
+func TestUnaryExpressions(t *testing.T) {
+	tr := tester.New(t, "")
+
+	tests := []struct {
+		input         string
+		expectedType  object.ObjectType
+		expectedValue any
+	}{
+		{"!false",
+			object.BOOL_OBJ, true},
+		{"!true",
+			object.BOOL_OBJ, false},
+		{"!!true",
+			object.BOOL_OBJ, true},
+		{"-10",
+			object.NUMBER_OBJ, float64(-10)},
+		{"--10",
+			object.NUMBER_OBJ, float64(10)},
+		{"-true",
+			object.ERROR_OBJ, nil},
+	}
+
+	for idx, tt := range tests {
+		tr.SetName(fmt.Sprintf("[%d]", idx))
+
+		res, _ := testEvalProgram(tr, tt.input)
+
+		tr.AssertNotNil(res)
+		tr.AssertEqual(res.Type(), tt.expectedType)
+
+		switch n := res.(type) {
+		case *object.Boolean:
+			tr.AssertEqual(n.Value, tt.expectedValue)
+		case *object.Number:
+			tr.AssertEqual(n.Value, tt.expectedValue)
+		case *object.Error:
+			// TODO: find a way to test errors
+			break
+
+		default:
+			tr.T.Errorf("[%d] unexpected type %T", idx, n)
+		}
+	}
+}
+
 func TestLetStatement(t *testing.T) {
 
 	input := "let ident = 5 + 5"
@@ -90,6 +135,7 @@ func TestLetStatement(t *testing.T) {
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(value.(*object.Number).Value, float64(10))
 }
+
 func TestIdentifer(t *testing.T) {
 
 	input := `

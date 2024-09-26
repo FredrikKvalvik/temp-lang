@@ -20,8 +20,11 @@ func isError(obj object.Object) bool {
 func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Illegal operation: %s %s %s", left, op, right)}
 }
-func typeMismatchError(left object.Object, op token.TokenType, right object.Object) *object.Error {
+func typeMismatchBinaryError(left object.Object, op token.TokenType, right object.Object) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Missmatching type: %s %s %s", left, op, right)}
+}
+func typeMismatchUnaryError(op token.TokenType, right object.Object) *object.Error {
+	return &object.Error{Message: fmt.Sprintf("Missmatching type: %s%s", op, right)}
 }
 
 // for interal error only. This should only show up in development

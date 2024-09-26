@@ -39,7 +39,12 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	// case *ast.IfStmt:
 	// case *ast.BlockStmt:
 
-	// case *ast.UnaryExpr:
+	case *ast.UnaryExpr:
+		right := Eval(n.Right, env)
+		if isError(right) {
+			return right
+		}
+		return evalUnaryExpression(right, n.Operand)
 	case *ast.BinaryExpr:
 		left := Eval(n.Left, env)
 		if isError(left) {
@@ -88,6 +93,24 @@ func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
 	return result
 }
 
+func evalUnaryExpression(right object.Object, op token.TokenType) object.Object {
+
+	switch {
+	case right.Type() == object.NUMBER_OBJ && op == token.MINUS:
+		return &object.Number{Value: -right.(*object.Number).Value}
+
+	case right.Type() == object.BOOL_OBJ && op == token.BANG:
+		fmt.Print(right)
+		if right == TRUE {
+			return FALSE
+		} else {
+			return TRUE
+		}
+	}
+
+	return typeMismatchUnaryError(op, right)
+}
+
 func evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
 
 	switch {
@@ -105,7 +128,7 @@ func evalBinaryExpression(left, right object.Object, op token.TokenType) object.
 		return boolObject(left != right)
 
 	case left.Type() != right.Type():
-		return typeMismatchError(left, op, right)
+		return typeMismatchBinaryError(left, op, right)
 	}
 
 	return illegalOpError(left, op, right)

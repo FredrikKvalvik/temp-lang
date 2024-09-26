@@ -21,6 +21,8 @@ func (p *Parser) parsePrefix() ast.Expr {
 		Token:   p.curToken,
 		Operand: p.curToken.Type,
 	}
+	// consume prefix token
+	p.advance()
 
 	expr.Right = p.parseExpression(p.peekStickiness())
 
