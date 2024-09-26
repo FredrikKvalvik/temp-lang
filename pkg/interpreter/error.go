@@ -8,6 +8,8 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
+// TODO: add line:col numbers to errors
+
 func isError(obj object.Object) bool {
 	if obj != nil {
 		return obj.Type() == object.ERROR_OBJ
