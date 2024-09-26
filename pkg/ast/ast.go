@@ -61,6 +61,14 @@ func (e *ExpressionStmt) String() string {
 	return s.String()
 }
 
+func (e *PrintStmt) String() string {
+	var s strings.Builder
+
+	fmt.Fprintf(&s, "print %s\n", e.Expression.String())
+
+	return s.String()
+}
+
 func (i *IfStmt) String() string {
 	var s strings.Builder
 

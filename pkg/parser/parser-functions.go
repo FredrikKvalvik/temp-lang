@@ -14,6 +14,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseIfStatement()
 	case token.LBRACE:
 		return p.parseBlockStatement()
+	case token.PRINT:
+		return p.parsePrintStatement()
 
 	default:
 		return p.parseExpressionStatement()
@@ -58,6 +60,23 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	}
 
 	return letStmt
+}
+
+func (p *Parser) parsePrintStatement() *ast.PrintStmt {
+	print := &ast.PrintStmt{
+		Token: p.curToken,
+	}
+
+	// consunme 'print'
+	p.advance()
+
+	print.Expression = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
+	}
+
+	return print
 }
 
 func (p *Parser) parseBlockStatement() *ast.BlockStmt {

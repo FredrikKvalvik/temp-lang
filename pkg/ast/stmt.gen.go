@@ -43,10 +43,20 @@ func (n *BlockStmt) StmtNode()      {}
 func (n *BlockStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *BlockStmt) Literal() any   { return n.Token.Literal }
 
+type PrintStmt struct {
+	Token      token.Token
+	Expression Expr
+}
+
+func (n *PrintStmt) StmtNode()      {}
+func (n *PrintStmt) Lexeme() string { return n.Token.Lexeme }
+func (n *PrintStmt) Literal() any   { return n.Token.Literal }
+
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckStmt() {
 	_ = Stmt(&LetStmt{})
 	_ = Stmt(&ExpressionStmt{})
 	_ = Stmt(&IfStmt{})
 	_ = Stmt(&BlockStmt{})
+	_ = Stmt(&PrintStmt{})
 }

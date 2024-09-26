@@ -1,6 +1,8 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
@@ -25,6 +27,11 @@ func Eval(node ast.Node, env *Environment) object.Object {
 
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
+
+	case *ast.PrintStmt:
+		value := Eval(n.Expression, env)
+		fmt.Println(value.Inspect())
+		return NIL
 	// case *ast.IfStmt:
 	// case *ast.BlockStmt:
 

@@ -27,7 +27,6 @@ func main() {
 		env := interpreter.NewEnv(nil)
 		repl.New(env).Run(os.Stdin, os.Stdout)
 		return
-		// repl(os.Stdin, os.Stdout)
 	}
 }
 

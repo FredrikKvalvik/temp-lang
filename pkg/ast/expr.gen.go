@@ -14,8 +14,8 @@ func (n *IdentifierExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *IdentifierExpr) Literal() any   { return n.Token.Literal }
 
 type NumberLiteralExpr struct {
-	Token token.Token
 	Value float64
+	Token token.Token
 }
 
 func (n *NumberLiteralExpr) ExprNode()      {}

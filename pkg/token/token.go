@@ -53,6 +53,7 @@ const (
 	IF
 	ELSE
 	RETURN
+	PRINT
 )
 
 var keywords = map[string]TokenType{
@@ -65,6 +66,7 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 	"and":    AND,
 	"or":     OR,
+	"print":  PRINT,
 }
 
 func LookupIdent(ident string) TokenType {

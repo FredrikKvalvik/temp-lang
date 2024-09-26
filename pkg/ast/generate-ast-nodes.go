@@ -54,6 +54,13 @@ var stmts = []template{
 			"Statements": "[]" + stmt,
 		},
 	},
+	{
+		name: "Print",
+		props: map[string]string{
+			"Token":      "token.Token",
+			"Expression": expr,
+		},
+	},
 }
 
 var exprs = []template{
