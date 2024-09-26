@@ -1,0 +1,7 @@
+
+let hello = "hello there"
+let name = "templang"
+
+print hello + " " + name
+
+print "hello", " ", "world"
