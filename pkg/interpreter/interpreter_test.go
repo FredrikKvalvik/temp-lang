@@ -162,6 +162,42 @@ func TestBlockStatement(t *testing.T) {
 
 }
 
+func TestIfStatement(t *testing.T) {
+	input := `
+	let a = 10
+	if a > 5 {
+		true
+	} else {
+		false
+	}
+	`
+	tr := tester.New(t, "")
+
+	res, _ := testEvalProgram(tr, input)
+
+	tr.AssertNotNil(res)
+	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
+	tr.AssertEqual(res.(*object.Boolean).Value, true)
+
+}
+func TestElseStatement(t *testing.T) {
+	input := `
+	let a = 10
+	if a < 5 {
+		true
+	} else {
+		false
+	}
+	`
+	tr := tester.New(t, "")
+
+	res, _ := testEvalProgram(tr, input)
+
+	tr.AssertNotNil(res)
+	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
+	tr.AssertEqual(res.(*object.Boolean).Value, false)
+}
+
 func TestIdentifer(t *testing.T) {
 
 	input := `
