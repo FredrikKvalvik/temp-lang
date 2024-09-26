@@ -1,14 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
+	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
+	"github.com/fredrikkvalvik/temp-lang/pkg/repl"
 )
 
 func main() {
@@ -18,43 +18,49 @@ func main() {
 		fmt.Printf("usage: templang [script-path]")
 		os.Exit(1)
 	} else if len(args) == 1 {
-		fmt.Printf("running scripts: %s...", args[0])
+		path := args[0]
+		file := readFile(path)
+		res := runProgram(file)
+		fmt.Println(res.Inspect())
+
 	} else {
-		repl(os.Stdin, os.Stdout)
+		env := interpreter.NewEnv(nil)
+		repl.New(env).Run(os.Stdin, os.Stdout)
+		return
+		// repl(os.Stdin, os.Stdout)
 	}
 }
 
-func repl(in io.Reader, out io.Writer) {
-	s := bufio.NewScanner(in)
+func runProgram(in string) object.Object {
+
+	l := lexer.New(in)
+	if l.DidError() {
+		for _, err := range l.Errors() {
+			fmt.Printf("%s\n", err)
+		}
+		return nil
+	}
+
+	p := parser.New(l)
+	program := p.ParseProgram()
+
+	if p.DidError() {
+		for _, err := range p.Errors() {
+			fmt.Println(err.Error())
+		}
+		return nil
+	}
 
 	env := interpreter.NewEnv(nil)
-	for {
-		fmt.Print("> ")
-		scanned := s.Scan()
-		if !scanned {
-			return
-		}
+	result := interpreter.Eval(program, env)
+	return result
+}
 
-		line := s.Text()
-		l := lexer.New(line)
-		if l.DidError() {
-			for _, err := range l.Errors() {
-				fmt.Fprintf(out, "%s\n", err)
-			}
-			continue
-		}
-
-		p := parser.New(l)
-		program := p.ParseProgram()
-
-		if p.DidError() {
-			for _, err := range p.Errors() {
-				fmt.Println(err.Error())
-			}
-			continue
-		}
-
-		result := interpreter.Eval(program, env)
-		fmt.Printf("%s\n", result.Inspect())
+func readFile(path string) string {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
 	}
+
+	return string(file)
 }
