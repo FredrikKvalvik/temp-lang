@@ -165,3 +165,32 @@ func (p *Parser) expectPeek(typ token.TokenType) bool {
 	p.expectPeekError(typ)
 	return false
 }
+
+func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
+	list := []ast.Expr{}
+
+	// [ expr1, expr2 ]
+	// ^
+	if p.peekTokenIs(end) {
+		p.advance()
+		// [ expr1, expr2 ]
+		//                ^
+		return list
+	}
+	list = append(list, p.parseExpression(LOWEST))
+
+	for p.peekTokenIs(token.COMMA) {
+		// consume current token
+		p.advance()
+		// consume comma
+		p.advance()
+		list = append(list, p.parseExpression(LOWEST))
+	}
+
+	// error if end of list without there being a ")"
+	if !p.expectPeek(end) {
+		return nil
+	}
+
+	return list
+}

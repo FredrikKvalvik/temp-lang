@@ -72,32 +72,11 @@ func (p *Parser) parsePrintStatement() *ast.PrintStmt {
 
 	// print expr1, expr2 ;
 	//       ^
-	exprs := []ast.Expr{}
-	for {
-		e := p.parseExpression(LOWEST)
-		exprs = append(exprs, e)
+	list := p.parseExpressionList(token.SEMICOLON)
 
-		// print expr1, expr2 ;
-		//           ^
-		// if peekToken == ',' do another iteration and add to list
-		if p.peekTokenIs(token.COMMA) {
-			p.advance()
-			// print expr1, expr2 ;
-			//            ^
-			p.advance()
-			// print expr1, expr2 ;
-			//              ^
-			continue
-		} else {
-			break
-		}
-	}
-
-	print.Expressions = exprs
-
-	if !p.expectPeek(token.SEMICOLON) {
-		return nil
-	}
+	// print expr1, expr2 ;
+	//                    ^
+	print.Expressions = list
 
 	return print
 }

@@ -143,6 +143,11 @@ func (p *Parser) parseFunctionArgs() []*ast.IdentifierExpr {
 
 }
 
+func parseCall(left ast.Expr) ast.Expr {
+
+	return nil
+}
+
 func (p *Parser) parseIdent() ast.Expr {
 	ident := &ast.IdentifierExpr{
 		Token: p.curToken,

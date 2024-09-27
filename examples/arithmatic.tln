@@ -2,7 +2,4 @@
 let a = 10 + 20 * 2
 let b = 50 / 2 + 1
 
-print a + b
-print a * b
-print a / b
-print a - b
+print a + b, a * b, a / b, a - b
