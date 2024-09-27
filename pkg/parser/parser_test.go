@@ -187,7 +187,7 @@ func TestBinaryExpression(t *testing.T) {
 
 }
 
-func TestFunctionLiterals(t *testing.T) {
+func TestFunctionLiteral(t *testing.T) {
 	tr := tester.New(t, "")
 
 	input := "fn() { 10; }"

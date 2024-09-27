@@ -23,7 +23,7 @@ func main() {
 		_ = runProgram(file)
 
 	} else {
-		env := interpreter.NewEnv(nil)
+		env := object.NewEnv(nil)
 		repl.New(env).Run(os.Stdin, os.Stdout)
 		return
 	}
@@ -49,7 +49,7 @@ func runProgram(in string) object.Object {
 		return nil
 	}
 
-	env := interpreter.NewEnv(nil)
+	env := object.NewEnv(nil)
 	result := interpreter.Eval(program, env)
 	return result
 }

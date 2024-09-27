@@ -5,8 +5,8 @@ package ast
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type IdentifierExpr struct {
-	Token token.Token
 	Value string
+	Token token.Token
 }
 
 func (n *IdentifierExpr) ExprNode()      {}
@@ -41,9 +41,9 @@ func (n *BooleanLiteralExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *BooleanLiteralExpr) Literal() any   { return n.Token.Literal }
 
 type UnaryExpr struct {
+	Token   token.Token
 	Operand token.TokenType
 	Right   Expr
-	Token   token.Token
 }
 
 func (n *UnaryExpr) ExprNode()      {}
@@ -51,10 +51,10 @@ func (n *UnaryExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *UnaryExpr) Literal() any   { return n.Token.Literal }
 
 type BinaryExpr struct {
-	Right   Expr
 	Token   token.Token
 	Operand token.TokenType
 	Left    Expr
+	Right   Expr
 }
 
 func (n *BinaryExpr) ExprNode()      {}

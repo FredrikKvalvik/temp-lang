@@ -18,7 +18,7 @@ var FALSE = &object.Boolean{Value: false} // Sentinel value: false
 var NIL = &object.Nil{}                   // Sentinal value: nil
 
 // main func for interpreter. Recursively evaluate ast and return a value at the end
-func Eval(node ast.Node, env *Environment) object.Object {
+func Eval(node ast.Node, env *object.Environment) object.Object {
 	// TODO: use assigned value form type
 	switch n := node.(type) {
 	case *ast.Program:
@@ -26,7 +26,7 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	case *ast.LetStmt:
 		key := n.Name.Value
 		value := Eval(n.Value, env)
-		return env.declareVar(key, value)
+		return env.DeclareVar(key, value)
 
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
@@ -67,11 +67,19 @@ func Eval(node ast.Node, env *Environment) object.Object {
 
 	case *ast.IdentifierExpr:
 		key := n.Value
-		value := env.getVar(key)
+		value := env.GetVar(key)
 		if value == nil {
 			return useOfUnassignVariableError(key)
 		}
 		return value
+
+	case *ast.FunctionLiteralExpr:
+		fn := &object.FnLiteral{
+			Parameters: n.Arguments,
+			Body:       n.Body,
+			Env:        env,
+		}
+		return fn
 
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
@@ -89,7 +97,7 @@ func Eval(node ast.Node, env *Environment) object.Object {
 	}
 }
 
-func evalPrintStatment(n *ast.PrintStmt, env *Environment) object.Object {
+func evalPrintStatment(n *ast.PrintStmt, env *object.Environment) object.Object {
 	var str strings.Builder
 	for idx, expr := range n.Expressions {
 		val := Eval(expr, env)
@@ -105,7 +113,7 @@ func evalPrintStatment(n *ast.PrintStmt, env *Environment) object.Object {
 	return NIL
 }
 
-func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
+func evalProgram(stmts []ast.Stmt, env *object.Environment) object.Object {
 	var result object.Object
 	for _, stmt := range stmts {
 		result = Eval(stmt, env)
@@ -118,8 +126,8 @@ func evalProgram(stmts []ast.Stmt, env *Environment) object.Object {
 	return result
 }
 
-func evalBlockStatment(b *ast.BlockStmt, env *Environment) object.Object {
-	scope := NewEnv(env)
+func evalBlockStatment(b *ast.BlockStmt, env *object.Environment) object.Object {
+	scope := object.NewEnv(env)
 
 	var res object.Object = NIL
 

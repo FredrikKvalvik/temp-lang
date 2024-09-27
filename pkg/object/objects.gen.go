@@ -2,6 +2,8 @@
 
 package object
 
+import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
+
 type Boolean struct {
 	Value bool
 }
@@ -25,6 +27,14 @@ type String struct {
 
 func (n *String) Type() ObjectType { return STRING_OBJ }
 
+type FnLiteral struct {
+	Parameters []*ast.IdentifierExpr
+	Body       *ast.BlockStmt
+	Env        *Environment
+}
+
+func (n *FnLiteral) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
+
 type Error struct {
 	Message string
 }
@@ -37,5 +47,6 @@ func typecheck() {
 	_ = Object(&Nil{})
 	_ = Object(&Number{})
 	_ = Object(&String{})
+	_ = Object(&FnLiteral{})
 	_ = Object(&Error{})
 }

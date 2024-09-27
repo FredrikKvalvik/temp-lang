@@ -32,9 +32,6 @@ func unknownNodeError(node ast.Node) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Unknown node: %s", node.Lexeme())}
 }
 
-func illegalDeclarationError(key string) *object.Error {
-	return &object.Error{Message: fmt.Sprintf("Illegal declaration, var `%s` has already been declared in this scope", key)}
-}
 func useOfUnassignVariableError(key string) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Use of unassigned var `%s`", key)}
 }

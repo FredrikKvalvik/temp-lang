@@ -1,37 +1,39 @@
-package interpreter
+package object
 
-import "github.com/fredrikkvalvik/temp-lang/pkg/object"
+import (
+	"fmt"
+)
 
 // environment represent the environment of the current execution scope
 type Environment struct {
 	parent *Environment
-	vars   map[string]object.Object
+	vars   map[string]Object
 }
 
 func NewEnv(parent *Environment) *Environment {
 	return &Environment{
 		parent: parent,
-		vars:   make(map[string]object.Object),
+		vars:   make(map[string]Object),
 	}
 }
 
-func (e *Environment) declareVar(key string, value object.Object) object.Object {
+func (e *Environment) DeclareVar(key string, value Object) Object {
 	if e.hasVar(key) {
 		return illegalDeclarationError(key)
 	}
-	e.setVar(key, value)
+	e.SetVar(key, value)
 	return value
 }
 
-func (e *Environment) setVar(key string, value object.Object) {
+func (e *Environment) SetVar(key string, value Object) {
 	e.vars[key] = value
 }
 
 // walks up the env tree to find the first var with name=key
-func (e *Environment) getVar(key string) object.Object {
+func (e *Environment) GetVar(key string) Object {
 	val, ok := e.vars[key]
 	if !ok && e.parent != nil {
-		val = e.parent.getVar(key)
+		val = e.parent.GetVar(key)
 	}
 
 	return val
@@ -45,4 +47,8 @@ func (e *Environment) hasVar(key string) bool {
 // might be useful?
 func (e *Environment) isGlobalEnv() bool {
 	return e.parent == nil
+}
+
+func illegalDeclarationError(key string) *Error {
+	return &Error{Message: fmt.Sprintf("Illegal declaration, var `%s` has already been declared in this scope", key)}
 }

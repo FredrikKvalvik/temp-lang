@@ -12,12 +12,13 @@ func _() {
 	_ = x[NIL_OBJ-1]
 	_ = x[NUMBER_OBJ-2]
 	_ = x[STRING_OBJ-3]
-	_ = x[ERROR_OBJ-4]
+	_ = x[FUNCTION_LITERAL_OBJ-4]
+	_ = x[ERROR_OBJ-5]
 }
 
-const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJERROR_OBJ"
+const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJERROR_OBJ"
 
-var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 44}
+var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 64}
 
 func (i ObjectType) String() string {
 	if i < 0 || i >= ObjectType(len(_ObjectType_index)-1) {

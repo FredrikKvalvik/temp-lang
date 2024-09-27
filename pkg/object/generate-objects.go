@@ -11,6 +11,7 @@ import (
 )
 
 const packageName = "object"
+const astPkg = "github.com/fredrikkvalvik/temp-lang/pkg/ast"
 
 type template struct {
 	name  string
@@ -46,6 +47,15 @@ var objects = []template{
 		},
 	},
 	{
+		name: "FnLiteral",
+		typ:  object.FUNCTION_LITERAL_OBJ,
+		props: map[string]string{
+			"Parameters": "[]*ast.IdentifierExpr",
+			"Body":       "*ast.BlockStmt",
+			"Env":        "*Environment",
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: map[string]string{
@@ -67,6 +77,7 @@ func generateObjects(tmpl []template) string {
 
 	f.WriteString("// THIS FILE IS GENERATED. DO NOT EDIT\n\n")
 	f.WriteString(fmt.Sprintf("package %s\n\n", packageName))
+	f.WriteString(fmt.Sprintf(`import "%s"`+"\n\n", astPkg))
 
 	for _, s := range tmpl {
 		name := s.name

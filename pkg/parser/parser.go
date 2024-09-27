@@ -79,7 +79,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.MINUS, p.parsePrefix)
 	p.registerPrefix(token.LPAREN, p.parseParenPrefix)
 
-	// binary
+	// Infix
 	p.registerInfix(token.PLUS, p.parseBinary)
 	p.registerInfix(token.MINUS, p.parseBinary)
 	p.registerInfix(token.ASTERISK, p.parseBinary)
@@ -90,6 +90,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GT, p.parseBinary)
 	p.registerInfix(token.EQ, p.parseBinary)
 	p.registerInfix(token.NOT_EQ, p.parseBinary)
+
+	// p.registerInfix(token.LPAREN)
 
 	return p
 }

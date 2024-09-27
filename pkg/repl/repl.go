@@ -7,14 +7,15 @@ import (
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
+	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
 )
 
 type Repl struct {
-	env *interpreter.Environment
+	env *object.Environment
 }
 
-func New(env *interpreter.Environment) *Repl {
+func New(env *object.Environment) *Repl {
 	return &Repl{
 		env: env,
 	}
@@ -24,7 +25,7 @@ func New(env *interpreter.Environment) *Repl {
 func (r *Repl) Run(in io.Reader, out io.Writer) {
 	s := bufio.NewScanner(in)
 
-	env := interpreter.NewEnv(nil)
+	env := object.NewEnv(nil)
 	for {
 		fmt.Print("> ")
 		scanned := s.Scan()

@@ -1,4 +1,6 @@
 
-fn() {
+let a = fn() {
 	print 10
 }
+
+print a

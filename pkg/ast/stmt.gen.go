@@ -24,10 +24,10 @@ func (n *ExpressionStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *ExpressionStmt) Literal() any   { return n.Token.Literal }
 
 type IfStmt struct {
-	Else      Stmt
 	Token     token.Token
 	Condition Expr
 	Then      *BlockStmt
+	Else      Stmt
 }
 
 func (n *IfStmt) StmtNode()      {}
@@ -44,8 +44,8 @@ func (n *BlockStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *BlockStmt) Literal() any   { return n.Token.Literal }
 
 type PrintStmt struct {
-	Expressions []Expr
 	Token       token.Token
+	Expressions []Expr
 }
 
 func (n *PrintStmt) StmtNode()      {}

@@ -23,7 +23,7 @@ about how programming languages are made.
 - [ ] first class function
 - [ ] higher order function
 - [ ] closures
-- [ ] iteration (for loops and such)
+- [ ] iteration (for loops or some form of iterator implementation)
 - [ ] complex data structures (array and map)
 - [ ] _
 
