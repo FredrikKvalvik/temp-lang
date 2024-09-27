@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
@@ -187,38 +188,49 @@ func TestBinaryExpression(t *testing.T) {
 
 }
 
-func TestFunctionLiteral(t *testing.T) {
-	tr := tester.New(t, "")
+func TestFunctionLiterals(t *testing.T) {
 
-	input := "fn() { 10; }"
+	tests := []struct {
+		input           string
+		expectedArgLen  int
+		expectedBodyLen int
+	}{
+		{"fn() {}",
+			0, 0},
+		{"fn() { 10; }",
+			0, 1},
+		{"fn(a) {}",
+			1, 0},
+		{"fn(a, b, c) { }",
+			3, 0},
+		{"fn(a, b, c) { 1; 2; 3}",
+			3, 3},
+	}
 
-	res := testParseProgram(input)
+	for idx, tt := range tests {
+		tr := tester.New(t, fmt.Sprintf("[%d]", idx))
 
-	tr.AssertNotNil(res)
-	tr.AssertEqual(len(res.Statements), 1)
+		res := testParseProgram(tt.input)
 
-	tr.SetName("is expression")
-	expr, ok := res.Statements[0].(*ast.ExpressionStmt)
-	tr.AssertEqual(ok, true)
-	tr.AssertNotNil(expr)
+		tr.AssertNotNil(res)
+		tr.AssertEqual(len(res.Statements), 1)
 
-	tr.SetName("is functionLiteral")
-	fun, ok := expr.Expression.(*ast.FunctionLiteralExpr)
-	tr.AssertTrue(ok)
+		tr.SetName(fmt.Sprintf("[%d]is expression", idx))
+		expr, ok := res.Statements[0].(*ast.ExpressionStmt)
+		tr.AssertEqual(ok, true)
+		tr.AssertNotNil(expr)
 
-	tr.SetName("test function args")
-	tr.AssertEqual(len(fun.Arguments), 0)
+		tr.SetName(fmt.Sprintf("[%d]is functionLiteral", idx))
+		fun, ok := expr.Expression.(*ast.FunctionLiteralExpr)
+		tr.AssertTrue(ok)
 
-	tr.SetName("test function body")
-	tr.AssertNotNil(fun.Body)
-	tr.AssertEqual(len(fun.Body.Statements), 1)
+		tr.SetName(fmt.Sprintf("[%d]test function args", idx))
+		tr.AssertEqual(len(fun.Arguments), tt.expectedArgLen)
 
-	expr, ok = fun.Body.Statements[0].(*ast.ExpressionStmt)
-	tr.AssertTrue(ok)
-	tr.AssertNotNil(expr)
-	num, ok := expr.Expression.(*ast.NumberLiteralExpr)
-	tr.AssertTrue(ok)
-	tr.AssertEqual(num.Value, float64(10))
+		tr.SetName(fmt.Sprintf("[%d]test function body", idx))
+		tr.AssertNotNil(fun.Body)
+		tr.AssertEqual(len(fun.Body.Statements), tt.expectedBodyLen)
+	}
 }
 
 func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, op token.TokenType, eRight any) bool {

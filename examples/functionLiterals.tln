@@ -1,5 +1,5 @@
 
-let a = fn() {
+let a = fn(a) {
 	print 10
 }
 

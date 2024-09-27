@@ -82,14 +82,10 @@ func (p *Parser) parseFunctionLiteral() ast.Expr {
 	if !p.expectPeek(token.LPAREN) {
 		return nil
 	}
+	// fn ( arg1, arg2 ) { ... }
+	//    ^
+	fun.Arguments = p.parseFunctionArgs()
 
-	args := []*ast.IdentifierExpr{}
-	fun.Arguments = args
-	// TODO: implement args
-
-	if !p.expectPeek(token.RPAREN) {
-		return nil
-	}
 	// fn ( arg1, arg2 ) { ... }
 	//                 ^
 
@@ -104,6 +100,47 @@ func (p *Parser) parseFunctionLiteral() ast.Expr {
 	//                         ^
 
 	return fun
+}
+
+func (p *Parser) parseFunctionArgs() []*ast.IdentifierExpr {
+	args := []*ast.IdentifierExpr{}
+
+	// fn ( arg1, arg2 ) { ... }
+	//    ^
+
+	// handle case with no args
+	if p.peekTokenIs(token.RPAREN) {
+		p.advance()
+		// fn ( arg1, arg2 ) { ... }
+		//                 ^
+		return args
+	}
+
+	p.advance()
+	// fn ( arg1, arg2 ) { ... }
+	//      ^
+	firstArg := &ast.IdentifierExpr{Token: p.curToken, Value: p.curToken.Lexeme}
+	args = append(args, firstArg)
+
+	for p.peekTokenIs(token.COMMA) {
+		// fn ( arg1, arg2 ) { ... }
+		//         ^
+		p.advance()
+		// fn ( arg1, arg2 ) { ... }
+		//          ^
+		p.advance()
+		// fn ( arg1, arg2 ) { ... }
+		//            ^
+		arg := &ast.IdentifierExpr{Token: p.curToken, Value: p.curToken.Lexeme}
+		args = append(args, arg)
+	}
+
+	p.advance()
+	// fn ( arg1, arg2 ) { ... }
+	//                 ^
+
+	return args
+
 }
 
 func (p *Parser) parseIdent() ast.Expr {

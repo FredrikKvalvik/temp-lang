@@ -118,6 +118,7 @@ func (p *Parser) parseBlockStatement() *ast.BlockStmt {
 
 	for !p.curTokenIs(token.RBRACE) && !p.atEnd() {
 		stmt := p.parseStatement()
+
 		block.Statements = append(block.Statements, stmt)
 
 		p.advance()
