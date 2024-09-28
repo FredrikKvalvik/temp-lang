@@ -142,10 +142,26 @@ func (p *FunctionLiteralExpr) String() string {
 			s.WriteString(", ")
 		}
 	}
-	s.WriteString(")")
+	s.WriteString(") { .. }")
 
 	return s.String()
 
+}
+
+func (n *CallExpr) String() string {
+	var s strings.Builder
+
+	s.WriteString(fmt.Sprintf("fn %s(", n.Callee.Lexeme()))
+	for i, arg := range n.Arguments {
+		s.WriteString(arg.String())
+
+		if i != len(n.Arguments)-1 {
+			s.WriteString(", ")
+		}
+	}
+	s.WriteString(")")
+
+	return s.String()
 }
 
 func (n *NumberLiteralExpr) String() string {

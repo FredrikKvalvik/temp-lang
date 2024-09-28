@@ -5,8 +5,8 @@ package ast
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type IdentifierExpr struct {
-	Value string
 	Token token.Token
+	Value string
 }
 
 func (n *IdentifierExpr) ExprNode()      {}
@@ -51,10 +51,10 @@ func (n *UnaryExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *UnaryExpr) Literal() any   { return n.Token.Literal }
 
 type BinaryExpr struct {
-	Token   token.Token
 	Operand token.TokenType
 	Left    Expr
 	Right   Expr
+	Token   token.Token
 }
 
 func (n *BinaryExpr) ExprNode()      {}
@@ -80,6 +80,16 @@ func (n *FunctionLiteralExpr) ExprNode()      {}
 func (n *FunctionLiteralExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *FunctionLiteralExpr) Literal() any   { return n.Token.Literal }
 
+type CallExpr struct {
+	Token     token.Token
+	Callee    Expr
+	Arguments []Expr
+}
+
+func (n *CallExpr) ExprNode()      {}
+func (n *CallExpr) Lexeme() string { return n.Token.Lexeme }
+func (n *CallExpr) Literal() any   { return n.Token.Literal }
+
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckExpr() {
 	_ = Expr(&IdentifierExpr{})
@@ -90,4 +100,5 @@ func typecheckExpr() {
 	_ = Expr(&BinaryExpr{})
 	_ = Expr(&ParenExpr{})
 	_ = Expr(&FunctionLiteralExpr{})
+	_ = Expr(&CallExpr{})
 }

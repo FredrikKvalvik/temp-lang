@@ -124,6 +124,14 @@ var exprs = []template{
 			"Body":      "*Block" + stmt,
 		},
 	},
+	{
+		name: "Call",
+		props: map[string]string{
+			"Token":     "token.Token",
+			"Callee":    expr,
+			"Arguments": "[]" + expr,
+		},
+	},
 }
 
 // This will generate a file for statements and expressions

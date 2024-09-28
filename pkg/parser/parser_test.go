@@ -232,6 +232,57 @@ func TestFunctionLiterals(t *testing.T) {
 		tr.AssertEqual(len(fun.Body.Statements), tt.expectedBodyLen)
 	}
 }
+func TestFunctionCalls(t *testing.T) {
+
+	tests := []struct {
+		input           string
+		expectedCallee  string
+		expectedArgsLen int
+	}{
+		// without args
+		{"function()",
+			"function", 0},
+		{"function(1)",
+			"function", 1},
+		// with args
+		{"function(a,b,c)",
+			"function", 3},
+		// anynomous function call without args
+		{"fn() {}()",
+			"fn() { .. }", 0},
+		// anynomous function call without args
+		{"fn(a) {}(1)",
+			"fn(a) { .. }", 1},
+		// anynomous function call with args
+		{"fn(a,b,c) {}(1,2,3)",
+			"fn(a, b, c) { .. }", 3},
+	}
+
+	for idx, tt := range tests {
+		tr := tester.New(t, fmt.Sprintf("[%d]", idx))
+
+		res := testParseProgram(tt.input)
+
+		tr.AssertNotNil(res)
+		tr.AssertEqual(len(res.Statements), 1)
+
+		tr.SetName(fmt.Sprintf("[%d]is expression", idx))
+		expr, ok := res.Statements[0].(*ast.ExpressionStmt)
+		tr.AssertEqual(ok, true)
+		tr.AssertNotNil(expr)
+
+		tr.SetName(fmt.Sprintf("[%d]is call", idx))
+		call, ok := expr.Expression.(*ast.CallExpr)
+		tr.AssertTrue(ok)
+
+		tr.SetName(fmt.Sprintf("[%d]test callee name", idx))
+		tr.AssertEqual(call.Callee.String(), tt.expectedCallee)
+
+		tr.SetName(fmt.Sprintf("[%d]test call args", idx))
+		tr.AssertEqual(len(call.Arguments), tt.expectedArgsLen)
+
+	}
+}
 
 func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, op token.TokenType, eRight any) bool {
 	t.Helper()

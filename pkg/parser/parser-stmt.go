@@ -62,16 +62,14 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 
 // FIX: does not parse the last element in the list
 func (p *Parser) parsePrintStatement() *ast.PrintStmt {
+	// print expr1, expr2 ;
+	// ^
 	print := &ast.PrintStmt{
 		Token: p.curToken,
 	}
 
 	// print expr1, expr2 ;
-	// ^
-	p.advance()
-
-	// print expr1, expr2 ;
-	//       ^
+	//     ^
 	list := p.parseExpressionList(token.SEMICOLON)
 
 	// print expr1, expr2 ;

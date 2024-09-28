@@ -91,7 +91,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.EQ, p.parseBinary)
 	p.registerInfix(token.NOT_EQ, p.parseBinary)
 
-	// p.registerInfix(token.LPAREN)
+	p.registerInfix(token.LPAREN, p.parseCall)
 
 	return p
 }
@@ -170,13 +170,18 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 	list := []ast.Expr{}
 
 	// [ expr1, expr2 ]
-	//   ^
+	// ^
 	if p.peekTokenIs(end) {
 		p.advance()
 		// [ expr1, expr2 ]
 		//                ^
 		return list
 	}
+
+	p.advance()
+	// [ expr1, expr2 ]
+	//   ^
+
 	list = append(list, p.parseExpression(LOWEST))
 	// [ expr1, expr2 ]
 	//       ^
