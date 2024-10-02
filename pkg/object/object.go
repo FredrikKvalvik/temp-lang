@@ -3,7 +3,10 @@
 
 package object
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // object represents runtime values.
 // Object can be any value thats valid in the program
@@ -20,12 +23,30 @@ const (
 	NUMBER_OBJ
 	STRING_OBJ
 	FUNCTION_LITERAL_OBJ
+	RETURN_OBJ
 	ERROR_OBJ
 )
 
-func (n *Nil) Inspect() string       { return "nil" }
-func (b *Boolean) Inspect() string   { return fmt.Sprintf("%v", b.Value) }
-func (b *String) Inspect() string    { return fmt.Sprintf(`"%s"`, b.Value) }
-func (b *Number) Inspect() string    { return fmt.Sprintf("%v", b.Value) }
-func (b *FnLiteral) Inspect() string { return fmt.Sprint("FnLiteral inspect not implemented") }
-func (b *Error) Inspect() string     { return b.Message }
+func (n *Nil) Inspect() string     { return "nil" }
+func (b *Boolean) Inspect() string { return fmt.Sprintf("%v", b.Value) }
+func (b *String) Inspect() string  { return fmt.Sprintf(`"%s"`, b.Value) }
+func (b *Number) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
+func (b *FnLiteral) Inspect() string {
+	var str strings.Builder
+
+	str.WriteString("fn(")
+	for idx, param := range b.Parameters {
+		if idx != 0 {
+			str.WriteString(", ")
+		}
+
+		str.WriteString(param.String())
+	}
+
+	str.WriteString(") ")
+	str.WriteString(b.Body.String())
+
+	return str.String()
+}
+func (b *Return) Inspect() string { return fmt.Sprintf("return[%s]", b.Value.Inspect()) }
+func (b *Error) Inspect() string  { return b.Message }

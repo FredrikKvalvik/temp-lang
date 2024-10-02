@@ -63,6 +63,35 @@ func testLetStatement(t *testing.T, i int, stmt ast.Stmt, expectedName string) b
 	return true
 }
 
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input         string
+		expectedValue any
+	}{
+		{`return "hello"`, "hello"},
+		{`return 100`, float64(100)},
+		{`return`, nil},
+	}
+
+	for i, tt := range tests {
+		tr := tester.New(t, fmt.Sprintf("%d", i))
+		p := testParseProgram(tt.input)
+
+		tr.AssertEqual(len(p.Statements), 1)
+		retStmt, ok := p.Statements[0].(*ast.ReturnStmt)
+
+		tr.AssertEqual(ok, true)
+
+		switch ev := tt.expectedValue.(type) {
+		case string:
+		case float64:
+			tr.AssertEqual(testLiteralExpression(t, i, retStmt.Value, ev), true)
+		default:
+			tr.AssertNil(ev)
+		}
+	}
+}
+
 // TODO: finish implementing test
 func TestIfStatement(t *testing.T) {
 	input := `if x { y; }`

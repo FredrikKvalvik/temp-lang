@@ -30,12 +30,18 @@ type String struct {
 func (n *String) Type() ObjectType { return STRING_OBJ }
 
 type FnLiteral struct {
-	Env        *Environment
 	Parameters []*ast.IdentifierExpr
 	Body       *ast.BlockStmt
+	Env        *Environment
 }
 
 func (n *FnLiteral) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
+
+type Return struct {
+	Value Object
+}
+
+func (n *Return) Type() ObjectType { return RETURN_OBJ }
 
 type Error struct {
 	Message string
@@ -51,5 +57,6 @@ func typecheck() {
 	_ = Object(&Number{})
 	_ = Object(&String{})
 	_ = Object(&FnLiteral{})
+	_ = Object(&Return{})
 	_ = Object(&Error{})
 }

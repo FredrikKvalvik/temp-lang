@@ -147,6 +147,13 @@ func (p *Parser) advance() {
 	p.peekToken = p.l.NextToken()
 }
 
+// will consume the current token if peekToken == acceptedToken
+func (p *Parser) consume(acceptedToken token.TokenType) {
+	if p.peekTokenIs(acceptedToken) {
+		p.advance()
+	}
+}
+
 func (p *Parser) atEnd() bool {
 	return p.curToken.Type == token.EOF
 }

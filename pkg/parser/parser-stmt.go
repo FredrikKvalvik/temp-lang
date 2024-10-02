@@ -14,6 +14,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseIfStatement()
 	case token.LBRACE:
 		return p.parseBlockStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	case token.PRINT:
 		return p.parsePrintStatement()
 
@@ -53,9 +55,7 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	letStmt.Value = p.parseExpression(LOWEST)
 
 	// consume ';' if present. Some expressions dont naturally end with ';'
-	if p.peekTokenIs(token.SEMICOLON) {
-		p.advance()
-	}
+	p.consume(token.SEMICOLON)
 
 	return letStmt
 }
@@ -156,6 +156,31 @@ func (p *Parser) parseIfStatement() *ast.IfStmt {
 	return ifstmt
 }
 
+func (p *Parser) parseReturnStatement() *ast.ReturnStmt {
+	// return ... ;
+	// ^
+	ret := &ast.ReturnStmt{Token: p.curToken}
+
+	p.advance()
+	// return ... ;
+	//        ^
+
+	if p.curTokenIs(token.SEMICOLON) {
+		// return early with Value as nil
+		// return ;
+		//        ^
+		return ret
+	}
+
+	ret.Value = p.parseExpression(LOWEST)
+
+	p.consume(token.SEMICOLON)
+	// return ... ;
+	//            ^
+
+	return ret
+}
+
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
 	exprStmt := &ast.ExpressionStmt{
 		Token:      p.curToken,
@@ -163,9 +188,7 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
 	}
 
 	// consume ';' if present. Some expressions dont naturally end with ';'
-	if p.peekTokenIs(token.SEMICOLON) {
-		p.advance()
-	}
+	p.consume(token.SEMICOLON)
 
 	return exprStmt
 }
@@ -184,7 +207,7 @@ func (p *Parser) parseExpression(stickiness int) ast.Expr {
 
 	left := prefix()
 
-	for stickiness < p.peekStickiness() {
+	for !p.peekTokenIs(token.SEMICOLON) && stickiness < p.peekStickiness() {
 		//   2      +     2
 		//   left   op    right
 		//   ^      ^peeking op

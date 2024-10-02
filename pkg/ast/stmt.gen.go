@@ -43,6 +43,15 @@ func (n *BlockStmt) StmtNode()      {}
 func (n *BlockStmt) Lexeme() string { return n.Token.Lexeme }
 func (n *BlockStmt) Literal() any   { return n.Token.Literal }
 
+type ReturnStmt struct {
+	Token token.Token
+	Value Expr
+}
+
+func (n *ReturnStmt) StmtNode()      {}
+func (n *ReturnStmt) Lexeme() string { return n.Token.Lexeme }
+func (n *ReturnStmt) Literal() any   { return n.Token.Literal }
+
 type PrintStmt struct {
 	Token       token.Token
 	Expressions []Expr
@@ -58,5 +67,6 @@ func typecheckStmt() {
 	_ = Stmt(&ExpressionStmt{})
 	_ = Stmt(&IfStmt{})
 	_ = Stmt(&BlockStmt{})
+	_ = Stmt(&ReturnStmt{})
 	_ = Stmt(&PrintStmt{})
 }

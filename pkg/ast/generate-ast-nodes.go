@@ -55,6 +55,13 @@ var stmts = []template{
 		},
 	},
 	{
+		name: "Return",
+		props: map[string]string{
+			"Token": "token.Token",
+			"Value": expr,
+		},
+	},
+	{
 		name: "Print",
 		props: map[string]string{
 			"Token":       "token.Token",

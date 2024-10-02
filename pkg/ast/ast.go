@@ -97,6 +97,16 @@ func (b *BlockStmt) String() string {
 	return s.String()
 }
 
+func (r *ReturnStmt) String() string {
+	str := "return"
+
+	if r.Value != nil {
+		str += " " + r.Token.String()
+	}
+
+	return str
+}
+
 func (i *IdentifierExpr) String() string {
 	var str strings.Builder
 

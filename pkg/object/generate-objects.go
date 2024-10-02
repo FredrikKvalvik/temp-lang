@@ -57,6 +57,13 @@ var objects = []template{
 		},
 	},
 	{
+		name: "Return",
+		typ:  object.RETURN_OBJ,
+		props: map[string]string{
+			"Value": "Object",
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: map[string]string{

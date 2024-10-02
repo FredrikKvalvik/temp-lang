@@ -1,5 +1,7 @@
 let callMe = fn(fun) {
+
 	fun("hello world")
+	return
 }
 
 callMe(fn(text) { 
