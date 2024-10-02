@@ -165,7 +165,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStmt {
 	// return ... ;
 	//        ^
 
-	if p.curTokenIs(token.SEMICOLON) {
+	if p.curTokenIs(token.SEMICOLON) || p.curTokenIs(token.RBRACE) {
 		// return early with Value as nil
 		// return ;
 		//        ^
