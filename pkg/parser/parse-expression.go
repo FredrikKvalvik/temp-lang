@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -146,14 +144,11 @@ func (p *Parser) parseFunctionArgs() []*ast.IdentifierExpr {
 }
 
 func (p *Parser) parseCall(left ast.Expr) ast.Expr {
-	// callee(arg1, arg2)
-	//       ^
 	fun := &ast.CallExpr{Token: p.curToken}
 	fun.Callee = left
 
 	fun.Arguments = p.parseExpressionList(token.RPAREN)
 
-	fmt.Print(fun.String())
 	return fun
 }
 

@@ -51,10 +51,10 @@ func (n *UnaryExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *UnaryExpr) Literal() any   { return n.Token.Literal }
 
 type BinaryExpr struct {
+	Token   token.Token
 	Operand token.TokenType
 	Left    Expr
 	Right   Expr
-	Token   token.Token
 }
 
 func (n *BinaryExpr) ExprNode()      {}
@@ -62,8 +62,8 @@ func (n *BinaryExpr) Lexeme() string { return n.Token.Lexeme }
 func (n *BinaryExpr) Literal() any   { return n.Token.Literal }
 
 type ParenExpr struct {
-	Token      token.Token
 	Expression Expr
+	Token      token.Token
 }
 
 func (n *ParenExpr) ExprNode()      {}

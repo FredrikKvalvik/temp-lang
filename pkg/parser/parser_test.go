@@ -234,6 +234,8 @@ func TestFunctionLiterals(t *testing.T) {
 }
 func TestFunctionCalls(t *testing.T) {
 
+	// TODO: can probalby improve test by testing the arguments of
+	// the function calls, instead of just the number of args
 	tests := []struct {
 		input           string
 		expectedCallee  string

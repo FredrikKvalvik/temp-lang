@@ -16,13 +16,14 @@ about how programming languages are made.
 - [x] prefix expression
 - [x] lexical scoping
 - [x] if/else control flow
+- [x] functions
+- [x] first class function
+- [x] higher order function
+- [x] closures
 
 ### upcomming freatures / TODOs
 
-- [ ] functions
-- [ ] first class function
-- [ ] higher order function
-- [ ] closures
+- [ ] return statements
 - [ ] iteration (for loops or some form of iterator implementation)
 - [ ] complex data structures (array and map)
 - [ ] _
@@ -30,7 +31,7 @@ about how programming languages are made.
 ## about
 
 everything is written by hand, without the use of any other library than the go std lib.
-This is mosty based on the books written by Robert Nystrom and Thorsten Ball (links at the bottom).
+This is mosty based on [Crafting interpreters] by Robert Nystrom, [Writing An Interpreter In Go] and [Writing A Compiler In Go] Thorsten Ball.
 
 ### Lexer
 
@@ -43,18 +44,19 @@ tokens while parsing and line/col data to make better errors.
 ### Parser
 
 The parser takes list of tokens and creates an
-[abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST)
+[abstract syntax tree] (AST)
 based on the type/value of tokens. For most of this paring, we use a
-[Pratt parsing](https://en.wikipedia.org/wiki/Operator-precedence_parser#Pratt_parsing)
-algorith.
+[Pratt parsing] algorith.
 
 ### Evaluator/interpreter
 
 At last, we evaluate the AST based on the semantics defined on the interpreter.
 
-## sources
+<!-- ## sources -->
 
-- [Crafting interpreters by Robert Nystrom](https://craftinginterpreters.com)
-- [Pratt parsers: expression parsing made easy](https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/)
-- [Writing An Interpreter In Go by Thorsten Ball](https://interpreterbook.com)
-- [Writing A Compiler In Go by Thorsten Ball](https://compilerbook.com)
+[Pratt parsing]: https://en.wikipedia.org/wiki/Operator-precedence_parser#Pratt_parsing
+[abstract syntax tree]: https://en.wikipedia.org/wiki/Abstract_syntax_tree
+[Crafting interpreters]: https://craftinginterpreters.com
+[Pratt parsers: expression parsing made easy]: https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/
+[Writing An Interpreter In Go]: https://interpreterbook.com
+[Writing A Compiler In Go]: https://compilerbook.com

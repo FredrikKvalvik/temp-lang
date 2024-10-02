@@ -1,0 +1,18 @@
+
+
+
+// let printme = fn(msg1, msg2, msg3) {
+// 	print msg1, msg2, msg3
+// }
+
+// printme(100, "hello world", false)
+
+let callMe = fn(fun) {
+	fun()
+}
+
+let hello = fn() {
+	print "hello"
+}
+
+callMe(hello)

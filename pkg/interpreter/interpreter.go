@@ -81,6 +81,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return fn
 
+	case *ast.CallExpr:
+		callee := Eval(n.Callee, env)
+
+		args := evalExpressions(n.Arguments, env)
+		if len(args) > 0 && isError(args[0]) {
+			return args[0]
+		}
+
+		return applyFunction(callee, args)
+
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
 
@@ -104,6 +114,7 @@ func evalPrintStatment(n *ast.PrintStmt, env *object.Environment) object.Object 
 		if isError(val) {
 			return val
 		}
+
 		str.WriteString(val.Inspect())
 		if len(n.Expressions) != idx+1 {
 			str.WriteString(", ")
@@ -233,4 +244,39 @@ func boolObject(b bool) *object.Boolean {
 	} else {
 		return FALSE
 	}
+}
+
+// On error, will return an error as first, and only item in slice
+func evalExpressions(exprs []ast.Expr, env *object.Environment) []object.Object {
+	list := make([]object.Object, 0)
+	for _, expr := range exprs {
+		obj := Eval(expr, env)
+		if isError(obj) {
+			return []object.Object{obj}
+		}
+		list = append(list, obj)
+	}
+
+	return list
+}
+
+func applyFunction(callee object.Object, args []object.Object) object.Object {
+	if callee.Type() != object.FUNCTION_LITERAL_OBJ {
+		return &object.Error{
+			Message: fmt.Sprintf("expected function, got=%s\n", callee.Type()),
+		}
+	}
+	fn := callee.(*object.FnLiteral)
+	if len(fn.Parameters) != len(args) {
+		return &object.Error{
+			Message: fmt.Sprintf("expected number of args=%d, got=%d\n",
+				len(fn.Parameters), len(args)),
+		}
+	}
+	scope := object.NewEnv(fn.Env)
+	for idx, arg := range fn.Parameters {
+		scope.DeclareVar(arg.Value, args[idx])
+	}
+
+	return Eval(fn.Body, scope)
 }

@@ -20,7 +20,10 @@ func main() {
 	} else if len(args) == 1 {
 		path := args[0]
 		file := readFile(path)
-		_ = runProgram(file)
+		res := runProgram(file)
+		if res.Type() == object.ERROR_OBJ {
+			fmt.Println(res.Inspect())
+		}
 
 	} else {
 		env := object.NewEnv(nil)
