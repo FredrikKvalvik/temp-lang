@@ -18,7 +18,9 @@ func isError(obj object.Object) bool {
 }
 
 func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.Error {
-	return &object.Error{Message: fmt.Sprintf("Illegal operation: %s %s %s", left, op, right)}
+	return &object.Error{
+		Message: fmt.Sprintf("Illegal operation: %s %s %s", left, op, right),
+	}
 }
 func typeMismatchBinaryError(left object.Object, op token.TokenType, right object.Object) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("Missmatching type: %s %s %s", left, op, right)}

@@ -104,6 +104,12 @@ func (p *Parser) Errors() []error {
 	return p.errors
 }
 
+func (p *Parser) GetErrorPosition(tok token.Token) (int, int) {
+	col := p.l.GetTokenColumn(&tok)
+
+	return tok.Line, col
+}
+
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = make([]ast.Stmt, 0)

@@ -4,6 +4,8 @@ package object
 
 import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
 
+import "github.com/fredrikkvalvik/temp-lang/pkg/token"
+
 type Boolean struct {
 	Value bool
 }
@@ -28,15 +30,16 @@ type String struct {
 func (n *String) Type() ObjectType { return STRING_OBJ }
 
 type FnLiteral struct {
+	Env        *Environment
 	Parameters []*ast.IdentifierExpr
 	Body       *ast.BlockStmt
-	Env        *Environment
 }
 
 func (n *FnLiteral) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
 
 type Error struct {
 	Message string
+	Token   token.Token
 }
 
 func (n *Error) Type() ObjectType { return ERROR_OBJ }

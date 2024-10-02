@@ -12,6 +12,7 @@ import (
 
 const packageName = "object"
 const astPkg = "github.com/fredrikkvalvik/temp-lang/pkg/ast"
+const tokenPkg = "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type template struct {
 	name  string
@@ -60,6 +61,7 @@ var objects = []template{
 		typ:  object.ERROR_OBJ,
 		props: map[string]string{
 			"Message": "string",
+			"Token":   "token.Token",
 		},
 	},
 }
@@ -78,6 +80,7 @@ func generateObjects(tmpl []template) string {
 	f.WriteString("// THIS FILE IS GENERATED. DO NOT EDIT\n\n")
 	f.WriteString(fmt.Sprintf("package %s\n\n", packageName))
 	f.WriteString(fmt.Sprintf(`import "%s"`+"\n\n", astPkg))
+	f.WriteString(fmt.Sprintf(`import "%s"`+"\n\n", tokenPkg))
 
 	for _, s := range tmpl {
 		name := s.name

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -20,9 +21,16 @@ func main() {
 	} else if len(args) == 1 {
 		path := args[0]
 		file := readFile(path)
-		res := runProgram(file)
-		if res != nil && res.Type() == object.ERROR_OBJ {
+		res, err := runProgram(file)
+
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		if res.Type() == object.ERROR_OBJ {
 			fmt.Println(res.Inspect())
+			return
 		}
 
 	} else {
@@ -32,29 +40,31 @@ func main() {
 	}
 }
 
-func runProgram(in string) object.Object {
+func runProgram(in string) (object.Object, error) {
 
 	l := lexer.New(in)
 	if l.DidError() {
+		errs := ""
 		for _, err := range l.Errors() {
-			fmt.Printf("%s\n", err)
+			errs += fmt.Sprintf("%s\n", err)
 		}
-		return nil
+		return nil, errors.New(errs)
 	}
 
 	p := parser.New(l)
 	program := p.ParseProgram()
 
 	if p.DidError() {
+		errs := ""
 		for _, err := range p.Errors() {
-			fmt.Println(err.Error())
+			errs += fmt.Sprintf("%s\n", err)
 		}
-		return nil
+		return nil, errors.New(errs)
 	}
 
 	env := object.NewEnv(nil)
 	result := interpreter.Eval(program, env)
-	return result
+	return result, nil
 }
 
 func readFile(path string) string {
