@@ -26,7 +26,8 @@ about how programming languages are made.
 - [ ] return statements
 - [ ] iteration (for loops or some form of iterator implementation)
 - [ ] complex data structures (array and map)
-- [ ] _
+- [ ] error messages on runtime errors
+- [ ] some form of std lib implemented with the language
 
 ## about
 

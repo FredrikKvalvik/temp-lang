@@ -21,7 +21,7 @@ func main() {
 		path := args[0]
 		file := readFile(path)
 		res := runProgram(file)
-		if res.Type() == object.ERROR_OBJ {
+		if res != nil && res.Type() == object.ERROR_OBJ {
 			fmt.Println(res.Inspect())
 		}
 
