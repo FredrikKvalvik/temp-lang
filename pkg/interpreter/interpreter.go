@@ -79,7 +79,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		// exit early when returning without an expression
 		if n.Value == nil {
-			return &object.Return{}
+			return &object.Return{Value: NIL}
 		}
 
 		value := Eval(n.Value, env)
@@ -267,11 +267,7 @@ func boolObject(b bool) *object.Boolean {
 
 func unwrapReturn(obj object.Object) object.Object {
 	if ret, ok := obj.(*object.Return); ok {
-		if ret.Value == nil {
-			return NIL
-		} else {
-			return ret.Value
-		}
+		return ret.Value
 	}
 	return obj
 }
