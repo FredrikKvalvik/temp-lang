@@ -200,12 +200,12 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 	//       ^
 
 	for p.peekTokenIs(token.COMMA) {
+		p.advance()
 		// [ expr1, expr2 ]
 		//        ^
 		p.advance()
 		// [ expr1, expr2 ]
 		//          ^
-		p.advance()
 		list = append(list, p.parseExpression(LOWEST))
 	}
 
