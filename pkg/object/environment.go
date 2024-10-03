@@ -45,7 +45,7 @@ func (e *Environment) hasVar(key string) bool {
 }
 
 // might be useful?
-func (e *Environment) isGlobalEnv() bool {
+func (e *Environment) IsGlobalEnv() bool {
 	return e.parent == nil
 }
 

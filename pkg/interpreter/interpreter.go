@@ -73,6 +73,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return value
 
+	case *ast.ReturnStmt:
+		if env.IsGlobalEnv() {
+			return &object.Error{Message: "Illegal return in global scope"}
+		}
+		// exit early when returning without an expression
+		if n.Value == nil {
+			return &object.Return{}
+		}
+
+		value := Eval(n.Value, env)
+		if isError(value) {
+			return value
+		}
+		return &object.Return{Value: value}
+
 	case *ast.FunctionLiteralExpr:
 		fn := &object.FnLiteral{
 			Parameters: n.Arguments,
@@ -129,8 +144,12 @@ func evalProgram(stmts []ast.Stmt, env *object.Environment) object.Object {
 	for _, stmt := range stmts {
 		result = Eval(stmt, env)
 
-		if isError(result) {
-			return result
+		switch rt := result.(type) {
+		case *object.Error:
+			return rt
+
+		case *object.Return:
+			return rt.Value
 		}
 	}
 
@@ -144,7 +163,7 @@ func evalBlockStatment(b *ast.BlockStmt, env *object.Environment) object.Object 
 
 	for _, stmt := range b.Statements {
 		res = Eval(stmt, scope)
-		if isError(res) {
+		if isError(res) || res.Type() == object.RETURN_OBJ {
 			return res
 		}
 	}
@@ -246,6 +265,17 @@ func boolObject(b bool) *object.Boolean {
 	}
 }
 
+func unwrapReturn(obj object.Object) object.Object {
+	if ret, ok := obj.(*object.Return); ok {
+		if ret.Value == nil {
+			return NIL
+		} else {
+			return ret.Value
+		}
+	}
+	return obj
+}
+
 // On error, will return an error as first, and only item in slice
 func evalExpressions(exprs []ast.Expr, env *object.Environment) []object.Object {
 	list := make([]object.Object, 0)
@@ -278,5 +308,6 @@ func applyFunction(callee object.Object, args []object.Object) object.Object {
 		scope.DeclareVar(arg.Value, args[idx])
 	}
 
-	return Eval(fn.Body, scope)
+	evaluated := Eval(fn.Body, scope)
+	return unwrapReturn(evaluated)
 }
