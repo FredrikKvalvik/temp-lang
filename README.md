@@ -20,13 +20,13 @@ about how programming languages are made.
 - [x] first class function
 - [x] higher order function
 - [x] closures
+- [x] return statements
 
 ### upcomming freatures / TODOs
 
-- [ ] return statements
 - [ ] iteration (for loops or some form of iterator implementation)
 - [ ] complex data structures (array and map)
-- [ ] error messages on runtime errors
+- [ ] error messages on runtime errors that help you identify your error
 - [ ] some form of std lib implemented with the language
 
 ## about
