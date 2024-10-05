@@ -191,3 +191,45 @@ func (p *Parser) parseBooleanLiteral() ast.Expr {
 
 	return booleanLiteral
 }
+
+func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
+	list := []ast.Expr{}
+
+	// [ expr1, expr2 ]
+	// ^
+	if p.peekTokenIs(end) {
+		p.advance()
+		// [ expr1, expr2 ]
+		//                ^
+		return list
+	}
+
+	p.advance()
+	// [ expr1, expr2 ]
+	//   ^
+
+	list = append(list, p.parseExpression(LOWEST))
+	// [ expr1, expr2 ]
+	//       ^
+
+	for p.peekTokenIs(token.COMMA) {
+		p.advance()
+		// [ expr1, expr2 ]
+		//        ^
+		p.advance()
+		// [ expr1, expr2 ]
+		//          ^
+		list = append(list, p.parseExpression(LOWEST))
+	}
+
+	// [ expr1, expr2 ]
+	//              ^
+	// error if end of list without seeing `end` token
+	if !p.expectPeek(end) {
+		return nil
+	}
+	// [ expr1, expr2 ]
+	//                ^
+
+	return list
+}
