@@ -14,61 +14,65 @@ const packageName = "object"
 const astPkg = "github.com/fredrikkvalvik/temp-lang/pkg/ast"
 const tokenPkg = "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
+type keyVal struct {
+	key   string
+	value string
+}
 type template struct {
 	name  string
 	typ   object.ObjectType
-	props map[string]string
+	props []keyVal
 }
 
 var objects = []template{
 	{
 		name: "Boolean",
 		typ:  object.BOOL_OBJ,
-		props: map[string]string{
-			"Value": "bool",
+		props: []keyVal{
+			{"Value", "bool"},
 		},
 	},
 	{
 		name:  "Nil",
+		props: []keyVal{},
 		typ:   object.NIL_OBJ,
-		props: map[string]string{},
 	},
 	{
 		name: "Number",
 		typ:  object.NUMBER_OBJ,
-		props: map[string]string{
-			"Value": "float64",
+		props: []keyVal{
+			{"Value", "float64"},
 		},
 	},
 	{
 		name: "String",
 		typ:  object.STRING_OBJ,
-		props: map[string]string{
-			"Value": "string",
+		props: []keyVal{
+			{"Value", "string"},
 		},
 	},
 	{
 		name: "FnLiteral",
 		typ:  object.FUNCTION_LITERAL_OBJ,
-		props: map[string]string{
-			"Parameters": "[]*ast.IdentifierExpr",
-			"Body":       "*ast.BlockStmt",
-			"Env":        "*Environment",
+		props: []keyVal{
+			{"Parameters", "[]*ast.IdentifierExpr"},
+			{"Body", "*ast.BlockStmt"},
+			{"Env", "*Environment"},
 		},
 	},
 	{
 		name: "Return",
 		typ:  object.RETURN_OBJ,
-		props: map[string]string{
-			"Value": "Object",
+		props: []keyVal{
+			{"Value", "Object"},
 		},
 	},
 	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
-		props: map[string]string{
-			"Message": "string",
-			"Token":   "token.Token",
+		props: []keyVal{
+			{"Message", "string"},
+			{"Token", "token.Token"},
 		},
 	},
 }
@@ -95,8 +99,8 @@ func generateObjects(tmpl []template) string {
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
 		// f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
-		for key, value := range s.props {
-			f.WriteString(fmt.Sprintf("\t%s %s\n", key, value))
+		for _, kv := range s.props {
+			f.WriteString(fmt.Sprintf("\t%s %s\n", kv.key, kv.value))
 		}
 
 		f.WriteString("}\n")

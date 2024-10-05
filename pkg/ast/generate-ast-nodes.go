@@ -17,55 +17,59 @@ const exprMethod = "func (%s *%s) ExprNode() {}"
 const packageName = "ast"
 const tokenPkg = "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
+type keyVal struct {
+	key   string
+	value string
+}
 type template struct {
 	name  string
-	props map[string]string
+	props []keyVal
 }
 
 var stmts = []template{
 	{
 		name: "Let",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Name":  "*Identifier" + expr,
-			"Value": expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Name", "*Identifier" + expr},
+			{"Value", expr},
 		},
 	},
 	{
 		name: "Expression",
-		props: map[string]string{
-			"Token":      "token.Token",
-			"Expression": expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Expression", expr},
 		},
 	},
 	{
 		name: "If",
-		props: map[string]string{
-			"Token":     "token.Token",
-			"Condition": expr,
-			"Then":      "*Block" + stmt,
-			"Else":      stmt,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Condition", expr},
+			{"Then", "*Block" + stmt},
+			{"Else", stmt},
 		},
 	},
 	{
 		name: "Block",
-		props: map[string]string{
-			"Token":      "token.Token",
-			"Statements": "[]" + stmt,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Statements", "[]" + stmt},
 		},
 	},
 	{
 		name: "Return",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Value": expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Value", expr},
 		},
 	},
 	{
 		name: "Print",
-		props: map[string]string{
-			"Token":       "token.Token",
-			"Expressions": "[]" + expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Expressions", "[]" + expr},
 		},
 	},
 }
@@ -73,70 +77,70 @@ var stmts = []template{
 var exprs = []template{
 	{
 		name: "Identifier",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Value": "string",
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Value", "string"},
 		},
 	},
 	{
 		name: "NumberLiteral",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Value": "float64",
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Value", "float64"},
 		},
 	},
 	{
 		name: "StringLiteral",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Value": "string",
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Value", "string"},
 		},
 	},
 	{
 		name: "BooleanLiteral",
-		props: map[string]string{
-			"Token": "token.Token",
-			"Value": "bool",
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Value", "bool"},
 		},
 	},
 	{
 		name: "Unary",
-		props: map[string]string{
-			"Token":   "token.Token",
-			"Operand": "token.TokenType",
-			"Right":   expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Operand", "token.TokenType"},
+			{"Right", expr},
 		},
 	},
 	{
 		name: "Binary",
-		props: map[string]string{
-			"Token":   "token.Token",
-			"Operand": "token.TokenType",
-			"Left":    expr,
-			"Right":   expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Operand", "token.TokenType"},
+			{"Left", expr},
+			{"Right", expr},
 		},
 	},
 	{
 		name: "Paren",
-		props: map[string]string{
-			"Token":      "token.Token",
-			"Expression": expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Expression", expr},
 		},
 	},
 	{
 		name: "FunctionLiteral",
-		props: map[string]string{
-			"Token":     "token.Token",
-			"Arguments": "[]*Identifier" + expr,
-			"Body":      "*Block" + stmt,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Arguments", "[]*Identifier" + expr},
+			{"Body", "*Block" + stmt},
 		},
 	},
 	{
 		name: "Call",
-		props: map[string]string{
-			"Token":     "token.Token",
-			"Callee":    expr,
-			"Arguments": "[]" + expr,
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Callee", expr},
+			{"Arguments", "[]" + expr},
 		},
 	},
 }
@@ -164,8 +168,8 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
 		// f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
-		for key, value := range s.props {
-			f.WriteString(fmt.Sprintf("\t%s %s\n", key, value))
+		for _, kv := range s.props {
+			f.WriteString(fmt.Sprintf("\t%s %s\n", kv.key, kv.value))
 		}
 
 		f.WriteString("}\n")
