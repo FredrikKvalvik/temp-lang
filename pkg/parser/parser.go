@@ -106,9 +106,9 @@ func (p *Parser) Errors() []error {
 }
 
 func (p *Parser) GetErrorPosition(tok token.Token) (int, int) {
-	col := p.l.GetTokenColumn(&tok)
+	line, col := p.l.GetTokenPosition(&tok)
 
-	return tok.Line, col
+	return line, col
 }
 
 func (p *Parser) ParseProgram() *ast.Program {

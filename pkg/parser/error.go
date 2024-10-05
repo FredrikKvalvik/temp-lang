@@ -38,8 +38,7 @@ func lineColString(l *lexer.Lexer, tok *token.Token) string {
 }
 
 func getLineCol(l *lexer.Lexer, tok *token.Token) (int, int) {
-	line := tok.Line
-	col := l.GetTokenColumn(tok)
+	line, col := l.GetTokenPosition(tok)
 
 	return line, col
 }

@@ -47,14 +47,16 @@ func (l *Lexer) DidError() bool {
 }
 
 // used for error messages
-func (l *Lexer) GetTokenColumn(tok *token.Token) int {
+func (l *Lexer) GetTokenPosition(tok *token.Token) (int, int) {
 	offset := tok.Offset
 
-	return l.getColFromOffset(offset)
+	line, col := l.getTokenPostionFromOffset(offset)
+	return line, col
 }
 
-func (l *Lexer) getColFromOffset(offset int) int {
+func (l *Lexer) getTokenPostionFromOffset(offset int) (int, int) {
 	col := 1
+	line := 1
 
 	position := 0
 	// increment col for each loop.
@@ -62,14 +64,16 @@ func (l *Lexer) getColFromOffset(offset int) int {
 	// return col at end
 	for position < offset {
 		if l.source[position] == '\n' {
+			line += 1
 			col = 1
 		} else {
 			col += 1
 		}
+
 		position += 1
 	}
 
-	return col
+	return line, col
 }
 
 // pull tokens when needed
@@ -195,7 +199,6 @@ func (l *Lexer) getToken(t token.TokenType, lexeme string, literal any) token.To
 		Type:    t,
 		Lexeme:  lexeme,
 		Literal: literal,
-		Line:    l.line,
 		Offset:  l.position,
 	}
 
@@ -286,9 +289,11 @@ func (l *Lexer) readNumber() (string, float64, error) {
 
 		// if the next char is not a number, then the token is invalid
 		if !isDigit(l.peek()) {
+			line, col := l.getTokenPostionFromOffset(l.readPosition - 1)
+
 			err := fmt.Errorf("[%d:%d]: expected digit, got=%s\n",
-				l.line,
-				l.getColFromOffset(l.readPosition-1),
+				line,
+				col,
 				string(l.peek()))
 			return "", 0, err
 

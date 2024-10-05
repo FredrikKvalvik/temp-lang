@@ -9,7 +9,7 @@ import (
 
 func TestTokenPrint(t *testing.T) {
 	tokens := []token.Token{
-		token.NewToken(token.LET, "let", nil, 0, 0),
+		token.NewToken(token.LET, "let", nil, 0),
 	}
 
 	for _, tok := range tokens {
