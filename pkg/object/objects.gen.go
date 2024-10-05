@@ -30,9 +30,9 @@ type String struct {
 func (n *String) Type() ObjectType { return STRING_OBJ }
 
 type FnLiteral struct {
-	Parameters []*ast.IdentifierExpr
 	Body       *ast.BlockStmt
 	Env        *Environment
+	Parameters []*ast.IdentifierExpr
 }
 
 func (n *FnLiteral) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
