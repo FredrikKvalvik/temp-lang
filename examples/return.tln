@@ -14,8 +14,9 @@ let b = fn(num) {
 print b(b(b(b(100))))
 
 let c = fn() {
-	print "returning nothing"
-	return
+	print "no return"
+
+	100
 }
 
 print c()

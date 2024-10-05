@@ -28,6 +28,7 @@ about how programming languages are made.
 - [ ] complex data structures (array and map)
 - [ ] error messages on runtime errors that help you identify your error
 - [ ] some form of std lib implemented with the language
+- [ ] formatted strings with print statment
 
 ## about
 
@@ -52,6 +53,10 @@ based on the type/value of tokens. For most of this paring, we use a
 ### Evaluator/interpreter
 
 At last, we evaluate the AST based on the semantics defined on the interpreter.
+
+## Notes
+
+[https://mukulrathi.com/](https://mukulrathi.com/create-your-own-programming-language/intro-to-type-checking/)
 
 <!-- ## sources -->
 

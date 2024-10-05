@@ -6,4 +6,5 @@ let fib = fn(n) {
 	return fib(n-1) + fib(n-2)
 }
 
-print fib(30)
+print "running fib(30)..."
+print "fib(30) ==", fib(30)
