@@ -126,6 +126,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.StringLiteralExpr:
 		return &object.String{Value: n.Value}
 	default:
+		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
 	}
 }
@@ -143,13 +144,16 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 
 	var ret object.Object = NIL
 	for {
-		condition := Eval(node.Condition, scope)
-		if condition.Type() != object.BOOL_OBJ {
-			return &object.Error{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
-		}
-
-		if condition == FALSE {
-			break
+		// default condition to true when no condition is defined
+		var condition object.Object = TRUE
+		if node.Condition != nil {
+			Eval(node.Condition, scope)
+			if condition.Type() != object.BOOL_OBJ {
+				return &object.Error{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
+			}
+			if condition == FALSE {
+				break
+			}
 		}
 
 		ret = Eval(node.Body, scope)

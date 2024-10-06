@@ -110,12 +110,25 @@ func (r *ReturnStmt) String() string {
 func (r *EachStmt) String() string {
 	var str strings.Builder
 
+	init := ""
+	if r.Init != nil {
+		init = r.Init.String() + ";"
+	}
+	condition := ""
+	if r.Condition != nil {
+		condition = r.Condition.String() + ";"
+	}
+	update := ""
+	if r.Condition != nil {
+		update = r.Update.String()
+	}
+
 	fmt.Fprintf(
 		&str,
 		"each %s; %s; %s %s",
-		r.Init.String(),
-		r.Condition.String(),
-		r.Update.String(),
+		init,
+		condition,
+		update,
 		r.Body.String(),
 	)
 

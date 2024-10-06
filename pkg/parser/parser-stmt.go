@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -198,6 +200,7 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//      ^
+	fmt.Printf("1p.curToken: %s\n", p.curToken.String())
 	if !p.curTokenIs(token.SEMICOLON) {
 		each.Init = p.parseLetStatment()
 	}
@@ -206,6 +209,7 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                 ^
+	fmt.Printf("2p.curToken: %s\n", p.curToken.String())
 	if !p.curTokenIs(token.SEMICOLON) {
 		each.Condition = p.parseExpressionStatement().Expression
 	}
@@ -215,16 +219,26 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                         ^
-	if !p.curTokenIs(token.SEMICOLON) {
+	fmt.Printf("3p.curToken: %s\n", p.curToken.String())
+	if !p.curTokenIs(token.LBRACE) {
 		each.Update = p.parseExpressionStatement().Expression
 	}
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                                 ^
-	if !p.expectPeek(token.LBRACE) {
+	if !p.curTokenIs(token.LBRACE) {
+		fmt.Printf("4p.curToken: %s\n", p.curToken.String())
+		err := p.expectError(&p.curToken, token.LBRACE)
+		p.errors = append(p.errors, err)
 		return nil
 	}
-	each.Body = p.parseBlockStatement()
 
+	fmt.Printf("5p.curToken: %s\n", p.curToken.String())
+	body := p.parseBlockStatement()
+	fmt.Printf("body.String(): %v\n", body.String())
+	each.Body = body
+	fmt.Printf("6p.curToken: %s\n", p.curToken.String())
+
+	fmt.Printf("each.String(): %v\n", each.String())
 	return each
 }
 

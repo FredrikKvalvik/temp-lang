@@ -1,8 +1,3 @@
-each let a = 0; a < 100; a = a + 1 {
-	if a == 95 {
-		print "hei carina"
-	} else {
-		print a
-	}
+each ;; {
+	print "hello"
 }
-
