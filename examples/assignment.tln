@@ -1,0 +1,10 @@
+let a = 100
+
+print "before reassignment", a
+
+{
+  a = 33
+  print "inside scope", a
+}
+
+print "after reassignment", a
