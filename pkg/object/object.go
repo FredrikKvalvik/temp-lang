@@ -49,4 +49,4 @@ func (b *FnLiteral) Inspect() string {
 	return str.String()
 }
 func (b *Return) Inspect() string { return fmt.Sprintf("return[%s]", b.Value.Inspect()) }
-func (b *Error) Inspect() string  { return b.Message }
+func (b *Error) Inspect() string  { return b.Error.Error() }

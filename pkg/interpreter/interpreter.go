@@ -83,7 +83,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.ReturnStmt:
 		if env.IsGlobalEnv() {
-			return &object.Error{Message: "Illegal return in global scope"}
+			return &object.Error{Error: IllegalGlobalReturnError}
 		}
 		// exit early when returning without an expression
 		if n.Value == nil {
@@ -145,7 +145,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 	for {
 		condition := Eval(node.Condition, scope)
 		if condition.Type() != object.BOOL_OBJ {
-			return &object.Error{Message: "Condition for loop must evaluate to a boolean value"}
+			return &object.Error{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
 		}
 
 		if condition == FALSE {
@@ -171,7 +171,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
 	ident, ok := node.Left.(*ast.IdentifierExpr)
 	if !ok {
-		return &object.Error{Message: "Can only assign value to identifiers", Token: node.Token}
+		return &object.Error{Error: fmt.Errorf("Can only assign value to identifiers"), Token: node.Token}
 	}
 
 	val := Eval(node.Right, env)
@@ -181,8 +181,8 @@ func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object
 	val = env.ReassignVar(ident.Value, val)
 	if val == nil {
 		return &object.Error{
-			Message: fmt.Sprintf("No existing varible with name=%s", ident.Value),
-			Token:   node.Token}
+			Error: UseOfUndeclaredError,
+			Token: node.Token}
 	}
 	return val
 }
@@ -354,13 +354,13 @@ func evalExpressions(exprs []ast.Expr, env *object.Environment) []object.Object 
 func applyFunction(callee object.Object, args []object.Object) object.Object {
 	if callee.Type() != object.FUNCTION_LITERAL_OBJ {
 		return &object.Error{
-			Message: fmt.Sprintf("expected function, got=%s\n", callee.Type()),
+			Error: fmt.Errorf("expected function, got=%s\n", callee.Type()),
 		}
 	}
 	fn := callee.(*object.FnLiteral)
 	if len(fn.Parameters) != len(args) {
 		return &object.Error{
-			Message: fmt.Sprintf("expected number of args=%d, got=%d\n",
+			Error: fmt.Errorf("expected number of args=%d, got=%d\n",
 				len(fn.Parameters), len(args)),
 		}
 	}

@@ -44,8 +44,8 @@ type Return struct {
 func (n *Return) Type() ObjectType { return RETURN_OBJ }
 
 type Error struct {
-	Message string
-	Token   token.Token
+	Error error
+	Token token.Token
 }
 
 func (n *Error) Type() ObjectType { return ERROR_OBJ }

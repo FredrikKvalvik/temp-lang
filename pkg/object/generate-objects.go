@@ -71,7 +71,7 @@ var objects = []template{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: []keyVal{
-			{"Message", "string"},
+			{"Error", "error"},
 			{"Token", "token.Token"},
 		},
 	},

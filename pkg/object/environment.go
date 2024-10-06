@@ -69,5 +69,8 @@ func (e *Environment) IsGlobalEnv() bool {
 }
 
 func illegalDeclarationError(key string) *Error {
-	return &Error{Message: fmt.Sprintf("Illegal declaration, var `%s` has already been declared in this scope", key)}
+	return &Error{Error: fmt.Errorf(
+		"Illegal declaration, var `%s` has already been declared in this scope",
+		key,
+	)}
 }
