@@ -47,6 +47,7 @@ const (
 
 	// Keywords
 	FUNCTION
+	EACH
 	LET
 	TRUE
 	FALSE
@@ -66,6 +67,7 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 	"and":    AND,
 	"or":     OR,
+	"each":   EACH,
 	"print":  PRINT,
 }
 
