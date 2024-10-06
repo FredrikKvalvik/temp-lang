@@ -55,6 +55,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalUnaryExpression(right, n.Operand)
 	case *ast.BinaryExpr:
+		// not very clean, but it makes parsing alot easier
+		if n.Operand == token.ASSIGN {
+			return evalAssignment(n, env)
+		}
+
 		left := Eval(n.Left, env)
 		if isError(left) {
 			return left
@@ -120,6 +125,25 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	default:
 		return unknownNodeError(node)
 	}
+}
+
+func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
+	ident, ok := node.Left.(*ast.IdentifierExpr)
+	if !ok {
+		return &object.Error{Message: "Can only assign value to identifiers", Token: node.Token}
+	}
+
+	val := Eval(node.Right, env)
+	if isError(val) {
+		return val
+	}
+	val = env.ReassignVar(ident.Value, val)
+	if val == nil {
+		return &object.Error{
+			Message: fmt.Sprintf("No existing varible with name=%s", ident.Value),
+			Token:   node.Token}
+	}
+	return val
 }
 
 func evalPrintStatment(n *ast.PrintStmt, env *object.Environment) object.Object {

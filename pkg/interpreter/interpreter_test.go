@@ -135,6 +135,51 @@ func TestLetStatement(t *testing.T) {
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(value.(*object.Number).Value, float64(10))
 }
+
+func TestAssignment(t *testing.T) {
+
+	tests := []struct {
+		input         string
+		varName       string
+		expectedType  object.ObjectType
+		expectedValue any
+	}{
+		{"let a = 10; a = 100",
+			"a",
+			object.NUMBER_OBJ, float64(100),
+		},
+		{`let b = 10; b = "hello"`,
+			"b",
+			object.STRING_OBJ, "hello",
+		},
+		{`let c = ""
+			{
+				c = "from scope"
+			}`,
+			"c",
+			object.STRING_OBJ, "from scope",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+
+			res, e := testEvalProgram(tr, tt.input)
+			if res.Type() == object.ERROR_OBJ {
+				tr.T.Log(res.Inspect())
+			}
+
+			value := e.GetVar(tt.varName)
+			tr.AssertNotNil(value)
+			tr.AssertEqual(value.Type(), tt.expectedType)
+
+			testAssertType(tr, value, tt.expectedType, tt.expectedValue)
+
+		})
+	}
+}
+
 func TestFnLiteralExpression(t *testing.T) {
 
 	input := "let a = fn() { 10; }"
@@ -246,6 +291,24 @@ func TestIdentifer(t *testing.T) {
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(res.(*object.Number).Value, float64(30))
 
+}
+
+func testAssertType(
+	tr *tester.Tester,
+	value object.Object,
+	expectedType object.ObjectType,
+	expectedValue any,
+) {
+	tr.T.Helper()
+
+	switch expectedType {
+	case object.NUMBER_OBJ:
+		tr.AssertEqual(value.(*object.Number).Value, expectedValue)
+	case object.STRING_OBJ:
+		tr.AssertEqual(value.(*object.String).Value, expectedValue)
+	case object.BOOL_OBJ:
+		tr.AssertEqual(value, expectedValue)
+	}
 }
 
 func testEvalProgram(tr *tester.Tester, input string) (object.Object, *object.Environment) {
