@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
@@ -53,25 +52,15 @@ func TestBinaryExpression(t *testing.T) {
 			nil, object.ERROR_OBJ},
 	}
 
-	for index, tt := range tests {
-		tr.SetName(fmt.Sprint(index))
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
 
-		result, _ := testEvalProgram(tr, tt.input)
+			result, _ := testEvalProgram(tr, tt.input)
 
-		tr.AssertEqual(result.Type(), tt.expectedType)
+			tr.AssertEqual(result.Type(), tt.expectedType)
 
-		switch result.Type() {
-		case object.NUMBER_OBJ:
-			tr.AssertEqual(result.(*object.Number).Value, tt.expectedVal)
-		case object.STRING_OBJ:
-			tr.AssertEqual(result.(*object.String).Value, tt.expectedVal)
-		case object.BOOL_OBJ:
-			tr.AssertEqual(result.(*object.Boolean).Value, tt.expectedVal)
-		case object.ERROR_OBJ:
-			// TODO: check error message
-		default:
-			tr.T.Errorf("Unexpected object type=%s\n", result.Type())
-		}
+			testAssertType(tr, result, tt.expectedType, tt.expectedVal)
+		})
 	}
 }
 
@@ -97,26 +86,16 @@ func TestUnaryExpressions(t *testing.T) {
 			object.ERROR_OBJ, nil},
 	}
 
-	for idx, tt := range tests {
-		tr.SetName(fmt.Sprintf("[%d]", idx))
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			res, _ := testEvalProgram(tr, tt.input)
 
-		res, _ := testEvalProgram(tr, tt.input)
+			tr.AssertNotNil(res)
+			tr.AssertEqual(res.Type(), tt.expectedType)
 
-		tr.AssertNotNil(res)
-		tr.AssertEqual(res.Type(), tt.expectedType)
+			testAssertType(tr, res, tt.expectedType, tt.expectedValue)
 
-		switch n := res.(type) {
-		case *object.Boolean:
-			tr.AssertEqual(n.Value, tt.expectedValue)
-		case *object.Number:
-			tr.AssertEqual(n.Value, tt.expectedValue)
-		case *object.Error:
-			// TODO: find a way to test errors
-			break
-
-		default:
-			tr.T.Errorf("[%d] unexpected type %T", idx, n)
-		}
+		})
 	}
 }
 
@@ -307,7 +286,11 @@ func testAssertType(
 	case object.STRING_OBJ:
 		tr.AssertEqual(value.(*object.String).Value, expectedValue)
 	case object.BOOL_OBJ:
-		tr.AssertEqual(value, expectedValue)
+		tr.AssertEqual(value.(*object.Boolean).Value, expectedValue)
+	case object.ERROR_OBJ:
+		// TODO: check error message
+	default:
+		tr.T.Errorf("Unexpected object type=%s\n", value.Type())
 	}
 }
 
