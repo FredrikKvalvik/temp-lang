@@ -43,7 +43,7 @@ tidy:
 ## build: build the application
 .PHONY: build
 build:
-	go build -o=/tmp/bin/${binary_name} ${main_package_path}
+	go build -o=./tmp/bin/${binary_name} ${main_package_path}
 
 ## run: run the  application
 .PHONY: run
