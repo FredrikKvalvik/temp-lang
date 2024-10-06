@@ -42,7 +42,11 @@ func typeMismatchUnaryError(op token.TokenType, right object.Object) *object.Err
 
 // for interal error only. This should only show up in development
 func unknownNodeError(node ast.Node) *object.Error {
-	return &object.Error{Error: fmt.Errorf("%w: %s", UnknownNodeError, node.Lexeme())}
+	if node == nil {
+		return &object.Error{Error: fmt.Errorf("%w: %s", UnknownNodeError, "nil")}
+	} else {
+		return &object.Error{Error: fmt.Errorf("%w: %s", UnknownNodeError, node.String())}
+	}
 }
 
 func useOfUnassignVariableError(key string) *object.Error {
