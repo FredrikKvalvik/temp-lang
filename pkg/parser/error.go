@@ -11,6 +11,10 @@ func (p *Parser) expectPeekError(expect token.TokenType) {
 	err := p.expectError(&p.peekToken, expect)
 	p.errors = append(p.errors, err)
 }
+func (p *Parser) expectCurError(expect token.TokenType) {
+	err := p.expectError(&p.curToken, expect)
+	p.errors = append(p.errors, err)
+}
 
 func (p *Parser) expectError(tok *token.Token, expect token.TokenType) error {
 	lcStr := lineColString(p.l, tok)

@@ -16,6 +16,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseBlockStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	case token.EACH:
+		return p.parseEachStatement()
 	case token.PRINT:
 		return p.parsePrintStatement()
 
@@ -179,6 +181,51 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStmt {
 	//            ^
 
 	return ret
+}
+
+// each statments can take different forms
+// -- each let a = 0; a < 10; a = a + 1 { ... }
+// -- each item in items { ... }
+
+func (p *Parser) parseEachStatement() ast.Stmt {
+
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	// ^
+	each := &ast.EachStmt{
+		Token: p.curToken,
+	}
+
+	p.advance()
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//      ^
+	if !p.curTokenIs(token.SEMICOLON) {
+		each.Init = p.parseLetStatment()
+	}
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//               ^
+	p.advance()
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//                 ^
+	if !p.curTokenIs(token.SEMICOLON) {
+		each.Condition = p.parseExpressionStatement().Expression
+	}
+
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//                       ^
+	p.advance()
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//                         ^
+	if !p.curTokenIs(token.SEMICOLON) {
+		each.Update = p.parseExpressionStatement().Expression
+	}
+	// each let a = 0; a < 10; a = a + 1 { ... }
+	//                                 ^
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+	each.Body = p.parseBlockStatement()
+
+	return each
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {

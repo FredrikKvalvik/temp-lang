@@ -107,6 +107,21 @@ func (r *ReturnStmt) String() string {
 	return str
 }
 
+func (r *EachStmt) String() string {
+	var str strings.Builder
+
+	fmt.Fprintf(
+		&str,
+		"each %s; %s; %s %s",
+		r.Init.String(),
+		r.Condition.String(),
+		r.Update.String(),
+		r.Body.String(),
+	)
+
+	return str.String()
+}
+
 func (i *IdentifierExpr) String() string {
 	var str strings.Builder
 

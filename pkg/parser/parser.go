@@ -179,3 +179,13 @@ func (p *Parser) expectPeek(typ token.TokenType) bool {
 	p.expectPeekError(typ)
 	return false
 }
+func (p *Parser) expectCur(typ token.TokenType) bool {
+
+	if p.curTokenIs(typ) {
+		p.advance()
+		return true
+	}
+
+	p.expectPeekError(typ)
+	return false
+}

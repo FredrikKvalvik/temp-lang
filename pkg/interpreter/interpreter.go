@@ -48,6 +48,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.BlockStmt:
 		return evalBlockStatment(n, env)
 
+	case *ast.EachStmt:
+		return evalEachStatment(n, env)
+
 	case *ast.UnaryExpr:
 		right := Eval(n.Right, env)
 		if isError(right) {
@@ -125,6 +128,43 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	default:
 		return unknownNodeError(node)
 	}
+}
+
+func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object {
+	scope := object.NewEnv(env)
+	if node.Init != nil {
+		name := node.Init.Name
+		value := Eval(node.Init.Value, scope)
+		if isError(value) {
+			return value
+		}
+		scope.DeclareVar(name.Value, value)
+	}
+
+	for {
+		condition := Eval(node.Condition, scope)
+		if condition.Type() != object.BOOL_OBJ {
+			return &object.Error{Message: "Condition for loop must evaluate to a boolean value"}
+		}
+
+		if condition == FALSE {
+			break
+		}
+
+		b := Eval(node.Body, scope)
+		if isError(b) {
+			return b
+		}
+
+		if node.Update != nil {
+			update := Eval(node.Update, scope)
+			if isError(update) {
+				return update
+			}
+		}
+
+	}
+	return NIL
 }
 
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
