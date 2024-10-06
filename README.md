@@ -29,6 +29,7 @@ about how programming languages are made.
 - [ ] error messages on runtime errors that help you identify your error
 - [ ] some form of std lib implemented with the language
 - [ ] formatted strings with print statment
+- [ ] attach REPL to an executed program
 
 ## about
 
