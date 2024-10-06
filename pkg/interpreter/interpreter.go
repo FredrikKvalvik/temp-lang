@@ -141,6 +141,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 		scope.DeclareVar(name.Value, value)
 	}
 
+	var ret object.Object = NIL
 	for {
 		condition := Eval(node.Condition, scope)
 		if condition.Type() != object.BOOL_OBJ {
@@ -151,9 +152,9 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 			break
 		}
 
-		b := Eval(node.Body, scope)
-		if isError(b) {
-			return b
+		ret = Eval(node.Body, scope)
+		if isError(ret) || ret.Type() == object.RETURN_OBJ {
+			return ret
 		}
 
 		if node.Update != nil {
@@ -164,7 +165,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 		}
 
 	}
-	return NIL
+	return ret
 }
 
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
