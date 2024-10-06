@@ -112,11 +112,11 @@ func (r *EachStmt) String() string {
 
 	init := ""
 	if r.Init != nil {
-		init = r.Init.String() + ";"
+		init = r.Init.String()
 	}
 	condition := ""
 	if r.Condition != nil {
-		condition = r.Condition.String() + ";"
+		condition = r.Condition.String()
 	}
 	update := ""
 	if r.Condition != nil {
