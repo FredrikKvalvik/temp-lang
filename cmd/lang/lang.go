@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"flag"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
@@ -13,15 +15,15 @@ import (
 )
 
 func main() {
-	args := os.Args[1:]
+	attach := flag.Bool("attach", false, "attach repl to a program after its execution")
 
-	if len(args) > 1 {
-		fmt.Printf("usage: templang [script-path]")
-		os.Exit(1)
-	} else if len(args) == 1 {
-		path := args[0]
+	flag.Parse()
+
+	if len(flag.Args()) > 0 {
+		path := flag.Arg(0)
 		file := readFile(path)
-		res, err := runProgram(file)
+		env := object.NewEnv(nil)
+		res, err := runProgram(file, env)
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -33,14 +35,18 @@ func main() {
 			return
 		}
 
+		if attach != nil && *attach {
+			repl.New(os.Stdin, os.Stdout).Run(env)
+		}
+
 	} else {
 		env := object.NewEnv(nil)
-		repl.New(env).Run(os.Stdin, os.Stdout)
+		repl.New(os.Stdin, os.Stdout).Run(env)
 		return
 	}
 }
 
-func runProgram(in string) (object.Object, error) {
+func runProgram(in string, env *object.Environment) (object.Object, error) {
 
 	l := lexer.New(in)
 	if l.DidError() {
@@ -62,7 +68,6 @@ func runProgram(in string) (object.Object, error) {
 		return nil, errors.New(errs)
 	}
 
-	env := object.NewEnv(nil)
 	result := interpreter.Eval(program, env)
 	return result, nil
 }

@@ -21,6 +21,7 @@ about how programming languages are made.
 - [x] higher order function
 - [x] closures
 - [x] return statements
+- [x] attach REPL to an executed program
 
 ### upcomming freatures / TODOs
 
@@ -29,7 +30,6 @@ about how programming languages are made.
 - [ ] error messages on runtime errors that help you identify your error
 - [ ] some form of std lib implemented with the language
 - [ ] formatted strings with print statment
-- [ ] attach REPL to an executed program
 
 ## about
 

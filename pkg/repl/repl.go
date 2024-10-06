@@ -12,20 +12,22 @@ import (
 )
 
 type Repl struct {
-	env *object.Environment
+	// env *object.Environment
+	in  io.Reader
+	out io.Writer
 }
 
-func New(env *object.Environment) *Repl {
+func New(in io.Reader, out io.Writer) *Repl {
 	return &Repl{
-		env: env,
+		in:  in,
+		out: out,
 	}
 }
 
 // os.Stdin and os.Stdout are the usual args
-func (r *Repl) Run(in io.Reader, out io.Writer) {
-	s := bufio.NewScanner(in)
+func (r *Repl) Run(env *object.Environment) {
+	s := bufio.NewScanner(r.in)
 
-	env := object.NewEnv(nil)
 	for {
 		fmt.Print("> ")
 		scanned := s.Scan()
@@ -37,7 +39,7 @@ func (r *Repl) Run(in io.Reader, out io.Writer) {
 		l := lexer.New(line)
 		if l.DidError() {
 			for _, err := range l.Errors() {
-				fmt.Fprintf(out, "%s\n", err)
+				fmt.Fprintf(r.out, "%s\n", err)
 			}
 			continue
 		}
