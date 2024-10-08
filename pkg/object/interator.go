@@ -17,15 +17,15 @@ type Iterator interface {
 	Done() bool
 }
 
-func NewIterator(iterable Object) (Iterator, *Error) {
+func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 	switch it := iterable.(type) {
-	case *String:
+	case *StringObj:
 		return newStringIterator(it), nil
-	case *Number:
+	case *NumberObj:
 		return newNumberIterator(it), nil
 
 	default:
-		return nil, &Error{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
+		return nil, &ErrorObj{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
 	}
 
 }
@@ -34,7 +34,7 @@ type StringIter struct {
 	reader *strings.Reader
 }
 
-func newStringIterator(str *String) *StringIter {
+func newStringIterator(str *StringObj) *StringIter {
 	r := strings.NewReader(str.Value)
 	return &StringIter{
 		reader: r,
@@ -49,9 +49,9 @@ func (si *StringIter) Next() Object {
 	ch, _, err := si.reader.ReadRune()
 
 	if err != nil {
-		return &Error{Error: fmt.Errorf("Could not read string")}
+		return &ErrorObj{Error: fmt.Errorf("Could not read string")}
 	}
-	str := &String{Value: string(ch)}
+	str := &StringObj{Value: string(ch)}
 
 	return str
 }
@@ -59,17 +59,17 @@ func (si *StringIter) Next() Object {
 func (si *StringIter) Done() bool { return si.reader.Len() == 0 }
 
 type NumberIter struct {
-	number *Number
+	number *NumberObj
 	index  int
 }
 
-func newNumberIterator(num *Number) *NumberIter {
+func newNumberIterator(num *NumberObj) *NumberIter {
 	return &NumberIter{
 		number: num,
 	}
 }
 func (ni *NumberIter) Next() Object {
-	n := &Number{Value: float64(ni.index)}
+	n := &NumberObj{Value: float64(ni.index)}
 	ni.index += 1
 	return n
 }

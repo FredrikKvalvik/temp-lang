@@ -28,27 +28,27 @@ func isError(obj object.Object) bool {
 	return false
 }
 
-func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.Error {
-	return &object.Error{
+func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.ErrorObj {
+	return &object.ErrorObj{
 		Error: fmt.Errorf("%w: %s %s %s", IllegalOperationError, left, op, right),
 	}
 }
-func typeMismatchBinaryError(left object.Object, op token.TokenType, right object.Object) *object.Error {
-	return &object.Error{Error: fmt.Errorf("%w: %s %s %s", IllegalOperationError, left, op, right)}
+func typeMismatchBinaryError(left object.Object, op token.TokenType, right object.Object) *object.ErrorObj {
+	return &object.ErrorObj{Error: fmt.Errorf("%w: %s %s %s", IllegalOperationError, left, op, right)}
 }
-func typeMismatchUnaryError(op token.TokenType, right object.Object) *object.Error {
-	return &object.Error{Error: fmt.Errorf("%w: %s%s", IllegalOperationError, op, right)}
+func typeMismatchUnaryError(op token.TokenType, right object.Object) *object.ErrorObj {
+	return &object.ErrorObj{Error: fmt.Errorf("%w: %s%s", IllegalOperationError, op, right)}
 }
 
 // for interal error only. This should only show up in development
-func unknownNodeError(node ast.Node) *object.Error {
+func unknownNodeError(node ast.Node) *object.ErrorObj {
 	if node == nil {
-		return &object.Error{Error: fmt.Errorf("%w: %s", UnknownNodeError, "nil")}
+		return &object.ErrorObj{Error: fmt.Errorf("%w: %s", UnknownNodeError, "nil")}
 	} else {
-		return &object.Error{Error: fmt.Errorf("%w: %s", UnknownNodeError, node.String())}
+		return &object.ErrorObj{Error: fmt.Errorf("%w: %s", UnknownNodeError, node.String())}
 	}
 }
 
-func useOfUnassignVariableError(key string) *object.Error {
-	return &object.Error{Error: fmt.Errorf("%w `%s`", UseOfUndeclaredError, key)}
+func useOfUnassignVariableError(key string) *object.ErrorObj {
+	return &object.ErrorObj{Error: fmt.Errorf("%w `%s`", UseOfUndeclaredError, key)}
 }

@@ -112,7 +112,7 @@ func TestLetStatement(t *testing.T) {
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertNotNil(value)
 	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(value.(*object.Number).Value, float64(10))
+	tr.AssertEqual(value.(*object.NumberObj).Value, float64(10))
 }
 
 func TestAssignment(t *testing.T) {
@@ -172,8 +172,8 @@ func TestFnLiteralExpression(t *testing.T) {
 	tr.AssertEqual(res.Type(), object.FUNCTION_LITERAL_OBJ)
 	tr.AssertNotNil(value)
 	tr.AssertEqual(value.Type(), object.FUNCTION_LITERAL_OBJ)
-	tr.AssertEqual(len(value.(*object.FnLiteral).Parameters), 0)
-	tr.AssertEqual(len(value.(*object.FnLiteral).Body.Statements), 1)
+	tr.AssertEqual(len(value.(*object.FnLiteralObj).Parameters), 0)
+	tr.AssertEqual(len(value.(*object.FnLiteralObj).Body.Statements), 1)
 }
 
 func TestBlockStatement(t *testing.T) {
@@ -193,12 +193,12 @@ func TestBlockStatement(t *testing.T) {
 	tr.SetName("testing outer")
 	tr.AssertNotNil(outer)
 	tr.AssertEqual(outer.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(outer.(*object.Number).Value, float64(10))
+	tr.AssertEqual(outer.(*object.NumberObj).Value, float64(10))
 
 	tr.SetName("testing inner")
 	tr.AssertNotNil(inner)
 	tr.AssertEqual(inner.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(inner.(*object.Number).Value, float64(5))
+	tr.AssertEqual(inner.(*object.NumberObj).Value, float64(5))
 
 }
 
@@ -217,7 +217,7 @@ func TestIfStatement(t *testing.T) {
 
 	tr.AssertNotNil(res)
 	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
-	tr.AssertEqual(res.(*object.Boolean).Value, true)
+	tr.AssertEqual(res.(*object.BooleanObj).Value, true)
 
 }
 
@@ -236,7 +236,7 @@ func TestElseStatement(t *testing.T) {
 
 	tr.AssertNotNil(res)
 	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
-	tr.AssertEqual(res.(*object.Boolean).Value, false)
+	tr.AssertEqual(res.(*object.BooleanObj).Value, false)
 }
 
 func TestIdentifer(t *testing.T) {
@@ -258,17 +258,17 @@ func TestIdentifer(t *testing.T) {
 	tr.SetName("testing value `a`")
 	tr.AssertNotNil(a)
 	tr.AssertEqual(a.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(a.(*object.Number).Value, float64(10))
+	tr.AssertEqual(a.(*object.NumberObj).Value, float64(10))
 
 	tr.SetName("testing value `b`")
 	tr.AssertNotNil(b)
 	tr.AssertEqual(b.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(b.(*object.Number).Value, float64(20))
+	tr.AssertEqual(b.(*object.NumberObj).Value, float64(20))
 
 	tr.SetName(`testing result`)
 	tr.AssertNotEqual(res, NIL)
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
-	tr.AssertEqual(res.(*object.Number).Value, float64(30))
+	tr.AssertEqual(res.(*object.NumberObj).Value, float64(30))
 
 }
 
@@ -282,11 +282,11 @@ func testAssertType(
 
 	switch expectedType {
 	case object.NUMBER_OBJ:
-		tr.AssertEqual(value.(*object.Number).Value, expectedValue)
+		tr.AssertEqual(value.(*object.NumberObj).Value, expectedValue)
 	case object.STRING_OBJ:
-		tr.AssertEqual(value.(*object.String).Value, expectedValue)
+		tr.AssertEqual(value.(*object.StringObj).Value, expectedValue)
 	case object.BOOL_OBJ:
-		tr.AssertEqual(value.(*object.Boolean).Value, expectedValue)
+		tr.AssertEqual(value.(*object.BooleanObj).Value, expectedValue)
 	case object.ERROR_OBJ:
 		// TODO: check error message
 	default:

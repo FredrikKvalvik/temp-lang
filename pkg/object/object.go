@@ -27,11 +27,11 @@ const (
 	ERROR_OBJ
 )
 
-func (n *Nil) Inspect() string     { return "nil" }
-func (b *Boolean) Inspect() string { return fmt.Sprintf("%v", b.Value) }
-func (b *String) Inspect() string  { return fmt.Sprintf(`"%s"`, b.Value) }
-func (b *Number) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
-func (b *FnLiteral) Inspect() string {
+func (n *NilObj) Inspect() string     { return "nil" }
+func (b *BooleanObj) Inspect() string { return fmt.Sprintf("%v", b.Value) }
+func (b *StringObj) Inspect() string  { return fmt.Sprintf(`"%s"`, b.Value) }
+func (b *NumberObj) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
+func (b *FnLiteralObj) Inspect() string {
 	var str strings.Builder
 
 	str.WriteString("fn(")
@@ -48,5 +48,5 @@ func (b *FnLiteral) Inspect() string {
 
 	return str.String()
 }
-func (b *Return) Inspect() string { return fmt.Sprintf("return[%s]", b.Value.Inspect()) }
-func (b *Error) Inspect() string  { return b.Error.Error() }
+func (b *ReturnObj) Inspect() string { return fmt.Sprintf("return[%s]", b.Value.Inspect()) }
+func (b *ErrorObj) Inspect() string  { return b.Error.Error() }

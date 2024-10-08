@@ -68,8 +68,8 @@ func (e *Environment) IsGlobalEnv() bool {
 	return e.parent == nil
 }
 
-func illegalDeclarationError(key string) *Error {
-	return &Error{Error: fmt.Errorf(
+func illegalDeclarationError(key string) *ErrorObj {
+	return &ErrorObj{Error: fmt.Errorf(
 		"Illegal declaration, var `%s` has already been declared in this scope",
 		key,
 	)}

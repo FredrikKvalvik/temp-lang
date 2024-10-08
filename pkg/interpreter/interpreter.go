@@ -13,9 +13,9 @@ import (
 // these should only exist as singleton values. That way,
 // we can easily compare the values by pointer
 
-var TRUE = &object.Boolean{Value: true}   // Sentinel value: true
-var FALSE = &object.Boolean{Value: false} // Sentinel value: false
-var NIL = &object.Nil{}                   // Sentinal value: nil
+var TRUE = &object.BooleanObj{Value: true}   // Sentinel value: true
+var FALSE = &object.BooleanObj{Value: false} // Sentinel value: false
+var NIL = &object.NilObj{}                   // Sentinal value: nil
 
 // main func for interpreter. Recursively evaluate ast and return a value at the end
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -65,7 +65,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if n.Name != nil {
 			name, ok := n.Name.(*ast.IdentifierExpr)
 			if !ok {
-				return &object.Error{Error: TypeError, Token: *n.Name.GetToken()}
+				return &object.ErrorObj{Error: TypeError, Token: *n.Name.GetToken()}
 			}
 			scope.DeclareVar(name.Value, NIL)
 		}
@@ -123,21 +123,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.ReturnStmt:
 		if env.IsGlobalEnv() {
-			return &object.Error{Error: IllegalGlobalReturnError}
+			return &object.ErrorObj{Error: IllegalGlobalReturnError}
 		}
 		// exit early when returning without an expression
 		if n.Value == nil {
-			return &object.Return{Value: NIL}
+			return &object.ReturnObj{Value: NIL}
 		}
 
 		value := Eval(n.Value, env)
 		if isError(value) {
 			return value
 		}
-		return &object.Return{Value: value}
+		return &object.ReturnObj{Value: value}
 
 	case *ast.FunctionLiteralExpr:
-		fn := &object.FnLiteral{
+		fn := &object.FnLiteralObj{
 			Parameters: n.Arguments,
 			Body:       n.Body,
 			Env:        env,
@@ -161,10 +161,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return boolObject(n.Value)
 
 	case *ast.NumberLiteralExpr:
-		return &object.Number{Value: n.Value}
+		return &object.NumberObj{Value: n.Value}
 
 	case *ast.StringLiteralExpr:
-		return &object.String{Value: n.Value}
+		return &object.StringObj{Value: n.Value}
 	default:
 		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
@@ -189,7 +189,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 		if node.Condition != nil {
 			Eval(node.Condition, scope)
 			if condition.Type() != object.BOOL_OBJ {
-				return &object.Error{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
+				return &object.ErrorObj{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
 			}
 			if condition == FALSE {
 				break
@@ -215,7 +215,7 @@ func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
 	ident, ok := node.Left.(*ast.IdentifierExpr)
 	if !ok {
-		return &object.Error{Error: fmt.Errorf("Can only assign value to identifiers"), Token: node.Token}
+		return &object.ErrorObj{Error: fmt.Errorf("Can only assign value to identifiers"), Token: node.Token}
 	}
 
 	val := Eval(node.Right, env)
@@ -224,7 +224,7 @@ func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object
 	}
 	val = env.ReassignVar(ident.Value, val)
 	if val == nil {
-		return &object.Error{
+		return &object.ErrorObj{
 			Error: UseOfUndeclaredError,
 			Token: node.Token}
 	}
@@ -254,10 +254,10 @@ func evalProgram(stmts []ast.Stmt, env *object.Environment) object.Object {
 		result = Eval(stmt, env)
 
 		switch rt := result.(type) {
-		case *object.Error:
+		case *object.ErrorObj:
 			return rt
 
-		case *object.Return:
+		case *object.ReturnObj:
 			return rt.Value
 		}
 	}
@@ -284,7 +284,7 @@ func evalUnaryExpression(right object.Object, op token.TokenType) object.Object 
 
 	switch {
 	case right.Type() == object.NUMBER_OBJ && op == token.MINUS:
-		return &object.Number{Value: -right.(*object.Number).Value}
+		return &object.NumberObj{Value: -right.(*object.NumberObj).Value}
 
 	case right.Type() == object.BOOL_OBJ && op == token.BANG:
 		fmt.Print(right)
@@ -302,10 +302,10 @@ func evalBinaryExpression(left, right object.Object, op token.TokenType) object.
 
 	switch {
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringBinaryExpression(left.(*object.String), op, right.(*object.String))
+		return evalStringBinaryExpression(left.(*object.StringObj), op, right.(*object.StringObj))
 
 	case left.Type() == object.NUMBER_OBJ && right.Type() == object.NUMBER_OBJ:
-		return evalNumberBinaryExpression(left.(*object.Number), op, right.(*object.Number))
+		return evalNumberBinaryExpression(left.(*object.NumberObj), op, right.(*object.NumberObj))
 
 	case op == token.EQ:
 		// this comparison works because TRUE and FALSE are pointers to singletons
@@ -322,11 +322,11 @@ func evalBinaryExpression(left, right object.Object, op token.TokenType) object.
 }
 
 // only allow + op on string. all else i illegal
-func evalStringBinaryExpression(left *object.String, op token.TokenType, right *object.String) object.Object {
+func evalStringBinaryExpression(left *object.StringObj, op token.TokenType, right *object.StringObj) object.Object {
 	switch op {
 	// string returns
 	case token.PLUS:
-		return &object.String{Value: left.Value + right.Value}
+		return &object.StringObj{Value: left.Value + right.Value}
 
 		// Boolean returns
 	case token.EQ:
@@ -339,18 +339,18 @@ func evalStringBinaryExpression(left *object.String, op token.TokenType, right *
 }
 
 // only allow + op on string. all else i illegal
-func evalNumberBinaryExpression(left *object.Number, op token.TokenType, right *object.Number) object.Object {
+func evalNumberBinaryExpression(left *object.NumberObj, op token.TokenType, right *object.NumberObj) object.Object {
 
 	switch op {
 	// Number return
 	case token.PLUS:
-		return &object.Number{Value: left.Value + right.Value}
+		return &object.NumberObj{Value: left.Value + right.Value}
 	case token.MINUS:
-		return &object.Number{Value: left.Value - right.Value}
+		return &object.NumberObj{Value: left.Value - right.Value}
 	case token.SLASH:
-		return &object.Number{Value: left.Value / right.Value}
+		return &object.NumberObj{Value: left.Value / right.Value}
 	case token.ASTERISK:
-		return &object.Number{Value: left.Value * right.Value}
+		return &object.NumberObj{Value: left.Value * right.Value}
 
 	// boolean return
 	case token.LT:
@@ -366,7 +366,7 @@ func evalNumberBinaryExpression(left *object.Number, op token.TokenType, right *
 	return illegalOpError(left, op, right)
 }
 
-func boolObject(b bool) *object.Boolean {
+func boolObject(b bool) *object.BooleanObj {
 	if b {
 		return TRUE
 	} else {
@@ -375,7 +375,7 @@ func boolObject(b bool) *object.Boolean {
 }
 
 func unwrapReturn(obj object.Object) object.Object {
-	if ret, ok := obj.(*object.Return); ok {
+	if ret, ok := obj.(*object.ReturnObj); ok {
 		return ret.Value
 	}
 	return obj
@@ -397,13 +397,13 @@ func evalExpressions(exprs []ast.Expr, env *object.Environment) []object.Object 
 
 func applyFunction(callee object.Object, args []object.Object) object.Object {
 	if callee.Type() != object.FUNCTION_LITERAL_OBJ {
-		return &object.Error{
+		return &object.ErrorObj{
 			Error: fmt.Errorf("expected function, got=%s\n", callee.Type()),
 		}
 	}
-	fn := callee.(*object.FnLiteral)
+	fn := callee.(*object.FnLiteralObj)
 	if len(fn.Parameters) != len(args) {
-		return &object.Error{
+		return &object.ErrorObj{
 			Error: fmt.Errorf("expected number of args=%d, got=%d\n",
 				len(fn.Parameters), len(args)),
 		}

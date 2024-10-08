@@ -94,7 +94,7 @@ func generateObjects(tmpl []template) string {
 	f.WriteString(fmt.Sprintf(`import "%s"`+"\n\n", tokenPkg))
 
 	for _, s := range tmpl {
-		name := s.name
+		name := s.name + "Obj"
 
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
@@ -113,7 +113,7 @@ func generateObjects(tmpl []template) string {
 	fmt.Fprint(&f, "// this is gives us a compile time check to see of all the interafaces has been properly implemented\n")
 	fmt.Fprintf(&f, "func typecheck() {\n")
 	for _, s := range tmpl {
-		name := s.name
+		name := s.name + "Obj"
 
 		fmt.Fprintf(&f, "_ = Object(& %s {})\n", name)
 	}

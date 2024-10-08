@@ -6,57 +6,57 @@ import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
 
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
-type Boolean struct {
+type BooleanObj struct {
 	Value bool
 }
 
-func (n *Boolean) Type() ObjectType { return BOOL_OBJ }
+func (n *BooleanObj) Type() ObjectType { return BOOL_OBJ }
 
-type Nil struct {
+type NilObj struct {
 }
 
-func (n *Nil) Type() ObjectType { return NIL_OBJ }
+func (n *NilObj) Type() ObjectType { return NIL_OBJ }
 
-type Number struct {
+type NumberObj struct {
 	Value float64
 }
 
-func (n *Number) Type() ObjectType { return NUMBER_OBJ }
+func (n *NumberObj) Type() ObjectType { return NUMBER_OBJ }
 
-type String struct {
+type StringObj struct {
 	Value string
 }
 
-func (n *String) Type() ObjectType { return STRING_OBJ }
+func (n *StringObj) Type() ObjectType { return STRING_OBJ }
 
-type FnLiteral struct {
+type FnLiteralObj struct {
 	Parameters []*ast.IdentifierExpr
 	Body       *ast.BlockStmt
 	Env        *Environment
 }
 
-func (n *FnLiteral) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
+func (n *FnLiteralObj) Type() ObjectType { return FUNCTION_LITERAL_OBJ }
 
-type Return struct {
+type ReturnObj struct {
 	Value Object
 }
 
-func (n *Return) Type() ObjectType { return RETURN_OBJ }
+func (n *ReturnObj) Type() ObjectType { return RETURN_OBJ }
 
-type Error struct {
+type ErrorObj struct {
 	Error error
 	Token token.Token
 }
 
-func (n *Error) Type() ObjectType { return ERROR_OBJ }
+func (n *ErrorObj) Type() ObjectType { return ERROR_OBJ }
 
 // this is gives us a compile time check to see of all the interafaces has been properly implemented
 func typecheck() {
-	_ = Object(&Boolean{})
-	_ = Object(&Nil{})
-	_ = Object(&Number{})
-	_ = Object(&String{})
-	_ = Object(&FnLiteral{})
-	_ = Object(&Return{})
-	_ = Object(&Error{})
+	_ = Object(&BooleanObj{})
+	_ = Object(&NilObj{})
+	_ = Object(&NumberObj{})
+	_ = Object(&StringObj{})
+	_ = Object(&FnLiteralObj{})
+	_ = Object(&ReturnObj{})
+	_ = Object(&ErrorObj{})
 }
