@@ -1,31 +1,36 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
 func (p *Parser) parseStatement() ast.Stmt {
-
+	var node ast.Stmt
 	switch p.curToken.Type {
 	case token.LET:
-		return p.parseLetStatment()
+		node = p.parseLetStatment()
 	case token.IF:
-		return p.parseIfStatement()
+		node = p.parseIfStatement()
 	case token.LBRACE:
-		return p.parseBlockStatement()
+		node = p.parseBlockStatement()
 	case token.RETURN:
-		return p.parseReturnStatement()
+		node = p.parseReturnStatement()
 	case token.EACH:
-		return p.parseEachStatement()
+		node = p.parseIteratorStatement()
 	case token.PRINT:
-		return p.parsePrintStatement()
+		node = p.parsePrintStatement()
 
 	default:
-		return p.parseExpressionStatement()
+		node = p.parseExpressionStatement()
 	}
+
+	if node != nil {
+		return node
+	} else {
+		return nil
+	}
+
 }
 
 func (p *Parser) parseLetStatment() *ast.LetStmt {
@@ -189,8 +194,21 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStmt {
 // -- each let a = 0; a < 10; a = a + 1 { ... }
 // -- each item in items { ... }
 
-func (p *Parser) parseEachStatement() ast.Stmt {
+// func (p *Parser) parseEachStatement() *ast.EachStmt {
+// 	// switch p.curToken.Type {
+// 	// case token.LET:
+// 	// 	return p.parseBoomerloopStatement()
+// 	// case token.IDENT:
+// 	// 	return p.parseIteratorStatement()
+// 	// 	// default:
+// 	// 	// 	return p.parseExpressionLoop()
+// 	// }
 
+// 	// return nil
+// 	return p.parseIteratorStatement()
+// }
+
+func (p *Parser) parseBoomerloopStatement() *ast.EachStmt {
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	// ^
 	each := &ast.EachStmt{
@@ -200,7 +218,6 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//      ^
-	fmt.Printf("1p.curToken: %s\n", p.curToken.String())
 	if !p.curTokenIs(token.SEMICOLON) {
 		each.Init = p.parseLetStatment()
 	}
@@ -209,7 +226,6 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                 ^
-	fmt.Printf("2p.curToken: %s\n", p.curToken.String())
 	if !p.curTokenIs(token.SEMICOLON) {
 		each.Condition = p.parseExpressionStatement().Expression
 	}
@@ -219,26 +235,80 @@ func (p *Parser) parseEachStatement() ast.Stmt {
 	p.advance()
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                         ^
-	fmt.Printf("3p.curToken: %s\n", p.curToken.String())
 	if !p.curTokenIs(token.LBRACE) {
 		each.Update = p.parseExpressionStatement().Expression
 	}
 	// each let a = 0; a < 10; a = a + 1 { ... }
 	//                                 ^
 	if !p.curTokenIs(token.LBRACE) {
-		fmt.Printf("4p.curToken: %s\n", p.curToken.String())
 		err := p.expectError(&p.curToken, token.LBRACE)
 		p.errors = append(p.errors, err)
 		return nil
 	}
 
-	fmt.Printf("5p.curToken: %s\n", p.curToken.String())
 	body := p.parseBlockStatement()
-	fmt.Printf("body.String(): %v\n", body.String())
 	each.Body = body
-	fmt.Printf("6p.curToken: %s\n", p.curToken.String())
 
-	fmt.Printf("each.String(): %v\n", each.String())
+	return each
+}
+func (p *Parser) parseIteratorStatement() *ast.IterStmt {
+	// each item : items { ... }
+	// ^
+	each := &ast.IterStmt{
+
+		Token: p.curToken,
+	}
+
+	// handle case where there is no name or iterable
+	// return early
+	if p.peekTokenIs(token.LBRACE) {
+		// return with no name or iterable set
+		p.advance()
+		body := p.parseBlockStatement()
+		each.Body = body
+		return each
+	}
+
+	p.advance()
+	// each item : items { ... }
+	//      ^
+	first := p.parseExpression(LOWEST)
+	// each item : items { ... }
+	//         ^
+
+	p.consume(token.COLON)
+
+	// each item : items { ... }
+	//           ^
+	if !p.curTokenIs(token.LBRACE) {
+		p.advance()
+		// each item : items { ... }
+		//             ^
+
+		// set first to iterable and return each with no local var name
+		each.Name = first
+
+		p.advance()
+		// each item : items { ... }
+		//             ^
+
+		iterable := p.parseExpression(LOWEST)
+		// each item : items { ... }
+		//                 ^
+		each.Iterable = iterable
+
+	} else {
+		each.Iterable = first
+		// each items { ... }
+		//          ^
+	}
+
+	p.advance()
+	// each item : items { ... }
+	//                   ^
+	body := p.parseBlockStatement()
+	each.Body = body
+
 	return each
 }
 

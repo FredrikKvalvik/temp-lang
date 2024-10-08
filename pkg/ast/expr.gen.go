@@ -9,36 +9,40 @@ type IdentifierExpr struct {
 	Value string
 }
 
-func (n *IdentifierExpr) ExprNode()      {}
-func (n *IdentifierExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *IdentifierExpr) Literal() any   { return n.Token.Literal }
+func (n *IdentifierExpr) ExprNode()              {}
+func (n *IdentifierExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *IdentifierExpr) Literal() any           { return n.Token.Literal }
+func (n *IdentifierExpr) GetToken() *token.Token { return &n.Token }
 
 type NumberLiteralExpr struct {
 	Token token.Token
 	Value float64
 }
 
-func (n *NumberLiteralExpr) ExprNode()      {}
-func (n *NumberLiteralExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *NumberLiteralExpr) Literal() any   { return n.Token.Literal }
+func (n *NumberLiteralExpr) ExprNode()              {}
+func (n *NumberLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *NumberLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *NumberLiteralExpr) GetToken() *token.Token { return &n.Token }
 
 type StringLiteralExpr struct {
 	Token token.Token
 	Value string
 }
 
-func (n *StringLiteralExpr) ExprNode()      {}
-func (n *StringLiteralExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *StringLiteralExpr) Literal() any   { return n.Token.Literal }
+func (n *StringLiteralExpr) ExprNode()              {}
+func (n *StringLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *StringLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *StringLiteralExpr) GetToken() *token.Token { return &n.Token }
 
 type BooleanLiteralExpr struct {
 	Token token.Token
 	Value bool
 }
 
-func (n *BooleanLiteralExpr) ExprNode()      {}
-func (n *BooleanLiteralExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *BooleanLiteralExpr) Literal() any   { return n.Token.Literal }
+func (n *BooleanLiteralExpr) ExprNode()              {}
+func (n *BooleanLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *BooleanLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *BooleanLiteralExpr) GetToken() *token.Token { return &n.Token }
 
 type UnaryExpr struct {
 	Token   token.Token
@@ -46,9 +50,10 @@ type UnaryExpr struct {
 	Right   Expr
 }
 
-func (n *UnaryExpr) ExprNode()      {}
-func (n *UnaryExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *UnaryExpr) Literal() any   { return n.Token.Literal }
+func (n *UnaryExpr) ExprNode()              {}
+func (n *UnaryExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *UnaryExpr) Literal() any           { return n.Token.Literal }
+func (n *UnaryExpr) GetToken() *token.Token { return &n.Token }
 
 type BinaryExpr struct {
 	Token   token.Token
@@ -57,18 +62,20 @@ type BinaryExpr struct {
 	Right   Expr
 }
 
-func (n *BinaryExpr) ExprNode()      {}
-func (n *BinaryExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *BinaryExpr) Literal() any   { return n.Token.Literal }
+func (n *BinaryExpr) ExprNode()              {}
+func (n *BinaryExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *BinaryExpr) Literal() any           { return n.Token.Literal }
+func (n *BinaryExpr) GetToken() *token.Token { return &n.Token }
 
 type ParenExpr struct {
 	Token      token.Token
 	Expression Expr
 }
 
-func (n *ParenExpr) ExprNode()      {}
-func (n *ParenExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *ParenExpr) Literal() any   { return n.Token.Literal }
+func (n *ParenExpr) ExprNode()              {}
+func (n *ParenExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *ParenExpr) Literal() any           { return n.Token.Literal }
+func (n *ParenExpr) GetToken() *token.Token { return &n.Token }
 
 type FunctionLiteralExpr struct {
 	Token     token.Token
@@ -76,9 +83,10 @@ type FunctionLiteralExpr struct {
 	Body      *BlockStmt
 }
 
-func (n *FunctionLiteralExpr) ExprNode()      {}
-func (n *FunctionLiteralExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *FunctionLiteralExpr) Literal() any   { return n.Token.Literal }
+func (n *FunctionLiteralExpr) ExprNode()              {}
+func (n *FunctionLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *FunctionLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *FunctionLiteralExpr) GetToken() *token.Token { return &n.Token }
 
 type CallExpr struct {
 	Token     token.Token
@@ -86,9 +94,10 @@ type CallExpr struct {
 	Arguments []Expr
 }
 
-func (n *CallExpr) ExprNode()      {}
-func (n *CallExpr) Lexeme() string { return n.Token.Lexeme }
-func (n *CallExpr) Literal() any   { return n.Token.Literal }
+func (n *CallExpr) ExprNode()              {}
+func (n *CallExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *CallExpr) Literal() any           { return n.Token.Literal }
+func (n *CallExpr) GetToken() *token.Token { return &n.Token }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckExpr() {

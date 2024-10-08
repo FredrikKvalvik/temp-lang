@@ -10,18 +10,20 @@ type LetStmt struct {
 	Value Expr
 }
 
-func (n *LetStmt) StmtNode()      {}
-func (n *LetStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *LetStmt) Literal() any   { return n.Token.Literal }
+func (n *LetStmt) StmtNode()              {}
+func (n *LetStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *LetStmt) Literal() any           { return n.Token.Literal }
+func (n *LetStmt) GetToken() *token.Token { return &n.Token }
 
 type ExpressionStmt struct {
 	Token      token.Token
 	Expression Expr
 }
 
-func (n *ExpressionStmt) StmtNode()      {}
-func (n *ExpressionStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *ExpressionStmt) Literal() any   { return n.Token.Literal }
+func (n *ExpressionStmt) StmtNode()              {}
+func (n *ExpressionStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *ExpressionStmt) Literal() any           { return n.Token.Literal }
+func (n *ExpressionStmt) GetToken() *token.Token { return &n.Token }
 
 type IfStmt struct {
 	Token     token.Token
@@ -30,27 +32,30 @@ type IfStmt struct {
 	Else      Stmt
 }
 
-func (n *IfStmt) StmtNode()      {}
-func (n *IfStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *IfStmt) Literal() any   { return n.Token.Literal }
+func (n *IfStmt) StmtNode()              {}
+func (n *IfStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *IfStmt) Literal() any           { return n.Token.Literal }
+func (n *IfStmt) GetToken() *token.Token { return &n.Token }
 
 type BlockStmt struct {
 	Token      token.Token
 	Statements []Stmt
 }
 
-func (n *BlockStmt) StmtNode()      {}
-func (n *BlockStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *BlockStmt) Literal() any   { return n.Token.Literal }
+func (n *BlockStmt) StmtNode()              {}
+func (n *BlockStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *BlockStmt) Literal() any           { return n.Token.Literal }
+func (n *BlockStmt) GetToken() *token.Token { return &n.Token }
 
 type ReturnStmt struct {
 	Token token.Token
 	Value Expr
 }
 
-func (n *ReturnStmt) StmtNode()      {}
-func (n *ReturnStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *ReturnStmt) Literal() any   { return n.Token.Literal }
+func (n *ReturnStmt) StmtNode()              {}
+func (n *ReturnStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *ReturnStmt) Literal() any           { return n.Token.Literal }
+func (n *ReturnStmt) GetToken() *token.Token { return &n.Token }
 
 type EachStmt struct {
 	Token     token.Token
@@ -60,18 +65,32 @@ type EachStmt struct {
 	Body      *BlockStmt
 }
 
-func (n *EachStmt) StmtNode()      {}
-func (n *EachStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *EachStmt) Literal() any   { return n.Token.Literal }
+func (n *EachStmt) StmtNode()              {}
+func (n *EachStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *EachStmt) Literal() any           { return n.Token.Literal }
+func (n *EachStmt) GetToken() *token.Token { return &n.Token }
+
+type IterStmt struct {
+	Token    token.Token
+	Name     Expr
+	Iterable Expr
+	Body     *BlockStmt
+}
+
+func (n *IterStmt) StmtNode()              {}
+func (n *IterStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *IterStmt) Literal() any           { return n.Token.Literal }
+func (n *IterStmt) GetToken() *token.Token { return &n.Token }
 
 type PrintStmt struct {
 	Token       token.Token
 	Expressions []Expr
 }
 
-func (n *PrintStmt) StmtNode()      {}
-func (n *PrintStmt) Lexeme() string { return n.Token.Lexeme }
-func (n *PrintStmt) Literal() any   { return n.Token.Literal }
+func (n *PrintStmt) StmtNode()              {}
+func (n *PrintStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *PrintStmt) Literal() any           { return n.Token.Literal }
+func (n *PrintStmt) GetToken() *token.Token { return &n.Token }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckStmt() {
@@ -81,5 +100,6 @@ func typecheckStmt() {
 	_ = Stmt(&BlockStmt{})
 	_ = Stmt(&ReturnStmt{})
 	_ = Stmt(&EachStmt{})
+	_ = Stmt(&IterStmt{})
 	_ = Stmt(&PrintStmt{})
 }

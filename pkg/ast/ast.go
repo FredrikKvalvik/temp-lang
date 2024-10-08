@@ -9,12 +9,15 @@ package ast
 import (
 	"fmt"
 	"strings"
+
+	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
 type Node interface {
 	Literal() any
 	Lexeme() string
 	String() string
+	GetToken() *token.Token
 }
 
 type Stmt interface {
@@ -33,6 +36,9 @@ type Program struct {
 
 func (p *Program) Literal() any   { return "PROGRAM" }
 func (p *Program) Lexeme() string { return "PROGRAM" }
+func (p *Program) GetToken() *token.Token {
+	return &token.Token{Type: token.ILLEGAL}
+}
 func (p *Program) String() string {
 	var str strings.Builder
 
@@ -133,6 +139,10 @@ func (r *EachStmt) String() string {
 	)
 
 	return str.String()
+}
+
+func (s *IterStmt) String() string {
+	return "TODO ITER TEMP WLOLOL"
 }
 
 func (i *IdentifierExpr) String() string {

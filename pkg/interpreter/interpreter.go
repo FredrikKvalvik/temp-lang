@@ -48,6 +48,42 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.BlockStmt:
 		return evalBlockStatment(n, env)
 
+		// flow
+	// -- check for iterable
+	// -- if iterable, se if the type is valid
+	// -- resolve how to iterate based on the type of iterable
+	// -- if name != nil, set the first item to local name var.
+	// -- update var at the end of each loop
+	// -- each step can be its own function
+	case *ast.IterStmt:
+		if n.Iterable == nil {
+			// return evalEachBody(n.Body, TRUE, scope)
+			return nil
+		}
+
+		scope := object.NewEnv(env)
+		if n.Name != nil {
+			name, ok := n.Name.(*ast.IdentifierExpr)
+			if !ok {
+				return &object.Error{Error: TypeError, Token: *n.Name.GetToken()}
+			}
+			scope.DeclareVar(name.Value, NIL)
+		}
+
+		iterable := Eval(n.Iterable, env)
+		if isError(iterable) {
+			return iterable
+		}
+
+		// s := make([]object.Object, 0)
+		// switch it := iterable.(type) {
+		// case *object.Number:
+
+		// }
+
+		// TODO: implement loop logic and semantics
+		return NIL
+
 	case *ast.EachStmt:
 		return evalEachStatment(n, env)
 
