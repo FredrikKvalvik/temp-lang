@@ -12,9 +12,12 @@ const (
 	STRING_ITER
 )
 
+// return true while iterator is returning items.
+// return false when end is reached.
 type Iterator interface {
-	Next() Object
-	Done() bool
+	Next() (Object, bool)
+
+	// Done() bool
 }
 
 func NewIterator(iterable Object) (Iterator, *ErrorObj) {
@@ -41,19 +44,19 @@ func newStringIterator(str *StringObj) *StringIter {
 	}
 }
 
-func (si *StringIter) Next() Object {
-	if si.Done() {
-		return nil
+func (si *StringIter) Next() (Object, bool) {
+	if si.reader.Len() == 0 {
+		return nil, false
 	}
 
 	ch, _, err := si.reader.ReadRune()
 
 	if err != nil {
-		return &ErrorObj{Error: fmt.Errorf("Could not read string")}
+		return &ErrorObj{Error: fmt.Errorf("Could not read string")}, false
 	}
 	str := &StringObj{Value: string(ch)}
 
-	return str
+	return str, true
 }
 
 func (si *StringIter) Done() bool { return si.reader.Len() == 0 }
@@ -68,9 +71,26 @@ func newNumberIterator(num *NumberObj) *NumberIter {
 		number: num,
 	}
 }
-func (ni *NumberIter) Next() Object {
+func (ni *NumberIter) Next() (Object, bool) {
+	if ni.index >= int(ni.number.Value) {
+		return nil, false
+	}
 	n := &NumberObj{Value: float64(ni.index)}
 	ni.index += 1
-	return n
+
+	return n, true
 }
-func (ni *NumberIter) Done() bool { return ni.index >= int(ni.number.Value) }
+
+// type BooleanIter struct {
+// 	bool *BooleanObj
+// }
+
+// func newBooleanIterator(str *BooleanObj) *BooleanIter {
+// 	return &BooleanIter{
+// 		bool: str,
+// 	}
+// }
+// func (ni *BooleanIter) Next() Object {
+// 	return nil
+// }
+// func (ni *BooleanIter) Done() bool { return false }
