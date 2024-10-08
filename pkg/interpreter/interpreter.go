@@ -75,6 +75,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return iterable
 		}
 
+		_, err := object.NewIterator(iterable)
+		if err != nil {
+			return err
+		}
 		// s := make([]object.Object, 0)
 		// switch it := iterable.(type) {
 		// case *object.Number:
