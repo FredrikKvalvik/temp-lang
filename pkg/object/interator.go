@@ -12,12 +12,10 @@ const (
 	STRING_ITER
 )
 
-// return true while iterator is returning items.
-// return false when end is reached.
+// return true while iterator is returning items. return false when end of loop is finisjed
 type Iterator interface {
-	Next() (Object, bool)
-
-	// Done() bool
+	Next() Object
+	Done() bool
 }
 
 func NewIterator(iterable Object) (Iterator, *ErrorObj) {
@@ -26,6 +24,8 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 		return newStringIterator(it), nil
 	case *NumberObj:
 		return newNumberIterator(it), nil
+	case *BooleanObj:
+		return newBooleanIterator(it), nil
 
 	default:
 		return nil, &ErrorObj{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
@@ -44,19 +44,19 @@ func newStringIterator(str *StringObj) *StringIter {
 	}
 }
 
-func (si *StringIter) Next() (Object, bool) {
-	if si.reader.Len() == 0 {
-		return nil, false
+func (si *StringIter) Next() Object {
+	if si.Done() {
+		return nil
 	}
 
 	ch, _, err := si.reader.ReadRune()
 
 	if err != nil {
-		return &ErrorObj{Error: fmt.Errorf("Could not read string")}, false
+		return &ErrorObj{Error: fmt.Errorf("Could not read string")}
 	}
 	str := &StringObj{Value: string(ch)}
 
-	return str, true
+	return str
 }
 
 func (si *StringIter) Done() bool { return si.reader.Len() == 0 }
@@ -71,26 +71,23 @@ func newNumberIterator(num *NumberObj) *NumberIter {
 		number: num,
 	}
 }
-func (ni *NumberIter) Next() (Object, bool) {
-	if ni.index >= int(ni.number.Value) {
-		return nil, false
-	}
+func (ni *NumberIter) Next() Object {
 	n := &NumberObj{Value: float64(ni.index)}
 	ni.index += 1
+	return n
+}
+func (ni *NumberIter) Done() bool { return ni.index >= int(ni.number.Value) }
 
-	return n, true
+type BooleanIter struct {
+	bool *BooleanObj
 }
 
-// type BooleanIter struct {
-// 	bool *BooleanObj
-// }
-
-// func newBooleanIterator(str *BooleanObj) *BooleanIter {
-// 	return &BooleanIter{
-// 		bool: str,
-// 	}
-// }
-// func (ni *BooleanIter) Next() Object {
-// 	return nil
-// }
-// func (ni *BooleanIter) Done() bool { return false }
+func newBooleanIterator(bool *BooleanObj) *BooleanIter {
+	return &BooleanIter{
+		bool: bool,
+	}
+}
+func (ni *BooleanIter) Next() Object {
+	return ni.bool
+}
+func (ni *BooleanIter) Done() bool { return !ni.bool.Value }

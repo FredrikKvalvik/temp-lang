@@ -56,37 +56,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	// -- update var at the end of each loop
 	// -- each step can be its own function
 	case *ast.IterStmt:
-		if n.Iterable == nil {
-			// return evalEachBody(n.Body, TRUE, scope)
-			return nil
-		}
-
-		scope := object.NewEnv(env)
-		if n.Name != nil {
-			name, ok := n.Name.(*ast.IdentifierExpr)
-			if !ok {
-				return &object.ErrorObj{Error: TypeError, Token: *n.Name.GetToken()}
-			}
-			scope.DeclareVar(name.Value, NIL)
-		}
-
-		iterable := Eval(n.Iterable, env)
-		if isError(iterable) {
-			return iterable
-		}
-
-		_, err := object.NewIterator(iterable)
-		if err != nil {
-			return err
-		}
-		// s := make([]object.Object, 0)
-		// switch it := iterable.(type) {
-		// case *object.Number:
-
-		// }
-
-		// TODO: implement loop logic and semantics
-		return NIL
+		return evalIterStatement(n, env)
 
 	case *ast.EachStmt:
 		return evalEachStatment(n, env)
@@ -169,6 +139,49 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
 	}
+}
+
+func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Object {
+	if node.Iterable == nil {
+		// when no iterable is found, default to infinite loop
+		node.Iterable = &ast.BooleanLiteralExpr{Value: true}
+	}
+
+	scope := object.NewEnv(env)
+	var name *ast.IdentifierExpr
+	if node.Name != nil {
+		ident, ok := node.Name.(*ast.IdentifierExpr)
+		if !ok {
+			return &object.ErrorObj{Error: TypeError, Token: *node.Name.GetToken()}
+		}
+		scope.DeclareVar(ident.Value, NIL)
+		name = ident
+	}
+
+	iterable := Eval(node.Iterable, env)
+	if isError(iterable) {
+		return iterable
+	}
+
+	iterator, err := object.NewIterator(iterable)
+	if err != nil {
+		return err
+	}
+
+	var result object.Object = NIL
+	for !iterator.Done() {
+		val := iterator.Next()
+		if name != nil {
+			scope.SetVar(name.Value, val)
+		}
+
+		result = Eval(node.Body, scope)
+		if isError(result) || result.Type() == object.RETURN_OBJ {
+			return result
+		}
+	}
+
+	return result
 }
 
 func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object {

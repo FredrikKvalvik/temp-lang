@@ -259,35 +259,31 @@ func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 		Token: p.curToken,
 	}
 
+	p.advance()
+
 	// handle case where there is no name or iterable
 	// return early
-	if p.peekTokenIs(token.LBRACE) {
+	if p.curTokenIs(token.LBRACE) {
+		// each { ... }
+		//      ^
 		// return with no name or iterable set
-		p.advance()
 		body := p.parseBlockStatement()
 		each.Body = body
 		return each
 	}
 
-	p.advance()
+	// each items { ... }
 	// each item : items { ... }
 	//      ^
 	first := p.parseExpression(LOWEST)
-	// each item : items { ... }
-	//         ^
+	// each items { ... }
+	// each  item : items { ... }
+	//          ^
 
-	p.consume(token.COLON)
-
-	// each item : items { ... }
-	//           ^
-	if !p.curTokenIs(token.LBRACE) {
-		p.advance()
-		// each item : items { ... }
-		//             ^
-
+	if !p.peekTokenIs(token.LBRACE) {
 		// set first to iterable and return each with no local var name
 		each.Name = first
-
+		p.advance()
 		p.advance()
 		// each item : items { ... }
 		//             ^
@@ -297,15 +293,16 @@ func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 		//                 ^
 		each.Iterable = iterable
 
+		p.advance()
+		// each item : items { ... }
+		//                   ^
 	} else {
 		each.Iterable = first
+		p.advance()
 		// each items { ... }
-		//          ^
+		//            ^
 	}
 
-	p.advance()
-	// each item : items { ... }
-	//                   ^
 	body := p.parseBlockStatement()
 	each.Body = body
 
