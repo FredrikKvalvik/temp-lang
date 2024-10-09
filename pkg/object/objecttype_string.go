@@ -14,12 +14,13 @@ func _() {
 	_ = x[STRING_OBJ-3]
 	_ = x[FUNCTION_LITERAL_OBJ-4]
 	_ = x[RETURN_OBJ-5]
-	_ = x[ERROR_OBJ-6]
+	_ = x[LIST_OBJ-6]
+	_ = x[ERROR_OBJ-7]
 }
 
-const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJRETURN_OBJERROR_OBJ"
+const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJRETURN_OBJLIST_OBJERROR_OBJ"
 
-var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 65, 74}
+var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 65, 73, 82}
 
 func (i ObjectType) String() string {
 	if i < 0 || i >= ObjectType(len(_ObjectType_index)-1) {

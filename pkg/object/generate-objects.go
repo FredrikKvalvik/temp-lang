@@ -68,6 +68,13 @@ var objects = []template{
 		},
 	},
 	{
+		name: "List",
+		typ:  object.LIST_OBJ,
+		props: []keyVal{
+			{"Values", "[]Object"},
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: []keyVal{

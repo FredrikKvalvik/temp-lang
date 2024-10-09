@@ -24,6 +24,7 @@ const (
 	STRING_OBJ
 	FUNCTION_LITERAL_OBJ
 	RETURN_OBJ
+	LIST_OBJ
 	ERROR_OBJ
 )
 
@@ -49,4 +50,21 @@ func (b *FnLiteralObj) Inspect() string {
 	return str.String()
 }
 func (b *ReturnObj) Inspect() string { return fmt.Sprintf("return[%s]", b.Value.Inspect()) }
-func (b *ErrorObj) Inspect() string  { return b.Error.Error() }
+func (b *ListObj) Inspect() string {
+	var str strings.Builder
+
+	fmt.Fprint(&str, "[")
+
+	for i, value := range b.Values {
+		if i != len(b.Values)-1 {
+			fmt.Fprintf(&str, "%s, ", value.Inspect())
+		} else {
+			fmt.Fprint(&str, value.Inspect())
+		}
+	}
+
+	fmt.Fprint(&str, "]")
+
+	return str.String()
+}
+func (b *ErrorObj) Inspect() string { return b.Error.Error() }

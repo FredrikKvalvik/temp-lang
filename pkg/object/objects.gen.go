@@ -43,6 +43,12 @@ type ReturnObj struct {
 
 func (n *ReturnObj) Type() ObjectType { return RETURN_OBJ }
 
+type ListObj struct {
+	Values []Object
+}
+
+func (n *ListObj) Type() ObjectType { return LIST_OBJ }
+
 type ErrorObj struct {
 	Error error
 	Token token.Token
@@ -58,5 +64,6 @@ func typecheck() {
 	_ = Object(&StringObj{})
 	_ = Object(&FnLiteralObj{})
 	_ = Object(&ReturnObj{})
+	_ = Object(&ListObj{})
 	_ = Object(&ErrorObj{})
 }
