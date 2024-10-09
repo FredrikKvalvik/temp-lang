@@ -30,7 +30,6 @@ var stmts = []template{
 	{
 		name: "Let",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Name", "*Identifier" + expr},
 			{"Value", expr},
 		},
@@ -38,14 +37,12 @@ var stmts = []template{
 	{
 		name: "Expression",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Expression", expr},
 		},
 	},
 	{
 		name: "If",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Condition", expr},
 			{"Then", "*Block" + stmt},
 			{"Else", stmt},
@@ -54,21 +51,18 @@ var stmts = []template{
 	{
 		name: "Block",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Statements", "[]" + stmt},
 		},
 	},
 	{
 		name: "Return",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Value", expr},
 		},
 	},
 	{
 		name: "Each",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Init", "*Let" + stmt},
 			{"Condition", expr},
 			{"Update", expr},
@@ -78,7 +72,6 @@ var stmts = []template{
 	{
 		name: "Iter",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Name", expr},
 			{"Iterable", expr},
 			{"Body", "*Block" + stmt},
@@ -87,7 +80,6 @@ var stmts = []template{
 	{
 		name: "Print",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Expressions", "[]" + expr},
 		},
 	},
@@ -97,35 +89,30 @@ var exprs = []template{
 	{
 		name: "Identifier",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Value", "string"},
 		},
 	},
 	{
 		name: "NumberLiteral",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Value", "float64"},
 		},
 	},
 	{
 		name: "StringLiteral",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Value", "string"},
 		},
 	},
 	{
 		name: "BooleanLiteral",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Value", "bool"},
 		},
 	},
 	{
 		name: "Unary",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Operand", "token.TokenType"},
 			{"Right", expr},
 		},
@@ -133,7 +120,6 @@ var exprs = []template{
 	{
 		name: "Binary",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Operand", "token.TokenType"},
 			{"Left", expr},
 			{"Right", expr},
@@ -142,14 +128,12 @@ var exprs = []template{
 	{
 		name: "Paren",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Expression", expr},
 		},
 	},
 	{
 		name: "FunctionLiteral",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Arguments", "[]*Identifier" + expr},
 			{"Body", "*Block" + stmt},
 		},
@@ -157,7 +141,6 @@ var exprs = []template{
 	{
 		name: "Call",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Callee", expr},
 			{"Arguments", "[]" + expr},
 		},
@@ -165,7 +148,6 @@ var exprs = []template{
 	{
 		name: "ListLiteral",
 		props: []keyVal{
-			{"Token", "token.Token"},
 			{"Items", "[]" + expr},
 		},
 	},
@@ -193,8 +175,9 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
-		// f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
-		for _, kv := range s.props {
+		// add token to all ast nodes
+		kvs := append([]keyVal{{"Token", "token.Token"}}, s.props...)
+		for _, kv := range kvs {
 			f.WriteString(fmt.Sprintf("\t%s %s\n", kv.key, kv.value))
 		}
 
