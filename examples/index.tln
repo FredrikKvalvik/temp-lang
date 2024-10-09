@@ -4,3 +4,9 @@ let list = ["indexing", "just", "works"]
 each i : 3 {
 	print list[i]
 }
+
+let str = "hello world"
+
+each i : 3 {
+	print str[i * 2]
+}

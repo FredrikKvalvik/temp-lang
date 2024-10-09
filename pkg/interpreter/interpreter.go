@@ -161,10 +161,30 @@ func evalIndexExpression(left, index object.Object) object.Object {
 	switch {
 	case left.Type() == object.LIST_OBJ && index.Type() == object.NUMBER_OBJ:
 		return evalIndexListExpression(left, index)
+	case left.Type() == object.STRING_OBJ && index.Type() == object.NUMBER_OBJ:
+		return evalIndexStringExpression(left, index)
 
 	default:
 		return &object.ErrorObj{Error: TypeError}
 	}
+}
+
+func evalIndexStringExpression(left, index object.Object) object.Object {
+	idx := index.(*object.NumberObj).Value
+	if !isIntegral(idx) {
+		return newError(IllegalFloatAsIndexError)
+	}
+
+	str := left.(*object.StringObj).Value
+	maxIdx := len(str) - 1
+
+	if int(idx) > maxIdx || idx < 0 {
+		return newError(IndexOutOfBoundsError)
+	}
+
+	// PERF: extremely inefficient. should look for better solution
+	ch := []rune(str)[int(idx)]
+	return &object.StringObj{Value: string(ch)}
 }
 
 func evalIndexListExpression(left, index object.Object) object.Object {
