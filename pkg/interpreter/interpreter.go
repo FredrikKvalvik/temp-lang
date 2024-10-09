@@ -127,6 +127,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
 
+	case *ast.IndexExpr:
+		left := Eval(n.Left, env)
+		if isError(left) {
+			return left
+		}
+		index := Eval(n.Index, env)
+		if isError(index) {
+			return index
+		}
+		return evalIndexExpression(left, index)
+
 	case *ast.ListLiteralExpr:
 		list := &object.ListObj{}
 		list.Values = evalExpressions(n.Items, env)
@@ -144,6 +155,32 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
 	}
+}
+
+func evalIndexExpression(left, index object.Object) object.Object {
+	switch {
+	case left.Type() == object.LIST_OBJ && index.Type() == object.NUMBER_OBJ:
+		return evalIndexListExpression(left, index)
+
+	default:
+		return &object.ErrorObj{Error: TypeError}
+	}
+}
+
+func evalIndexListExpression(left, index object.Object) object.Object {
+	idx := index.(*object.NumberObj).Value
+	if !isIntegral(idx) {
+		return newError(IllegalFloatAsIndexError)
+	}
+
+	list := left.(*object.ListObj).Values
+	maxIdx := len(list) - 1
+
+	if int(idx) > maxIdx || idx < 0 {
+		return newError(IndexOutOfBoundsError)
+	}
+
+	return list[int(idx)]
 }
 
 func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Object {
@@ -433,4 +470,9 @@ func applyFunction(callee object.Object, args []object.Object) object.Object {
 
 	evaluated := Eval(fn.Body, scope)
 	return unwrapReturn(evaluated)
+}
+
+// helper to check if value is a whole number
+func isIntegral(val float64) bool {
+	return val == float64(int(val))
 }

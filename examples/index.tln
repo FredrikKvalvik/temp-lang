@@ -1,0 +1,6 @@
+
+let list = ["indexing", "just", "works"]
+
+each i : 3 {
+	print list[i]
+}
