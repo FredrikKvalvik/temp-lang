@@ -192,6 +192,20 @@ func (p *Parser) parseBooleanLiteral() ast.Expr {
 	return booleanLiteral
 }
 
+func (p *Parser) parseListLiteralExpression() ast.Expr {
+	// [ item1, item2 ]
+	// ^
+	listLiteral := &ast.ListLiteralExpr{
+		Token: p.curToken,
+	}
+
+	listLiteral.Items = p.parseExpressionList(token.RBRACKET)
+
+	// [ item1, item2 ]
+	//                ^
+	return listLiteral
+}
+
 func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 	list := []ast.Expr{}
 
