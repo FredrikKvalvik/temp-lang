@@ -22,10 +22,14 @@ about how programming languages are made.
 - [x] closures
 - [x] return statements
 - [x] attach REPL to an executed program
+- [x] iteration (for loops or some form of iterator implementation). Currently supports the follow values to iterate:
+  - number - does n iterations where n=number
+  - string - loops through each char in a string. should handle UTF-8 correctly
+  - boolean - infinite loop on true, skip on false
+  - empty - default to boolean=true
 
 ### upcomming freatures / TODOs
 
-- [ ] iteration (for loops or some form of iterator implementation)
 - [ ] complex data structures (array and map)
 - [ ] error messages on runtime errors that help you identify your error
 - [ ] some form of std lib implemented with the language
