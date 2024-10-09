@@ -1,0 +1,12 @@
+
+let sum = fn(nList) {
+	let result = 0
+	each n : nList {
+		result = result + n
+	}
+
+	return result
+}
+
+print sum([10, 5, 100])
+print sum([1, 1, 1])
