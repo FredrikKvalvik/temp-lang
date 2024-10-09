@@ -23,6 +23,9 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 	case *StringObj:
 		return newStringIterator(it), nil
 	case *NumberObj:
+		if !isIntegral(it.Value) {
+			return nil, &ErrorObj{Error: fmt.Errorf("Number iterator must be whole number, got=%v", it.Value)}
+		}
 		return newNumberIterator(it), nil
 	case *BooleanObj:
 		return newBooleanIterator(it), nil
@@ -73,11 +76,13 @@ type NumberIter struct {
 }
 
 func newNumberIterator(num *NumberObj) *NumberIter {
+
 	return &NumberIter{
 		number: num,
 	}
 }
 func (ni *NumberIter) Next() Object {
+
 	n := &NumberObj{Value: float64(ni.index)}
 	ni.index += 1
 	return n
