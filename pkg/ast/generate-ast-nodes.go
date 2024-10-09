@@ -61,15 +61,6 @@ var stmts = []template{
 		},
 	},
 	{
-		name: "Each",
-		props: []keyVal{
-			{"Init", "*Let" + stmt},
-			{"Condition", expr},
-			{"Update", expr},
-			{"Body", "*Block" + stmt},
-		},
-	},
-	{
 		name: "Iter",
 		props: []keyVal{
 			{"Name", expr},

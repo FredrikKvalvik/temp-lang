@@ -48,18 +48,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.BlockStmt:
 		return evalBlockStatment(n, env)
 
-		// flow
-	// -- check for iterable
-	// -- if iterable, se if the type is valid
-	// -- resolve how to iterate based on the type of iterable
-	// -- if name != nil, set the first item to local name var.
-	// -- update var at the end of each loop
-	// -- each step can be its own function
 	case *ast.IterStmt:
 		return evalIterStatement(n, env)
-
-	case *ast.EachStmt:
-		return evalEachStatment(n, env)
 
 	case *ast.UnaryExpr:
 		right := Eval(n.Right, env)
@@ -244,47 +234,6 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	}
 
 	return result
-}
-
-func evalEachStatment(node *ast.EachStmt, env *object.Environment) object.Object {
-	scope := object.NewEnv(env)
-	if node.Init != nil {
-		name := node.Init.Name
-		value := Eval(node.Init.Value, scope)
-		if isError(value) {
-			return value
-		}
-		scope.DeclareVar(name.Value, value)
-	}
-
-	var ret object.Object = NIL
-	for {
-		// default condition to true when no condition is defined
-		var condition object.Object = TRUE
-		if node.Condition != nil {
-			Eval(node.Condition, scope)
-			if condition.Type() != object.BOOL_OBJ {
-				return &object.ErrorObj{Error: fmt.Errorf("Condition for loop must evaluate to a boolean value")}
-			}
-			if condition == FALSE {
-				break
-			}
-		}
-
-		ret = Eval(node.Body, scope)
-		if isError(ret) || ret.Type() == object.RETURN_OBJ {
-			return ret
-		}
-
-		if node.Update != nil {
-			update := Eval(node.Update, scope)
-			if isError(update) {
-				return update
-			}
-		}
-
-	}
-	return ret
 }
 
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {

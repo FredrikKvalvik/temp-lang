@@ -57,19 +57,6 @@ func (n *ReturnStmt) Lexeme() string         { return n.Token.Lexeme }
 func (n *ReturnStmt) Literal() any           { return n.Token.Literal }
 func (n *ReturnStmt) GetToken() *token.Token { return &n.Token }
 
-type EachStmt struct {
-	Token     token.Token
-	Init      *LetStmt
-	Condition Expr
-	Update    Expr
-	Body      *BlockStmt
-}
-
-func (n *EachStmt) StmtNode()              {}
-func (n *EachStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *EachStmt) Literal() any           { return n.Token.Literal }
-func (n *EachStmt) GetToken() *token.Token { return &n.Token }
-
 type IterStmt struct {
 	Token    token.Token
 	Name     Expr
@@ -99,7 +86,6 @@ func typecheckStmt() {
 	_ = Stmt(&IfStmt{})
 	_ = Stmt(&BlockStmt{})
 	_ = Stmt(&ReturnStmt{})
-	_ = Stmt(&EachStmt{})
 	_ = Stmt(&IterStmt{})
 	_ = Stmt(&PrintStmt{})
 }

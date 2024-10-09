@@ -190,67 +190,6 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStmt {
 	return ret
 }
 
-// each statments can take different forms
-// -- each let a = 0; a < 10; a = a + 1 { ... }
-// -- each item in items { ... }
-
-// func (p *Parser) parseEachStatement() *ast.EachStmt {
-// 	// switch p.curToken.Type {
-// 	// case token.LET:
-// 	// 	return p.parseBoomerloopStatement()
-// 	// case token.IDENT:
-// 	// 	return p.parseIteratorStatement()
-// 	// 	// default:
-// 	// 	// 	return p.parseExpressionLoop()
-// 	// }
-
-// 	// return nil
-// 	return p.parseIteratorStatement()
-// }
-
-func (p *Parser) parseBoomerloopStatement() *ast.EachStmt {
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	// ^
-	each := &ast.EachStmt{
-		Token: p.curToken,
-	}
-
-	p.advance()
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//      ^
-	if !p.curTokenIs(token.SEMICOLON) {
-		each.Init = p.parseLetStatment()
-	}
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//               ^
-	p.advance()
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//                 ^
-	if !p.curTokenIs(token.SEMICOLON) {
-		each.Condition = p.parseExpressionStatement().Expression
-	}
-
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//                       ^
-	p.advance()
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//                         ^
-	if !p.curTokenIs(token.LBRACE) {
-		each.Update = p.parseExpressionStatement().Expression
-	}
-	// each let a = 0; a < 10; a = a + 1 { ... }
-	//                                 ^
-	if !p.curTokenIs(token.LBRACE) {
-		err := p.expectError(&p.curToken, token.LBRACE)
-		p.errors = append(p.errors, err)
-		return nil
-	}
-
-	body := p.parseBlockStatement()
-	each.Body = body
-
-	return each
-}
 func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 	// each item : items { ... }
 	// ^
