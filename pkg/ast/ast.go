@@ -142,7 +142,22 @@ func (r *EachStmt) String() string {
 }
 
 func (s *IterStmt) String() string {
-	return "TODO ITER TEMP WLOLOL"
+	var str strings.Builder
+
+	fmt.Fprint(&str, "each")
+
+	switch {
+	case s.Iterable == nil && s.Name == nil:
+		fmt.Fprintf(&str, " ")
+	case s.Iterable != nil && s.Name == nil:
+		fmt.Fprintf(&str, " %s ", s.Iterable.String())
+	case s.Iterable != nil && s.Name != nil:
+		fmt.Fprintf(&str, " %s : %s ", s.Name.String(), s.Iterable.String())
+	}
+
+	fmt.Fprint(&str, s.Body.String())
+
+	return str.String()
 }
 
 func (i *IdentifierExpr) String() string {
@@ -190,10 +205,9 @@ func (p *FunctionLiteralExpr) String() string {
 			s.WriteString(", ")
 		}
 	}
-	s.WriteString(") { .. }")
+	fmt.Fprintf(&s, ") %s", p.Body.String())
 
 	return s.String()
-
 }
 
 func (n *CallExpr) String() string {
@@ -210,6 +224,10 @@ func (n *CallExpr) String() string {
 	s.WriteString(")")
 
 	return s.String()
+}
+
+func (n *ListLiteralExpr) String() string {
+	return "LIST LIT TODO"
 }
 
 func (n *NumberLiteralExpr) String() string {
