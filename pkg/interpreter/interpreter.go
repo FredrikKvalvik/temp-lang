@@ -127,6 +127,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
 
+	case *ast.ListLiteralExpr:
+		list := &object.ListObj{}
+		list.Values = evalExpressions(n.Items, env)
+		return list
+
 	case *ast.BooleanLiteralExpr:
 		return boolObject(n.Value)
 

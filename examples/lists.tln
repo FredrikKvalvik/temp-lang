@@ -1,0 +1,5 @@
+let items = ["items", "from", "list"]
+
+each item : items {
+	print item
+}

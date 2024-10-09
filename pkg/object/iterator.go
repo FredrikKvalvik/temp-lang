@@ -26,6 +26,8 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 		return newNumberIterator(it), nil
 	case *BooleanObj:
 		return newBooleanIterator(it), nil
+	case *ListObj:
+		return newListIterator(it), nil
 
 	default:
 		return nil, &ErrorObj{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
@@ -97,3 +99,27 @@ func (ni *BooleanIter) Next() Object {
 	return ni.bool
 }
 func (ni *BooleanIter) Done() bool { return !ni.bool.Value }
+
+// LIST_ITER
+
+type ListIter struct {
+	values []Object
+	idx    int
+}
+
+func newListIterator(list *ListObj) *ListIter {
+	return &ListIter{
+		values: list.Values,
+	}
+}
+func (li *ListIter) Next() Object {
+	value := li.values[li.idx]
+	li.idx++
+	return value
+}
+func (li *ListIter) Done() bool { return li.idx >= len(li.values) }
+
+// helper to check if value is a whole number
+func isIntegral(val float64) bool {
+	return val == float64(int(val))
+}
