@@ -10,12 +10,15 @@ type IteratorType int
 const (
 	NUMBER_ITER IteratorType = iota
 	STRING_ITER
+	BOOLEAN_ITER
+	LIST_ITER
 )
 
 // return true while iterator is returning items. return false when end of loop is finisjed
 type Iterator interface {
 	Next() Object
 	Done() bool
+	Type() IteratorType
 }
 
 func NewIterator(iterable Object) (Iterator, *ErrorObj) {
@@ -38,18 +41,17 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 
 }
 
+// STRING_ITER
 type StringIter struct {
 	reader *strings.Reader
 }
 
 func newStringIterator(str *StringObj) *StringIter {
 	r := strings.NewReader(str.Value)
-	return &StringIter{
-		reader: r,
-	}
+	return &StringIter{reader: r}
 }
 
-// STRING_ITER
+func (si *StringIter) Type() IteratorType { return STRING_ITER }
 
 func (si *StringIter) Next() Object {
 	if si.Done() {
@@ -81,6 +83,7 @@ func newNumberIterator(num *NumberObj) *NumberIter {
 		number: num,
 	}
 }
+func (i *NumberIter) Type() IteratorType { return NUMBER_ITER }
 func (ni *NumberIter) Next() Object {
 
 	n := &NumberObj{Value: float64(ni.index)}
@@ -100,6 +103,7 @@ func newBooleanIterator(bool *BooleanObj) *BooleanIter {
 		bool: bool,
 	}
 }
+func (i *BooleanIter) Type() IteratorType { return BOOLEAN_ITER }
 func (ni *BooleanIter) Next() Object {
 	return ni.bool
 }
@@ -117,6 +121,7 @@ func newListIterator(list *ListObj) *ListIter {
 		values: list.Values,
 	}
 }
+func (i *ListIter) Type() IteratorType { return LIST_ITER }
 func (li *ListIter) Next() Object {
 	value := li.values[li.idx]
 	li.idx++
