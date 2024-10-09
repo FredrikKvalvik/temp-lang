@@ -247,3 +247,22 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 
 	return list
 }
+
+func (p *Parser) parseIndexExpression(left ast.Expr) ast.Expr {
+	// list [ expr ]
+	//      ^
+	expr := &ast.IndexExpr{Token: p.curToken, Left: left}
+
+	p.advance()
+	// list [ expr ]
+	//        ^
+	expr.Index = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+	// list [ expr ]
+	//             ^
+
+	return expr
+}

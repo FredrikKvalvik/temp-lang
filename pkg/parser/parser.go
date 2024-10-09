@@ -94,6 +94,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.ASSIGN, p.parseBinary)
 
 	p.registerInfix(token.LPAREN, p.parseCall)
+	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
 	return p
 }

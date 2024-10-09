@@ -151,6 +151,13 @@ var exprs = []template{
 			{"Items", "[]" + expr},
 		},
 	},
+	{
+		name: "Index",
+		props: []keyVal{
+			{"Left", expr},
+			{"Index", expr},
+		},
+	},
 }
 
 // This will generate a file for statements and expressions

@@ -226,6 +226,10 @@ func (n *CallExpr) String() string {
 	return s.String()
 }
 
+func (n *IndexExpr) String() string {
+	return "TODO INDEX STRING"
+}
+
 func (n *ListLiteralExpr) String() string {
 	return "LIST LIT TODO"
 }

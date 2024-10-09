@@ -345,6 +345,33 @@ func TestListLiteralExpressions(t *testing.T) {
 		})
 	}
 }
+func TestIndexExpressions(t *testing.T) {
+	tests := []struct {
+		input string
+	}{
+		{"a[0]"},
+		{"[list][0]"},
+		{`"hello world"[0]`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+
+			res := testParseProgram(tt.input)
+			tr.AssertEqual(len(res.Statements), 1)
+
+			expression, ok := res.Statements[0].(*ast.ExpressionStmt)
+			tr.AssertTrue(ok)
+
+			indexExpr, ok := expression.Expression.(*ast.IndexExpr)
+			tr.AssertTrue(ok)
+
+			tr.AssertNotNil(indexExpr.Left)
+			tr.AssertNotNil(indexExpr.Index)
+		})
+	}
+}
 
 func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, op token.TokenType, eRight any) bool {
 	t.Helper()
