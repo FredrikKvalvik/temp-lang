@@ -26,12 +26,14 @@ about how programming languages are made.
   - number - does n iterations where n=number
   - string - loops through each char in a string. should handle UTF-8 correctly
   - boolean - infinite loop on true, skip on false
-  - empty - default to boolean=true
+  - list - loop through items in a list from start to end
+  - none - default to boolean=true
+- [x] app "list" value for ordered lists of values
 
 ### upcomming freatures / TODOs
 
-- [ ] complex data structures (array and map)
-- [ ] error messages on runtime errors that help you identify your error
+- [ ] Add "map" value as key-value pair storage
+- [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
 - [ ] some form of std lib implemented with the language
 - [ ] formatted strings with print statment
 
