@@ -29,7 +29,7 @@ const (
 
 func (n *NilObj) Inspect() string     { return "nil" }
 func (b *BooleanObj) Inspect() string { return fmt.Sprintf("%v", b.Value) }
-func (b *StringObj) Inspect() string  { return fmt.Sprintf(`"%s"`, b.Value) }
+func (b *StringObj) Inspect() string  { return fmt.Sprintf(`%s`, b.Value) }
 func (b *NumberObj) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
 func (b *FnLiteralObj) Inspect() string {
 	var str strings.Builder
