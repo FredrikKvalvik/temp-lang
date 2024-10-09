@@ -99,6 +99,16 @@ func (n *CallExpr) Lexeme() string         { return n.Token.Lexeme }
 func (n *CallExpr) Literal() any           { return n.Token.Literal }
 func (n *CallExpr) GetToken() *token.Token { return &n.Token }
 
+type ListLiteralExpr struct {
+	Token token.Token
+	Items []Expr
+}
+
+func (n *ListLiteralExpr) ExprNode()              {}
+func (n *ListLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *ListLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *ListLiteralExpr) GetToken() *token.Token { return &n.Token }
+
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckExpr() {
 	_ = Expr(&IdentifierExpr{})
@@ -110,4 +120,5 @@ func typecheckExpr() {
 	_ = Expr(&ParenExpr{})
 	_ = Expr(&FunctionLiteralExpr{})
 	_ = Expr(&CallExpr{})
+	_ = Expr(&ListLiteralExpr{})
 }

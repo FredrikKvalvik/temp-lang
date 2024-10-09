@@ -162,6 +162,13 @@ var exprs = []template{
 			{"Arguments", "[]" + expr},
 		},
 	},
+	{
+		name: "ListLiteral",
+		props: []keyVal{
+			{"Token", "token.Token"},
+			{"Items", "[]" + expr},
+		},
+	},
 }
 
 // This will generate a file for statements and expressions

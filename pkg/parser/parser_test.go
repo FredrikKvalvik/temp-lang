@@ -280,13 +280,13 @@ func TestFunctionCalls(t *testing.T) {
 			"function", 3},
 		// anynomous function call without args
 		{"fn() {}()",
-			"fn() { .. }", 0},
+			"fn() {\n}", 0},
 		// anynomous function call without args
 		{"fn(a) {}(1)",
-			"fn(a) { .. }", 1},
+			"fn(a) {\n}", 1},
 		// anynomous function call with args
 		{"fn(a,b,c) {}(1,2,3)",
-			"fn(a, b, c) { .. }", 3},
+			"fn(a, b, c) {\n}", 3},
 	}
 
 	for idx, tt := range tests {
@@ -312,6 +312,37 @@ func TestFunctionCalls(t *testing.T) {
 		tr.SetName(fmt.Sprintf("[%d]test call args", idx))
 		tr.AssertEqual(len(call.Arguments), tt.expectedArgsLen)
 
+	}
+}
+
+func TestListLiteralExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []any
+	}{
+		{"[]",
+			[]any{}},
+		{"[1]",
+			[]any{float64(1)}},
+		{`[1, "hello", "world"]`,
+			[]any{float64(1), "hello", "world"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+
+			res := testParseProgram(tt.input)
+			tr.AssertEqual(len(res.Statements), 1)
+
+			expression, ok := res.Statements[0].(*ast.ExpressionStmt)
+			tr.AssertTrue(ok)
+
+			listLit, ok := expression.Expression.(*ast.ListLiteralExpr)
+			tr.AssertTrue(ok)
+
+			tr.AssertEqual(len(listLit.Items), len(tt.expected))
+		})
 	}
 }
 
