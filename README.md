@@ -57,11 +57,28 @@ based on the type/value of tokens. For most of this paring, we use a
 
 ### Evaluator/interpreter
 
-At last, we evaluate the AST based on the semantics defined on the interpreter.
+At last, we evaluate the AST based on the semantics defined on the interpreter. The interpreter is
+whats called a "tree-walking-interpreter" where it works directly on the AST, instead of making
+istead of a more efficient datastructure. The reason for this is simplicity.
 
 ## Notes
 
-[https://mukulrathi.com/](https://mukulrathi.com/create-your-own-programming-language/intro-to-type-checking/)
+There are some blurred lines on where the responsibility lies when it comes to the interpreter.
+The main idea is that the lexer and parser are responsible for making sure that the program
+is grammatically correct, but they should not care about the semantics. an example of this with english:
+
+- timmy drives a car.
+
+This is a valid sentence in english following the structure of `subject-verb-object`.
+The parser defines this structure, and will accept anything, as long as the structure is correct.
+
+- emil dances a motorcycle.
+
+This sentence follows the same structure as the previous one, but it doesn't make sense. The parser
+doesn't care about that, as long as the words are the correct type, in the correct order, it is happy.
+
+The meaning of the words is decided by the interpreter. The interpreter will evaluate the sentences
+and see if the words actually mean anything.
 
 <!-- ## sources -->
 
