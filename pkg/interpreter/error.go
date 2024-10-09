@@ -9,14 +9,20 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
-var (
-	TypeError            = errors.New("Unexpected type")
-	UseOfUndeclaredError = errors.New("Use of undeclared var")
-	UnknownNodeError     = errors.New("Unknown node")
+type InterpreterError error
 
-	IllegalOperationError     = errors.New("Illegal operation")
-	IllegalGlobalReturnError  = errors.New("Illegal return in global scope")
-	IllegalRedaclarationError = errors.New("Illegal declaration")
+var (
+	TypeError            InterpreterError = errors.New("Unexpected type")
+	UseOfUndeclaredError InterpreterError = errors.New("Use of undeclared var")
+	UnknownNodeError     InterpreterError = errors.New("Unknown node")
+
+	IllegalOperationError     InterpreterError = errors.New("Illegal operation")
+	IllegalIndexError         InterpreterError = errors.New("Illegal Index")
+	IllegalFloatAsIndexError  InterpreterError = errors.New("Can't use decimal as index to list")
+	IllegalGlobalReturnError  InterpreterError = errors.New("Illegal return in global scope")
+	IllegalRedaclarationError InterpreterError = errors.New("Illegal declaration")
+
+	IndexOutOfBoundsError InterpreterError = errors.New("Index out of bound")
 )
 
 // TODO: add line:col numbers to errors
@@ -26,6 +32,14 @@ func isError(obj object.Object) bool {
 		return obj.Type() == object.ERROR_OBJ
 	}
 	return false
+}
+
+func newError(err InterpreterError, msgs ...string) *object.ErrorObj {
+	errs := []error{err}
+	for _, err := range msgs {
+		errs = append(errs, errors.New(err))
+	}
+	return &object.ErrorObj{Error: errors.Join(errs...)}
 }
 
 func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.ErrorObj {
