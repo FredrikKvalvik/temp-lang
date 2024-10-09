@@ -44,6 +44,8 @@ func newStringIterator(str *StringObj) *StringIter {
 	}
 }
 
+// STRING_ITER
+
 func (si *StringIter) Next() Object {
 	if si.Done() {
 		return nil
@@ -61,6 +63,8 @@ func (si *StringIter) Next() Object {
 
 func (si *StringIter) Done() bool { return si.reader.Len() == 0 }
 
+// NUMBER_ITER
+
 type NumberIter struct {
 	number *NumberObj
 	index  int
@@ -77,6 +81,8 @@ func (ni *NumberIter) Next() Object {
 	return n
 }
 func (ni *NumberIter) Done() bool { return ni.index >= int(ni.number.Value) }
+
+// BOOLEAN_ITER
 
 type BooleanIter struct {
 	bool *BooleanObj
