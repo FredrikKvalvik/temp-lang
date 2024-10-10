@@ -2,7 +2,7 @@
 
 _Name pending_
 
-Templang is a dynamically typed scripting language made created for me to learn
+Templang is a dynamically typed scripting language made for me to learn
 about how programming languages are made.
 
 ## (Current) Language features
