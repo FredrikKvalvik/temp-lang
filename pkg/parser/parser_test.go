@@ -345,6 +345,67 @@ func TestListLiteralExpressions(t *testing.T) {
 		})
 	}
 }
+
+func TestMapLiteralExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected map[any]any
+	}{
+		{"({})",
+			map[any]any{}},
+		{`({"10":10})`,
+			map[any]any{"10": 10}},
+		{`({1:10,true:false})`,
+			map[any]any{float64(1): 10, true: false}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+
+			res := testParseProgram(tt.input)
+			tr.AssertEqual(len(res.Statements), 1)
+
+			expression, ok := res.Statements[0].(*ast.ExpressionStmt)
+			tr.AssertTrue(ok)
+
+			mapLit, ok := expression.Expression.(*ast.ParenExpr).Expression.(*ast.MapLiteralExpr)
+			tr.AssertTrue(ok)
+
+			for keyExpr, valExpr := range mapLit.KeyValues {
+				tr.T.Run(keyExpr.String(), func(t *testing.T) {
+					tr := tester.New(t, "")
+
+					key := literalToValue(keyExpr)
+					tr.AssertNotNil(key)
+
+					val := literalToValue(valExpr)
+					tr.AssertNotNil(val)
+
+					expectedValue, ok := tt.expected[key]
+					tr.AssertTrue(ok)
+
+					tr.AssertEqual(tt.expected[key], expectedValue)
+
+				})
+			}
+		})
+	}
+}
+
+func literalToValue(expr ast.Expr) any {
+	switch e := expr.(type) {
+	case *ast.NumberLiteralExpr:
+		return e.Value
+	case *ast.StringLiteralExpr:
+		return e.Value
+	case *ast.BooleanLiteralExpr:
+		return e.Value
+	}
+
+	return nil
+}
+
 func TestIndexExpressions(t *testing.T) {
 	tests := []struct {
 		input string

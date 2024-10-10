@@ -266,3 +266,80 @@ func (p *Parser) parseIndexExpression(left ast.Expr) ast.Expr {
 
 	return expr
 }
+
+func (p *Parser) parseMapLiteralExpression() ast.Expr {
+	// { key1: value1,  key2: value2 }
+	// ^
+	mapLit := &ast.MapLiteralExpr{Token: p.curToken}
+
+	mapLit.KeyValues = p.parseExpressionPairs(token.RBRACE)
+	// { key1: value1,  key2: value2 }
+	//                               ^
+
+	return mapLit
+}
+
+func (p *Parser) parseExpressionPairs(end token.TokenType) map[ast.Expr]ast.Expr {
+	// { key1 : value1,  key2 : value2 }
+	// ^
+	pairs := map[ast.Expr]ast.Expr{}
+
+	// handle empty case
+	for p.peekTokenIs(end) {
+		p.advance()
+
+		return pairs
+	}
+
+	p.advance()
+	// { key1 : value1, key2 : value2 }
+	//   ^
+	key := p.parseExpression(LOWEST)
+
+	// { key1 : value1, key2 : value2 }
+	//      ^
+	if !p.expectPeek(token.COLON) {
+		return nil
+	}
+	// { key1 : value1, key2 : value2 }
+	//        ^
+
+	p.advance()
+	// { key1 : value1, key2 : value2 }
+	//          ^
+
+	value := p.parseExpression(LOWEST)
+	// { key1 : value1, key2 : value2 }
+	//               ^
+	pairs[key] = value
+
+	for p.peekTokenIs(token.COMMA) {
+		p.advance()
+		p.advance()
+		// { key1 : value1, key2 : value2 }
+		//                  ^
+		key := p.parseExpression(LOWEST)
+		if !p.expectPeek(token.COLON) {
+			return nil
+		}
+		// { key1 : value1, key2 : value2 }
+		//                       ^
+
+		p.advance()
+		// { key1 : value1, key2 : value2 }
+		//                         ^
+
+		value := p.parseExpression(LOWEST)
+		// { key1 : value1, key2 : value2 }
+		//                              ^
+		pairs[key] = value
+	}
+
+	if !p.expectPeek(end) {
+		return nil
+	}
+	// { key1 : value1, key2 : value2 }
+	//                                ^
+
+	return pairs
+}

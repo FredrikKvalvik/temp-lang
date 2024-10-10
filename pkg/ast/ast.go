@@ -223,7 +223,7 @@ func (n *ListLiteralExpr) String() string {
 	return str.String()
 }
 func (n *MapLiteralExpr) String() string {
-	return "LIST LIT TODO"
+	return "MAP LIT TODO"
 }
 
 func (n *NumberLiteralExpr) String() string {
