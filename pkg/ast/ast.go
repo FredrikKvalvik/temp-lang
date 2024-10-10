@@ -205,6 +205,9 @@ func (n *IndexExpr) String() string {
 func (n *ListLiteralExpr) String() string {
 	return "LIST LIT TODO"
 }
+func (n *MapLiteralExpr) String() string {
+	return "LIST LIT TODO"
+}
 
 func (n *NumberLiteralExpr) String() string {
 	return n.Lexeme()

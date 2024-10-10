@@ -109,6 +109,16 @@ func (n *ListLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
 func (n *ListLiteralExpr) Literal() any           { return n.Token.Literal }
 func (n *ListLiteralExpr) GetToken() *token.Token { return &n.Token }
 
+type MapLiteralExpr struct {
+	Token     token.Token
+	KeyValues map[Expr]Expr
+}
+
+func (n *MapLiteralExpr) ExprNode()              {}
+func (n *MapLiteralExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *MapLiteralExpr) Literal() any           { return n.Token.Literal }
+func (n *MapLiteralExpr) GetToken() *token.Token { return &n.Token }
+
 type IndexExpr struct {
 	Token token.Token
 	Left  Expr
@@ -132,5 +142,6 @@ func typecheckExpr() {
 	_ = Expr(&FunctionLiteralExpr{})
 	_ = Expr(&CallExpr{})
 	_ = Expr(&ListLiteralExpr{})
+	_ = Expr(&MapLiteralExpr{})
 	_ = Expr(&IndexExpr{})
 }

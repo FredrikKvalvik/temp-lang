@@ -143,6 +143,12 @@ var exprs = []template{
 		},
 	},
 	{
+		name: "MapLiteral",
+		props: []keyVal{
+			{"KeyValues", fmt.Sprintf("map[%s]%s", expr, expr)},
+		},
+	},
+	{
 		name: "Index",
 		props: []keyVal{
 			{"Left", expr},
