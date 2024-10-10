@@ -207,7 +207,20 @@ func (n *IndexExpr) String() string {
 }
 
 func (n *ListLiteralExpr) String() string {
-	return "LIST LIT TODO"
+	var str strings.Builder
+
+	str.WriteString("[")
+
+	for idx, expr := range n.Items {
+		fmt.Fprintf(&str, "%s", expr.String())
+
+		if idx != len(n.Items)-1 {
+			str.WriteString(", ")
+		}
+	}
+	str.WriteString("]")
+
+	return str.String()
 }
 func (n *MapLiteralExpr) String() string {
 	return "LIST LIT TODO"
