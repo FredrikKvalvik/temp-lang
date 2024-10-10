@@ -32,7 +32,7 @@ about how programming languages are made.
   - [ ] implement push/pop for lists
   - [ ] implement assign value at index
 
-### upcomming freatures / TODOs
+### upcoming features / TODOs
 
 - [ ] Add "map" value as key-value pair storage
 - [ ] add range/slice operator for indexing and loops
