@@ -199,7 +199,11 @@ func (n *CallExpr) String() string {
 }
 
 func (n *IndexExpr) String() string {
-	return "TODO INDEX STRING"
+	var str strings.Builder
+
+	fmt.Fprintf(&str, "%s[%s]", n.Left.String(), n.Index.String())
+
+	return str.String()
 }
 
 func (n *ListLiteralExpr) String() string {
