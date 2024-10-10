@@ -23,6 +23,7 @@ var (
 	IllegalIndexError        InterpreterError = errors.New("Illegal Index type")
 	IndexOutOfBoundsError    InterpreterError = errors.New("Index out of bound")
 
+	// Internal error only
 	UnknownNodeError InterpreterError = errors.New("Unknown node")
 )
 
@@ -36,6 +37,7 @@ func isError(obj object.Object) bool {
 }
 
 func newError(err InterpreterError, msgs ...string) *object.ErrorObj {
+
 	errs := []error{err}
 	for _, err := range msgs {
 		errs = append(errs, errors.New(err))
