@@ -12,17 +12,18 @@ import (
 type InterpreterError error
 
 var (
-	TypeError            InterpreterError = errors.New("Unexpected type")
-	UseOfUndeclaredError InterpreterError = errors.New("Use of undeclared var")
-	UnknownNodeError     InterpreterError = errors.New("Unknown node")
+	TypeError             InterpreterError = errors.New("Unexpected type")
+	UseOfUndeclaredError  InterpreterError = errors.New("Use of undeclared var")
+	IllegalOperationError InterpreterError = errors.New("Illegal operation")
 
-	IllegalOperationError     InterpreterError = errors.New("Illegal operation")
-	IllegalIndexError         InterpreterError = errors.New("Illegal Index")
-	IllegalFloatAsIndexError  InterpreterError = errors.New("Can't use decimal as index to list")
 	IllegalGlobalReturnError  InterpreterError = errors.New("Illegal return in global scope")
 	IllegalRedaclarationError InterpreterError = errors.New("Illegal declaration")
 
-	IndexOutOfBoundsError InterpreterError = errors.New("Index out of bound")
+	IllegalFloatAsIndexError InterpreterError = errors.New("Can't use decimal as index to list")
+	IllegalIndexError        InterpreterError = errors.New("Illegal Index type")
+	IndexOutOfBoundsError    InterpreterError = errors.New("Index out of bound")
+
+	UnknownNodeError InterpreterError = errors.New("Unknown node")
 )
 
 // TODO: add line:col numbers to errors

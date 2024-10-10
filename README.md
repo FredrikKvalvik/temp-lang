@@ -28,11 +28,16 @@ about how programming languages are made.
   - boolean - infinite loop on true, skip on false
   - list - loop through items in a list from start to end
   - none - default to boolean=true
-- [x] app "list" value for ordered lists of values
+- [x] "list" value for ordered lists of values
+  - [ ] implement push/pop for lists
+  - [ ] implement assign value at index
 
 ### upcomming freatures / TODOs
 
 - [ ] Add "map" value as key-value pair storage
+- [ ] add range/slice operator for indexing and loops
+  - syntax could be be something like `expr -> expr`
+  - should support ranging positive and negative direction
 - [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
 - [ ] some form of std lib implemented with the language
 - [ ] formatted strings with print statment
