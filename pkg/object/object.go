@@ -18,15 +18,16 @@ type Object interface {
 type ObjectType int
 
 const (
-	BOOL_OBJ ObjectType = iota
-	NIL_OBJ
-	NUMBER_OBJ
-	STRING_OBJ
-	FUNCTION_LITERAL_OBJ
-	RETURN_OBJ
-	LIST_OBJ
-	MAP_OBJ
-	ERROR_OBJ
+	_                    ObjectType = iota
+	BOOL_OBJ                        // representes true and false
+	NIL_OBJ                         // sentinel value for "no value"
+	NUMBER_OBJ                      // number object is any float64-representable number
+	STRING_OBJ                      // represents a string value
+	FUNCTION_LITERAL_OBJ            // represents a function object
+	RETURN_OBJ                      // internal type for propagating return values
+	LIST_OBJ                        // collection if objects in an ordered list
+	MAP_OBJ                         // Map is a datatype for storing key-value pairs
+	ERROR_OBJ                       // runtime error
 )
 
 func (n *NilObj) Inspect() string     { return "nil" }
