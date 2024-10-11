@@ -11,6 +11,11 @@ type Hashable interface {
 	HashKey() HashKey
 }
 
+type KeyValuePair struct {
+	Key   Object
+	Value Object
+}
+
 func (s *StringObj) HashKey() HashKey {
 	hash := fnv.New64a()
 	hash.Write([]byte(s.Value))

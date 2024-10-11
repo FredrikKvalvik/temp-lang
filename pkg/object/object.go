@@ -25,6 +25,7 @@ const (
 	FUNCTION_LITERAL_OBJ
 	RETURN_OBJ
 	LIST_OBJ
+	MAP_OBJ
 	ERROR_OBJ
 )
 
@@ -64,6 +65,20 @@ func (b *ListObj) Inspect() string {
 	}
 
 	fmt.Fprint(&str, "]")
+
+	return str.String()
+}
+
+func (b *MapObj) Inspect() string {
+	var str strings.Builder
+
+	fmt.Fprint(&str, "{\n")
+
+	for _, kv := range b.Pairs {
+		fmt.Fprintf(&str, "  %s: %s,\n", kv.Key.Inspect(), kv.Value.Inspect())
+	}
+
+	fmt.Fprint(&str, "}")
 
 	return str.String()
 }

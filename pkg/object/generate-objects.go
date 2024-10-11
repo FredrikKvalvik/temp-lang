@@ -75,6 +75,13 @@ var objects = []template{
 		},
 	},
 	{
+		name: "Map",
+		typ:  object.MAP_OBJ,
+		props: []keyVal{
+			{"Pairs", "map[HashKey]KeyValuePair"},
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: []keyVal{

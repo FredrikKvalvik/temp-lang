@@ -49,6 +49,12 @@ type ListObj struct {
 
 func (n *ListObj) Type() ObjectType { return LIST_OBJ }
 
+type MapObj struct {
+	Pairs map[HashKey]KeyValuePair
+}
+
+func (n *MapObj) Type() ObjectType { return MAP_OBJ }
+
 type ErrorObj struct {
 	Error error
 	Token token.Token
@@ -65,5 +71,6 @@ func typecheck() {
 	_ = Object(&FnLiteralObj{})
 	_ = Object(&ReturnObj{})
 	_ = Object(&ListObj{})
+	_ = Object(&MapObj{})
 	_ = Object(&ErrorObj{})
 }
