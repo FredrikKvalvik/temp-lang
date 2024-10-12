@@ -29,15 +29,22 @@ about how programming languages are made.
   - list - loop through items in a list from start to end
   - none - default to boolean=true
 - [x] "list" value for ordered lists of values
-  - [ ] implement push/pop for lists
-  - [ ] implement assign value at index
+  - [x] Indexing into list
+  - [x] Iteration over list
+  - [ ] Push/pop for lists
+  - [ ] Assign value at index
+- [x] Add "map"-object for key-value pairs where all primitive values are valid keys
+  - [ ] Indexing into map
+  - [ ] Iteration over map
+  - [ ] Assign value at key
 
 ### upcoming features / TODOs
 
-- [ ] Add "map" value as key-value pair storage
-- [ ] add range/slice operator for indexing and loops
+- [ ] \[IDEA\] add range/slice operator for indexing and loops
   - syntax could be be something like `expr -> expr`
   - should support ranging positive and negative direction
+  - should only be valid when used in each stmts.
+  - could also just be a builtin function that creates an iterator for the range
 - [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
 - [ ] some form of std lib implemented with the language
 - [ ] formatted strings with print statment
