@@ -47,6 +47,14 @@ about how programming languages are made.
   - could also just be a builtin function that creates an iterator for the range
 - [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
 - [ ] some form of std lib implemented with the language
+  - [ ] http
+  - [ ] math
+  - [ ] ...
+- [ ] module system with importing from std lib/another file
+- [ ] general built in functions
+  - [ ] push - add element(s) to end of a list
+  - [ ] pop - remove the last element of list
+  - [ ] length - return length of list/map/string
 - [ ] formatted strings with print statment
 
 ## about
