@@ -36,7 +36,7 @@ about how programming languages are made.
 - [x] Add "map"-object for key-value pairs where all primitive values are valid keys
   - [x] Indexing into map
   - [x] Iteration over map (by key)
-  - [ ] Assign value at key
+  - [x] Assign value at key
 
 ### upcoming features / TODOs
 
