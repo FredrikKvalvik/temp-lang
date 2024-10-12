@@ -82,6 +82,14 @@ var objects = []template{
 		},
 	},
 	{
+		name: "Builtin",
+		typ:  object.BUILTIN_OBJ,
+		props: []keyVal{
+			{"Fn", "BuiltinFn"},
+			{"Name", "string"},
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: []keyVal{

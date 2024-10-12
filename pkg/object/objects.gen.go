@@ -55,6 +55,13 @@ type MapObj struct {
 
 func (n *MapObj) Type() ObjectType { return MAP_OBJ }
 
+type BuiltinObj struct {
+	Fn   BuiltinFn
+	Name string
+}
+
+func (n *BuiltinObj) Type() ObjectType { return BUILTIN_OBJ }
+
 type ErrorObj struct {
 	Error error
 	Token *token.Token
@@ -72,5 +79,6 @@ func typecheck() {
 	_ = Object(&ReturnObj{})
 	_ = Object(&ListObj{})
 	_ = Object(&MapObj{})
+	_ = Object(&BuiltinObj{})
 	_ = Object(&ErrorObj{})
 }

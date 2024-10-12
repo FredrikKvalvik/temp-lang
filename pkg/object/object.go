@@ -15,9 +15,10 @@ type Object interface {
 	Inspect() string
 }
 
-type MapPairs = map[HashKey]KeyValuePair
-
+type BuiltinFn func(args ...Object) Object
 type ObjectType int
+
+type MapPairs = map[HashKey]KeyValuePair
 
 const (
 	_                    ObjectType = iota
@@ -29,6 +30,7 @@ const (
 	RETURN_OBJ                      // internal type for propagating return values
 	LIST_OBJ                        // collection if objects in an ordered list
 	MAP_OBJ                         // Map is a datatype for storing key-value pairs
+	BUILTIN_OBJ                     // Builtin function
 	ERROR_OBJ                       // runtime error
 )
 
@@ -85,4 +87,6 @@ func (b *MapObj) Inspect() string {
 
 	return str.String()
 }
+func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
+
 func (b *ErrorObj) Inspect() string { return b.Error.Error() }
