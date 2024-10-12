@@ -402,6 +402,9 @@ func TestIndexExpressions(t *testing.T) {
 		{"a[0]"},
 		{"[list][0]"},
 		{`"hello world"[0]`},
+		{`({"hello": "world"})["hello"]`},
+		{`({"hello": "world"})[true]`},
+		{`({"hello": "world"})[false]`},
 	}
 
 	for _, tt := range tests {

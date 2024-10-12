@@ -163,9 +163,11 @@ func evalIndexExpression(left, index object.Object) object.Object {
 		return evalIndexListExpression(left, index)
 	case left.Type() == object.STRING_OBJ && index.Type() == object.NUMBER_OBJ:
 		return evalIndexStringExpression(left, index)
+	case left.Type() == object.MAP_OBJ:
+		return evalIndexMapListExpression(left, index)
 
 	default:
-		return &object.ErrorObj{Error: TypeError}
+		return newError(TypeError, fmt.Sprintf("%s is not indexeble by %s", left.Inspect(), index.Inspect()))
 	}
 }
 
@@ -201,6 +203,22 @@ func evalIndexListExpression(left, index object.Object) object.Object {
 	}
 
 	return list[int(idx)]
+}
+
+func evalIndexMapListExpression(left, index object.Object) object.Object {
+	hashable, ok := index.(object.Hashable)
+	if !ok {
+		return newError(IllegalIndexError, fmt.Sprintf("%s is not a valid key", index.Inspect()))
+	}
+
+	hashMap := left.(*object.MapObj).Pairs
+
+	pair, ok := hashMap[hashable.HashKey()]
+	if !ok {
+		return NIL
+	}
+
+	return pair.Value
 }
 
 func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Object {

@@ -1,9 +1,11 @@
 let m = {
   "key": "value",
-  "key1": "value",
+  "key1": "im indexable",
   "key2": "value",
   "key3": "value",
-  "key4": "value"
+  "key4": "value",
 }
 
 print m
+print m["key1"]
+print m["this will return nil"]
