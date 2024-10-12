@@ -265,22 +265,55 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 }
 
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
-	ident, ok := node.Left.(*ast.IdentifierExpr)
-	if !ok {
-		return &object.ErrorObj{Error: fmt.Errorf("Can only assign value to identifiers"), Token: &node.Token}
-	}
-
 	val := Eval(node.Right, env)
 	if isError(val) {
 		return val
 	}
-	val = env.ReassignVar(ident.Value, val)
-	if val == nil {
-		return &object.ErrorObj{
-			Error: UseOfUndeclaredError,
-			Token: &node.Token}
+
+	switch n := node.Left.(type) {
+	case *ast.IdentifierExpr:
+		val = env.ReassignVar(n.Value, val)
+		return val
+
+	case *ast.IndexExpr:
+		left := Eval(n.Left, env)
+		if isError(left) {
+			return left
+		}
+		index := Eval(n.Index, env)
+		if isError(index) {
+			return index
+		}
+
+		return evalIndexAssignment(left, index, val)
 	}
-	return val
+
+	return newError(IllegalAssignmentError)
+}
+
+func evalIndexAssignment(assignee, index, value object.Object) object.Object {
+	if assignee.Type() == object.LIST_OBJ && index.Type() == object.NUMBER_OBJ {
+		return evalIndexListAssignment(index, assignee, value)
+	}
+
+	return nil
+}
+
+func evalIndexListAssignment(index object.Object, assignee object.Object, value object.Object) object.Object {
+	idx := index.(*object.NumberObj).Value
+
+	// make sure the index is a whole number
+	if !isIntegral(idx) {
+		return newError(IllegalFloatAsIndexError)
+	}
+
+	// check if index is out of bounds
+	if int(idx) >= len(assignee.(*object.ListObj).Values)-1 || int(idx) < 0 {
+		return newError(IndexOutOfBoundsError)
+	}
+
+	assignee.(*object.ListObj).Values[int(idx)] = value
+	return value
 }
 
 func evalPrintStatment(n *ast.PrintStmt, env *object.Environment) object.Object {

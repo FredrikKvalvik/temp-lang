@@ -18,6 +18,7 @@ var (
 
 	IllegalGlobalReturnError  InterpreterError = errors.New("Illegal return in global scope")
 	IllegalRedaclarationError InterpreterError = errors.New("Illegal declaration")
+	IllegalAssignmentError    InterpreterError = errors.New("Illegal assignment")
 
 	IllegalFloatAsIndexError InterpreterError = errors.New("Can't use decimal as index to list")
 	IllegalIndexError        InterpreterError = errors.New("Illegal Index type")
