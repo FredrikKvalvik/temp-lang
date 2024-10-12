@@ -34,8 +34,8 @@ about how programming languages are made.
   - [ ] Push/pop for lists
   - [ ] Assign value at index
 - [x] Add "map"-object for key-value pairs where all primitive values are valid keys
-  - [ ] Indexing into map
-  - [ ] Iteration over map
+  - [x] Indexing into map
+  - [x] Iteration over map (by key)
   - [ ] Assign value at key
 
 ### upcoming features / TODOs
