@@ -296,7 +296,29 @@ func evalIndexAssignment(assignee, index, value object.Object) object.Object {
 		return evalIndexListAssignment(index, assignee, value)
 	}
 
+	if assignee.Type() == object.MAP_OBJ {
+		return evalIndexHashAssignment(index, assignee, value)
+	}
+
 	return nil
+}
+
+func evalIndexHashAssignment(index object.Object, assignee object.Object, value object.Object) object.Object {
+	hash, ok := index.(object.Hashable)
+	if !ok {
+		return newError(IllegalIndexError)
+	}
+
+	pair, ok := assignee.(*object.MapObj).Pairs[hash.HashKey()]
+	if ok {
+		pair.Value = value
+		return pair.Value
+	} else {
+		kv := object.KeyValuePair{Key: index, Value: value}
+		assignee.(*object.MapObj).Pairs[hash.HashKey()] = kv
+		return kv.Value
+	}
+
 }
 
 func evalIndexListAssignment(index object.Object, assignee object.Object, value object.Object) object.Object {

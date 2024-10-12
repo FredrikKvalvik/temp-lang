@@ -32,7 +32,7 @@ about how programming languages are made.
   - [x] Indexing into list
   - [x] Iteration over list
   - [ ] Push/pop for lists
-  - [ ] Assign value at index
+  - [x] Assign value at index
 - [x] Add "map"-object for key-value pairs where all primitive values are valid keys
   - [x] Indexing into map
   - [x] Iteration over map (by key)
