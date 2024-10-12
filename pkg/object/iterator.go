@@ -1,7 +1,10 @@
+//go:generate go run golang.org/x/tools/cmd/stringer -type=IteratorType
 package object
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 )
 
@@ -12,6 +15,7 @@ const (
 	STRING_ITER
 	BOOLEAN_ITER
 	LIST_ITER
+	MAP_ITER
 )
 
 // return true while iterator is returning items. return false when end of loop is finisjed
@@ -34,6 +38,8 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 		return newBooleanIterator(it), nil
 	case *ListObj:
 		return newListIterator(it), nil
+	case *MapObj:
+		return newMapIterator(it), nil
 
 	default:
 		return nil, &ErrorObj{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
@@ -128,6 +134,33 @@ func (li *ListIter) Next() Object {
 	return value
 }
 func (li *ListIter) Done() bool { return li.idx >= len(li.values) }
+
+// helper to check if value is a whole number
+
+// MAP_ITER
+
+// iterate over the keys of a map
+type MapIter struct {
+	pairs []KeyValuePair
+	idx   int
+}
+
+func newMapIterator(m *MapObj) *MapIter {
+	pairs := slices.Collect(maps.Values(m.Pairs))
+	return &MapIter{
+		pairs: pairs,
+	}
+}
+
+func (mi *MapIter) Type() IteratorType { return MAP_ITER }
+
+func (mi *MapIter) Next() Object {
+	value := mi.pairs[mi.idx]
+	mi.idx++
+	return value.Key
+}
+
+func (mi *MapIter) Done() bool { return mi.idx >= len(mi.pairs) }
 
 // helper to check if value is a whole number
 func isIntegral(val float64) bool {

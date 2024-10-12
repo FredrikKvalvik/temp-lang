@@ -6,6 +6,9 @@ let m = {
   "key4": "value",
 }
 
-print m
-print m["key1"]
-print m["this will return nil"]
+print "index of key1: " + m["key1"]
+
+each key: m {
+  print key
+}
+

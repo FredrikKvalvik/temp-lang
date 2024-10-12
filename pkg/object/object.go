@@ -15,6 +15,8 @@ type Object interface {
 	Inspect() string
 }
 
+type MapPairs = map[HashKey]KeyValuePair
+
 type ObjectType int
 
 const (
