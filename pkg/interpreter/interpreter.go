@@ -133,6 +133,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		list.Values = evalExpressions(n.Items, env)
 		return list
 
+	case *ast.MapLiteralExpr:
+		mapLit := &object.MapObj{}
+		pairs, err := evalKeyValueExpressions(n.KeyValues, env)
+		if err != nil {
+			return err
+		}
+		mapLit.Pairs = pairs
+
+		return mapLit
+
 	case *ast.BooleanLiteralExpr:
 		return boolObject(n.Value)
 
@@ -204,7 +214,7 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	if node.Name != nil {
 		ident, ok := node.Name.(*ast.IdentifierExpr)
 		if !ok {
-			return &object.ErrorObj{Error: TypeError, Token: *node.Name.GetToken()}
+			return &object.ErrorObj{Error: TypeError, Token: node.Name.GetToken()}
 		}
 		scope.DeclareVar(ident.Value, NIL)
 		name = ident
@@ -239,7 +249,7 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
 	ident, ok := node.Left.(*ast.IdentifierExpr)
 	if !ok {
-		return &object.ErrorObj{Error: fmt.Errorf("Can only assign value to identifiers"), Token: node.Token}
+		return &object.ErrorObj{Error: fmt.Errorf("Can only assign value to identifiers"), Token: &node.Token}
 	}
 
 	val := Eval(node.Right, env)
@@ -250,7 +260,7 @@ func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object
 	if val == nil {
 		return &object.ErrorObj{
 			Error: UseOfUndeclaredError,
-			Token: node.Token}
+			Token: &node.Token}
 	}
 	return val
 }
@@ -417,6 +427,36 @@ func evalExpressions(exprs []ast.Expr, env *object.Environment) []object.Object 
 	}
 
 	return list
+}
+
+func evalKeyValueExpressions(expressionMap map[ast.Expr]ast.Expr, env *object.Environment) (
+	map[object.HashKey]object.KeyValuePair,
+	*object.ErrorObj,
+) {
+	pairs := make(map[object.HashKey]object.KeyValuePair, len(expressionMap))
+
+	for key, value := range expressionMap {
+		k := Eval(key, env)
+		if isError(k) {
+			return nil, k.(*object.ErrorObj)
+		}
+
+		hash, ok := k.(object.Hashable)
+		if !ok {
+			err := newError(IllegalIndexError, fmt.Sprintf("can't use %s as key", key.String()))
+			err.Token = key.GetToken()
+			return nil, err
+		}
+
+		v := Eval(value, env)
+		if isError(k) {
+			return nil, v.(*object.ErrorObj)
+		}
+
+		pairs[hash.HashKey()] = object.KeyValuePair{Key: k, Value: v}
+	}
+
+	return pairs, nil
 }
 
 func applyFunction(callee object.Object, args []object.Object) object.Object {

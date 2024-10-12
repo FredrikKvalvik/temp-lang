@@ -57,7 +57,7 @@ func (n *MapObj) Type() ObjectType { return MAP_OBJ }
 
 type ErrorObj struct {
 	Error error
-	Token token.Token
+	Token *token.Token
 }
 
 func (n *ErrorObj) Type() ObjectType { return ERROR_OBJ }

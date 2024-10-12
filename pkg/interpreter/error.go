@@ -37,7 +37,6 @@ func isError(obj object.Object) bool {
 }
 
 func newError(err InterpreterError, msgs ...string) *object.ErrorObj {
-
 	errs := []error{err}
 	for _, err := range msgs {
 		errs = append(errs, errors.New(err))
