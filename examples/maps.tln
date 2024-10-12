@@ -1,0 +1,9 @@
+let m = {
+  "key": "value",
+  "key1": "value",
+  "key2": "value",
+  "key3": "value",
+  "key4": "value"
+}
+
+print m

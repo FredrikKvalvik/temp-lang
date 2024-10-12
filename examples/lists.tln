@@ -1,8 +1,6 @@
 
 let items = ["items", "from", "list"]
 
-// each item : items {
-//	print item
-// }
-
-print "hello"[1]
+ each item : items {
+	print item
+ }
