@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
@@ -270,6 +271,43 @@ func TestIdentifer(t *testing.T) {
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertEqual(res.(*object.NumberObj).Value, float64(30))
 
+}
+
+func TestBuiltinFunctions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected any
+	}{
+		{`len("")`, float64(0)},
+		{`len("hello")`, float64(5)},
+		{`len("hello", "world")`, object.ArityError},
+		{`len()`, object.ArityError},
+		{`len([])`, float64(0)},
+		{`len([1,2,3])`, float64(3)},
+		{`len({})`, float64(0)},
+		{`len({true: false, 1: 2})`, float64(2)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+			result, _ := testEvalProgram(tr, tt.input)
+
+			switch tt.expected.(type) {
+			case float64:
+				tr.AssertEqual(result.Type(), object.NUMBER_OBJ, "result type must equal expected type")
+				tr.AssertEqual(result.(*object.NumberObj).Value, tt.expected, "result must equal expected value")
+
+			case error:
+				tr.AssertEqual(result.Type(), object.ERROR_OBJ, "result type must equal expected type")
+				err := result.(*object.ErrorObj).Error
+				tr.AssertTrue(errors.Is(err, tt.expected.(error)), "assert that error is of correct type")
+
+			default:
+				tr.T.Fatalf("uncovered test case for type: %T", tt.expected)
+			}
+		})
+	}
 }
 
 func testAssertType(

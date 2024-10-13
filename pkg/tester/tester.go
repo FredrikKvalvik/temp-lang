@@ -19,40 +19,40 @@ func (tt *Tester) SetName(name string) {
 	tt.name = name
 }
 
-func (tt *Tester) AssertEqual(in, expect any) {
+func (tt *Tester) AssertEqual(in, expect any, msg ...string) {
 	tt.T.Helper()
 
 	if in != expect {
-		tt.T.Fatalf("%s: Assert failed: %v != %v", tt.name, in, expect)
+		tt.T.Fatalf("%s: Assert failed: %v != %v", msg, in, expect)
 	}
 }
-func (tt *Tester) AssertNotEqual(in, expect any) {
+func (tt *Tester) AssertNotEqual(in, expect any, msg ...string) {
 	tt.T.Helper()
 
 	if in == expect {
-		tt.T.Fatalf("%s: Assert failed: %v == %v", tt.name, in, expect)
+		tt.T.Fatalf("%s: Assert failed: %v == %v", msg, in, expect)
 	}
 }
-func (tt *Tester) AssertTrue(in bool) {
+func (tt *Tester) AssertTrue(in bool, msg ...string) {
 	tt.T.Helper()
 
 	if !in {
-		tt.T.Fatalf("%s: AssertTrue failed, got=%v", tt.name, in)
+		tt.T.Fatalf("%s: AssertTrue failed, got=%v", msg, in)
 	}
 }
 
-func (tt *Tester) AssertNotNil(v any) {
+func (tt *Tester) AssertNotNil(v any, msg ...string) {
 	tt.T.Helper()
 
 	if v == nil {
-		tt.T.Fatalf("%s: NonNil Assert failed", tt.name)
+		tt.T.Fatalf("%s: NonNil Assert failed", msg)
 	}
 }
 
-func (tt *Tester) AssertNil(v any) {
+func (tt *Tester) AssertNil(v any, msg ...string) {
 	tt.T.Helper()
 
 	if v != nil {
-		tt.T.Fatalf("%s: Nil Assert failed, got=%+v", tt.name, v)
+		tt.T.Fatalf("%s: Nil Assert failed, got=%+v", msg, v)
 	}
 }
