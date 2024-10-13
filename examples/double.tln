@@ -1,0 +1,16 @@
+
+
+let mutDouble = fn(nList) {
+	each n : len(nList) {
+		nList[n] = nList[n] * 2
+	}
+
+	return nList
+}
+
+let a = [1,2,3]
+
+print "before: ", a
+print 1, mutDouble(a)
+print 2, mutDouble(a)
+print 3, mutDouble(a)

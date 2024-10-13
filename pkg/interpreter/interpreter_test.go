@@ -273,6 +273,7 @@ func TestIdentifer(t *testing.T) {
 
 }
 
+// collection of tests for all builtin functions
 func TestBuiltinFunctions(t *testing.T) {
 	tests := []struct {
 		input    string

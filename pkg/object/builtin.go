@@ -7,6 +7,7 @@ import (
 
 var (
 	ArityError = errors.New("wrong number of args")
+	TypeError  = errors.New("invalid type")
 )
 
 // takes 1 and returns the length of the object.
