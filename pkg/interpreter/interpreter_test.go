@@ -287,6 +287,12 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len([1,2,3])`, float64(3)},
 		{`len({})`, float64(0)},
 		{`len({true: false, 1: 2})`, float64(2)},
+
+		{`push([], 1)`, []float64{1}},
+		{`push([], 1, 2, 3)`, []float64{1, 2, 3}},
+		{`push([])`, object.ArityError},
+		{`push()`, object.ArityError},
+		{`push([1, 2], 3)`, []float64{1, 2, 3}},
 	}
 
 	for _, tt := range tests {
@@ -298,6 +304,17 @@ func TestBuiltinFunctions(t *testing.T) {
 			case float64:
 				tr.AssertEqual(result.Type(), object.NUMBER_OBJ, "result type must equal expected type")
 				tr.AssertEqual(result.(*object.NumberObj).Value, tt.expected, "result must equal expected value")
+
+			case []float64:
+				tr.AssertEqual(result.Type(), object.LIST_OBJ)
+				values := result.(*object.ListObj).Values
+				expected := tt.expected.([]float64)
+
+				tr.AssertEqual(len(values), len(expected))
+
+				for idx, eVal := range expected {
+					testAssertType(tr, values[idx], object.NUMBER_OBJ, eVal)
+				}
 
 			case error:
 				tr.AssertEqual(result.Type(), object.ERROR_OBJ, "result type must equal expected type")

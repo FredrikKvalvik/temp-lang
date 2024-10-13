@@ -30,3 +30,22 @@ func LenBuiltin(args ...Object) Object {
 
 	return nil
 }
+
+// push appends items to the end of a list
+// first arg must be type=list, every following argument will be pushed
+// to the list in the order they are gotten.
+// return the reference to the list
+func PushBuiltin(args ...Object) Object {
+	if len(args) < 2 {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected target list and item(s), got=%d", ArityError, len(args))}
+	}
+	list := args[0]
+	if list.Type() != LIST_OBJ {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected list, got=%s", TypeError, list.Type())}
+	}
+
+	items := args[1:]
+	list.(*ListObj).Values = append(list.(*ListObj).Values, items...)
+
+	return list
+}
