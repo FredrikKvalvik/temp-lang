@@ -336,8 +336,8 @@ func evalIndexListAssignment(index object.Object, assignee object.Object, value 
 	}
 
 	// check if index is out of bounds
-	if int(idx) >= len(assignee.(*object.ListObj).Values)-1 || int(idx) < 0 {
-		return newError(IndexOutOfBoundsError)
+	if int(idx) >= len(assignee.(*object.ListObj).Values) || int(idx) < 0 {
+		return newError(IndexOutOfBoundsError, "check")
 	}
 
 	assignee.(*object.ListObj).Values[int(idx)] = value
