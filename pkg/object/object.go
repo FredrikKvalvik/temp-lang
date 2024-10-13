@@ -87,6 +87,7 @@ func (b *MapObj) Inspect() string {
 
 	return str.String()
 }
+
 func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
 
 func (b *ErrorObj) Inspect() string { return b.Error.Error() }

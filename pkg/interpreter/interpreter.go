@@ -74,12 +74,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalBinaryExpression(left, right, n.Operand)
 
 	case *ast.IdentifierExpr:
-		key := n.Value
-		value := env.GetVar(key)
-		if value == nil {
-			return useOfUnassignVariableError(key)
+		// NOTE: we first look for a user-declared variable
+		// this is so that if the use declares a variable
+		// with the same name as a builtin, we should give
+		// the user declared variable priority
+
+		if val := env.GetVar(n.Value); val != nil {
+			return val
 		}
-		return value
+		if val, ok := builtins[n.Value]; ok {
+			return val
+		}
+		return newError(UseOfUndeclaredError, n.Value)
 
 	case *ast.ReturnStmt:
 		if env.IsGlobalEnv() {
@@ -533,25 +539,34 @@ func evalKeyValueExpressions(expressionMap map[ast.Expr]ast.Expr, env *object.En
 }
 
 func applyFunction(callee object.Object, args []object.Object) object.Object {
-	if callee.Type() != object.FUNCTION_LITERAL_OBJ {
-		return &object.ErrorObj{
-			Error: fmt.Errorf("expected function, got=%s\n", callee.Type()),
-		}
-	}
-	fn := callee.(*object.FnLiteralObj)
-	if len(fn.Parameters) != len(args) {
-		return &object.ErrorObj{
-			Error: fmt.Errorf("expected number of args=%d, got=%d\n",
-				len(fn.Parameters), len(args)),
-		}
-	}
-	scope := object.NewEnv(fn.Env)
-	for idx, arg := range fn.Parameters {
-		scope.DeclareVar(arg.Value, args[idx])
-	}
 
-	evaluated := Eval(fn.Body, scope)
-	return unwrapReturn(evaluated)
+	switch callee.Type() {
+	case object.BUILTIN_OBJ:
+		val := callee.(*object.BuiltinObj).Fn(args...)
+		if val != nil {
+			return val
+		}
+		return NIL
+
+	case object.FUNCTION_LITERAL_OBJ:
+		fn := callee.(*object.FnLiteralObj)
+		if len(fn.Parameters) != len(args) {
+			return &object.ErrorObj{
+				Error: fmt.Errorf("expected number of args=%d, got=%d\n",
+					len(fn.Parameters), len(args)),
+			}
+		}
+		scope := object.NewEnv(fn.Env)
+		for idx, arg := range fn.Parameters {
+			scope.DeclareVar(arg.Value, args[idx])
+		}
+
+		evaluated := Eval(fn.Body, scope)
+		return unwrapReturn(evaluated)
+
+	default:
+		return newError(TypeError, fmt.Sprintf("expected function, got=%s\n", callee.Type()))
+	}
 }
 
 // helper to check if value is a whole number
