@@ -293,12 +293,17 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`push([])`, object.ArityError},
 		{`push()`, object.ArityError},
 		{`push([1, 2], 3)`, []float64{1, 2, 3}},
+
+		{`pop([1])`, float64(1)},
+		{`pop([])`, NIL},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
 			tr := tester.New(t, "")
 			result, _ := testEvalProgram(tr, tt.input)
+
+			tr.T.Log(result.Inspect())
 
 			switch tt.expected.(type) {
 			case float64:

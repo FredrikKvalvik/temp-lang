@@ -49,3 +49,26 @@ func PushBuiltin(args ...Object) Object {
 
 	return list
 }
+
+// pop removes the last element from a list and returns it.
+// if pop is used on an empty list, return nil
+func PopBuiltin(args ...Object) Object {
+	if len(args) != 1 {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
+	}
+	arg := args[0]
+	if arg.Type() != LIST_OBJ {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected list, got=%s", TypeError, arg.Type())}
+	}
+
+	list := arg.(*ListObj)
+
+	if len(list.Values) == 0 {
+		return nil
+	}
+
+	last := list.Values[len(list.Values)-1]
+	list.Values = list.Values[:len(list.Values)-1]
+
+	return last
+}
