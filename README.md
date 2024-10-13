@@ -37,6 +37,10 @@ about how programming languages are made.
   - [x] Indexing into map
   - [x] Iteration over map (by key)
   - [x] Assign value at key
+  - [x] Builtin functions
+    - push - add element(s) to end of a list
+    - pop - remove the last element of list
+    - length - return length of list/map/string
 
 ### upcoming features / TODOs
 
@@ -51,10 +55,6 @@ about how programming languages are made.
   - [ ] math
   - [ ] ...
 - [ ] module system with importing from std lib/another file
-- [ ] general built in functions
-  - [ ] push - add element(s) to end of a list
-  - [ ] pop - remove the last element of list
-  - [ ] length - return length of list/map/string
 - [ ] formatted strings with print statment
 
 ## about
