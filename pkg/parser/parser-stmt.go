@@ -10,6 +10,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 	switch p.curToken.Type {
 	case token.LET:
 		node = p.parseLetStatment()
+	case token.FUNCTION:
+		node = p.parseFunctionStatment()
 	case token.IF:
 		node = p.parseIfStatement()
 	case token.LBRACE:
@@ -67,6 +69,48 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	p.consume(token.SEMICOLON)
 
 	return letStmt
+}
+
+// syntactic sugar for declaring a function variable
+func (p *Parser) parseFunctionStatment() *ast.LetStmt {
+	// fn name ( arg1, arg2 ) { ... }
+	// ^
+	let := &ast.LetStmt{
+		Token: p.curToken,
+	}
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	// fn name ( arg1, arg2 ) { ... }
+	//    ^
+	let.Name = &ast.IdentifierExpr{
+		Token: p.curToken,
+		Value: p.curToken.Lexeme,
+	}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+	// fn name ( arg1, arg2 ) { ... }
+	//         ^
+	fun := &ast.FunctionLiteralExpr{Token: p.curToken}
+	fun.Arguments = p.parseFunctionArgs()
+	// fn ( arg1, arg2 ) { ... }
+	//                 ^
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+	// fn ( arg1, arg2 ) { ... }
+	//                   ^
+
+	fun.Body = p.parseBlockStatement()
+	// fn ( arg1, arg2 ) { ... }
+	//                         ^
+
+	let.Value = fun
+
+	return let
 }
 
 // FIX: does not parse the last element in the list
