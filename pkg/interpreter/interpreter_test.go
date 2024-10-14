@@ -295,7 +295,9 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`push([1, 2], 3)`, []float64{1, 2, 3}},
 
 		{`pop([1])`, float64(1)},
+		{`pop([2, 1])`, float64(1)},
 		{`pop([])`, NIL},
+		{`pop({"in": "valid"})`, object.TypeError},
 	}
 
 	for _, tt := range tests {
@@ -316,10 +318,13 @@ func TestBuiltinFunctions(t *testing.T) {
 				expected := tt.expected.([]float64)
 
 				tr.AssertEqual(len(values), len(expected))
-
 				for idx, eVal := range expected {
 					testAssertType(tr, values[idx], object.NUMBER_OBJ, eVal)
 				}
+
+			case *object.NilObj:
+				tr.AssertEqual(result.Type(), object.NIL_OBJ)
+				tr.AssertEqual(result, tt.expected)
 
 			case error:
 				tr.AssertEqual(result.Type(), object.ERROR_OBJ, "result type must equal expected type")
