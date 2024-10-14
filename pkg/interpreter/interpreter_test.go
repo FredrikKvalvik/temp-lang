@@ -298,6 +298,14 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`pop([2, 1])`, float64(1)},
 		{`pop([])`, NIL},
 		{`pop({"in": "valid"})`, object.TypeError},
+
+		{`str({})`,
+			`{
+}`},
+		{`str([])`, `[]`},
+		{`str(10)`, `10`},
+		{`str([1,2,3])`, `[1, 2, 3]`},
+		{`str("hello world")`, `"hello world"`},
 	}
 
 	for _, tt := range tests {
@@ -309,8 +317,12 @@ func TestBuiltinFunctions(t *testing.T) {
 
 			switch tt.expected.(type) {
 			case float64:
-				tr.AssertEqual(result.Type(), object.NUMBER_OBJ, "result type must equal expected type")
+				tr.AssertEqual(result.Type(), object.NUMBER_OBJ, "result type must equal NUMBER_OBJ")
 				tr.AssertEqual(result.(*object.NumberObj).Value, tt.expected, "result must equal expected value")
+
+			case string:
+				tr.AssertEqual(result.Type(), object.STRING_OBJ, "result type must equal STRING_OBJ")
+				tr.AssertEqual(result.(*object.StringObj).Value, tt.expected, "result must equal expected value")
 
 			case []float64:
 				tr.AssertEqual(result.Type(), object.LIST_OBJ)
