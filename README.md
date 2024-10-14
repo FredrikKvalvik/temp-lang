@@ -8,6 +8,7 @@ about how programming languages are made.
 ## (Current) Language features
 
 - [x] C-like syntax
+- [x] Line comments
 - [x] mutable variables
 - [x] arithmetic operations
 - [x] boolean operations
