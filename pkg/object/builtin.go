@@ -12,7 +12,7 @@ var (
 
 // Arity: 1
 //
-// Arg0: any
+// Arg0: list | map | string
 //
 // takes 1 and returns the length of the object.
 // will return nil if there is no way to return a length
@@ -22,7 +22,6 @@ func LenBuiltin(args ...Object) Object {
 	}
 
 	arg := args[0]
-
 	switch argument := arg.(type) {
 	case *StringObj:
 		return &NumberObj{Value: float64(len([]rune(argument.Value)))}

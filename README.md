@@ -41,7 +41,8 @@ about how programming languages are made.
 - [x] Builtin functions
   - push - add element(s) to end of a list
   - pop - remove the last element of list
-  - length - return length of list/map/string
+  - len - return length of list/map/string
+  - str - return the value as its string representation
 
 ### upcoming features / TODOs
 
@@ -55,7 +56,10 @@ about how programming languages are made.
   - [ ] http
   - [ ] math
   - [ ] ...
-- [ ] module system with importing from std lib/another file
+- [ ] module system with importing from std lib/another file. requires:
+  - language support for accessing members of namespaces (syntax, parsing and resolving)
+  - expanding the internal typing to support multiple sources
+  - inport resoultion
 - [ ] formatted strings with print statment
 
 ## about
