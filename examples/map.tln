@@ -1,0 +1,24 @@
+let map = fn(list, fun) {
+	let newList = []
+	each item : list {
+		let x = fun(item)
+		push(newList, x)
+	}
+}
+
+let double = fn(n) {
+	return n * 2
+}
+
+let printItem = fn(n) {
+	print n
+}
+
+let a = [1, 2, 3]
+let b = map(a, double)
+let c =  map(map(a, double), double)
+
+print "a", a
+print "b", b
+print "c", c
+
