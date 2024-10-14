@@ -30,18 +30,18 @@ about how programming languages are made.
   - list - loop through items in a list from start to end
   - none - default to boolean=true
 - [x] "list" value for ordered lists of values
-  - [x] Indexing into list
-  - [x] Iteration over list
-  - [ ] Push/pop for lists
-  - [x] Assign value at index
+  - Indexing into list
+  - Iteration over list
+  - Push/pop for lists
+  - Assign value at index
 - [x] Add "map"-object for key-value pairs where all primitive values are valid keys
-  - [x] Indexing into map
-  - [x] Iteration over map (by key)
-  - [x] Assign value at key
-  - [x] Builtin functions
-    - push - add element(s) to end of a list
-    - pop - remove the last element of list
-    - length - return length of list/map/string
+  - Indexing into map
+  - Iteration over map (by key)
+  - Assign value at key
+- [x] Builtin functions
+  - push - add element(s) to end of a list
+  - pop - remove the last element of list
+  - length - return length of list/map/string
 
 ### upcoming features / TODOs
 
