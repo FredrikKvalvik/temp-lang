@@ -7,7 +7,7 @@ import (
 
 	"flag"
 
-	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
+	"github.com/fredrikkvalvik/temp-lang/pkg/evaluator"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
@@ -68,7 +68,7 @@ func runProgram(in string, env *object.Environment) (object.Object, error) {
 		return nil, errors.New(errs)
 	}
 
-	result := interpreter.Eval(program, env)
+	result := evaluator.Eval(program, env)
 	return result, nil
 }
 

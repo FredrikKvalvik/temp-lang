@@ -1,4 +1,4 @@
-package interpreter
+package evaluator
 
 import "github.com/fredrikkvalvik/temp-lang/pkg/object"
 

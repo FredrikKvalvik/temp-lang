@@ -83,7 +83,7 @@ type Pos struct {
 	Start, End int
 }
 type Token struct {
-	Pos    Pos       // offset from the start of the source file
+	Pos    Pos       // The postion of the lexeme in the source
 	Type   TokenType // the number of characters from the start of the line to the start of the token
 	Lexeme string    // the string that was parsed as this token
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/fredrikkvalvik/temp-lang/pkg/interpreter"
+	"github.com/fredrikkvalvik/temp-lang/pkg/evaluator"
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
@@ -54,7 +54,7 @@ func (r *Repl) Run(env *object.Environment) {
 			continue
 		}
 
-		result := interpreter.Eval(program, env)
+		result := evaluator.Eval(program, env)
 		fmt.Printf("%s\n", result.Inspect())
 	}
 }
