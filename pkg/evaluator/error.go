@@ -9,23 +9,23 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
-type InterpreterError error
+type RuntimeError error
 
 var (
-	TypeError             InterpreterError = errors.New("Unexpected type")
-	UseOfUndeclaredError  InterpreterError = errors.New("Use of undeclared var")
-	IllegalOperationError InterpreterError = errors.New("Illegal operation")
+	TypeError             RuntimeError = errors.New("Unexpected type")
+	UseOfUndeclaredError  RuntimeError = errors.New("Use of undeclared var")
+	IllegalOperationError RuntimeError = errors.New("Illegal operation")
 
-	IllegalGlobalReturnError  InterpreterError = errors.New("Illegal return in global scope")
-	IllegalRedaclarationError InterpreterError = errors.New("Illegal declaration")
-	IllegalAssignmentError    InterpreterError = errors.New("Illegal assignment")
+	IllegalGlobalReturnError  RuntimeError = errors.New("Illegal return in global scope")
+	IllegalRedaclarationError RuntimeError = errors.New("Illegal declaration")
+	IllegalAssignmentError    RuntimeError = errors.New("Illegal assignment")
 
-	IllegalFloatAsIndexError InterpreterError = errors.New("Can't use decimal as index to list")
-	IllegalIndexError        InterpreterError = errors.New("Illegal Index type")
-	IndexOutOfBoundsError    InterpreterError = errors.New("Index out of bound")
+	IllegalFloatAsIndexError RuntimeError = errors.New("Can't use decimal as index to list")
+	IllegalIndexError        RuntimeError = errors.New("Illegal Index type")
+	IndexOutOfBoundsError    RuntimeError = errors.New("Index out of bound")
 
 	// Internal error only
-	UnknownNodeError InterpreterError = errors.New("Unknown node")
+	UnknownNodeError RuntimeError = errors.New("Unknown node")
 )
 
 // TODO: add line:col numbers to errors
@@ -37,7 +37,7 @@ func isError(obj object.Object) bool {
 	return false
 }
 
-func newError(err InterpreterError, msgs ...string) *object.ErrorObj {
+func newError(err RuntimeError, msgs ...string) *object.ErrorObj {
 	errs := []error{err}
 	for _, err := range msgs {
 		errs = append(errs, errors.New(err))
@@ -64,8 +64,4 @@ func unknownNodeError(node ast.Node) *object.ErrorObj {
 	} else {
 		return &object.ErrorObj{Error: fmt.Errorf("%w: %s", UnknownNodeError, node.String())}
 	}
-}
-
-func useOfUnassignVariableError(key string) *object.ErrorObj {
-	return &object.ErrorObj{Error: fmt.Errorf("%w `%s`", UseOfUndeclaredError, key)}
 }
