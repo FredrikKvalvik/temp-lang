@@ -1,6 +1,9 @@
 package parser
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -164,8 +167,14 @@ func (p *Parser) parseIdent() ast.Expr {
 func (p *Parser) parseNumberLiteral() ast.Expr {
 	numberLiteral := &ast.NumberLiteralExpr{
 		Token: p.curToken,
-		Value: p.curToken.Literal.(float64),
 	}
+	num, err := strconv.ParseFloat(p.curToken.Lexeme, 64)
+	if err != nil {
+		p.errors = append(p.errors, fmt.Errorf("could not parse string=%s to number", p.curToken.Lexeme))
+		return nil
+	}
+
+	numberLiteral.Value = num
 
 	return numberLiteral
 }
@@ -173,7 +182,7 @@ func (p *Parser) parseNumberLiteral() ast.Expr {
 func (p *Parser) parseStringLiteral() ast.Expr {
 	stringLiteral := &ast.StringLiteralExpr{
 		Token: p.curToken,
-		Value: p.curToken.Literal.(string),
+		Value: p.curToken.Lexeme[1 : len(p.curToken.Lexeme)-1],
 	}
 
 	return stringLiteral

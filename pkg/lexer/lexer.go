@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -48,13 +47,13 @@ func (l *Lexer) DidError() bool {
 
 // used for error messages
 func (l *Lexer) GetTokenPosition(tok *token.Token) (int, int) {
-	offset := tok.Offset
+	offset := tok.Pos
 
 	line, col := l.getTokenPostionFromOffset(offset)
 	return line, col
 }
 
-func (l *Lexer) getTokenPostionFromOffset(offset int) (int, int) {
+func (l *Lexer) getTokenPostionFromOffset(pos token.Pos) (int, int) {
 	col := 1
 	line := 1
 
@@ -62,7 +61,7 @@ func (l *Lexer) getTokenPostionFromOffset(offset int) (int, int) {
 	// increment col for each loop.
 	// when we see a '\n', reset col and keep moving
 	// return col at end
-	for position < offset {
+	for position < pos.Start {
 		if l.source[position] == '\n' {
 			line += 1
 			col = 1
@@ -95,35 +94,35 @@ REDO:
 
 	switch l.ch {
 	case '(':
-		tok = l.getToken(token.LPAREN, string(l.ch), nil)
+		tok = l.getToken(token.LPAREN, string(l.ch))
 	case ')':
-		tok = l.getToken(token.RPAREN, string(l.ch), nil)
+		tok = l.getToken(token.RPAREN, string(l.ch))
 	case '{':
-		tok = l.getToken(token.LBRACE, string(l.ch), nil)
+		tok = l.getToken(token.LBRACE, string(l.ch))
 	case '}':
-		tok = l.getToken(token.RBRACE, string(l.ch), nil)
+		tok = l.getToken(token.RBRACE, string(l.ch))
 	case '[':
-		tok = l.getToken(token.LBRACKET, string(l.ch), nil)
+		tok = l.getToken(token.LBRACKET, string(l.ch))
 	case ']':
-		tok = l.getToken(token.RBRACKET, string(l.ch), nil)
+		tok = l.getToken(token.RBRACKET, string(l.ch))
 	case '+':
-		tok = l.getToken(token.PLUS, string(l.ch), nil)
+		tok = l.getToken(token.PLUS, string(l.ch))
 	case '-':
-		tok = l.getToken(token.MINUS, string(l.ch), nil)
+		tok = l.getToken(token.MINUS, string(l.ch))
 	case '*':
-		tok = l.getToken(token.ASTERISK, string(l.ch), nil)
+		tok = l.getToken(token.ASTERISK, string(l.ch))
 	case ',':
-		tok = l.getToken(token.COMMA, string(l.ch), nil)
+		tok = l.getToken(token.COMMA, string(l.ch))
 	case '.':
-		tok = l.getToken(token.DOT, string(l.ch), nil)
+		tok = l.getToken(token.DOT, string(l.ch))
 	case ':':
-		tok = l.getToken(token.COLON, string(l.ch), nil)
+		tok = l.getToken(token.COLON, string(l.ch))
 	case ';':
-		tok = l.getToken(token.SEMICOLON, string(l.ch), nil)
+		tok = l.getToken(token.SEMICOLON, string(l.ch))
 	case '<':
-		tok = l.getToken(token.LT, string(l.ch), nil)
+		tok = l.getToken(token.LT, string(l.ch))
 	case '>':
-		tok = l.getToken(token.GT, string(l.ch), nil)
+		tok = l.getToken(token.GT, string(l.ch))
 
 	case '/':
 		if l.peek() == '/' {
@@ -136,36 +135,36 @@ REDO:
 			goto REDO
 
 		} else {
-			tok = l.getToken(token.SLASH, string(l.ch), nil)
+			tok = l.getToken(token.SLASH, string(l.ch))
 		}
 
 	case '=':
 		if l.peek() == '=' {
 			l.advance()
-			tok = l.getToken(token.EQ, "==", nil)
+			tok = l.getToken(token.EQ, "==")
 		} else {
-			tok = l.getToken(token.ASSIGN, string(l.ch), nil)
+			tok = l.getToken(token.ASSIGN, string(l.ch))
 		}
 
 	case '!':
 		if l.peek() == '=' {
 			ch := l.ch
 			l.advance()
-			tok = l.getToken(token.NOT_EQ, string(ch)+string(l.ch), nil)
+			tok = l.getToken(token.NOT_EQ, string(ch)+string(l.ch))
 		} else {
-			tok = l.getToken(token.BANG, string(l.ch), nil)
+			tok = l.getToken(token.BANG, string(l.ch))
 		}
 
 	case '"':
 		tokType := token.STRING
-		lexeme, literal := l.readString()
-		tok = l.getToken(tokType, lexeme, literal)
+		lexeme := l.readString()
+		tok = l.getToken(tokType, lexeme)
 
 	case 0:
 		if l.newlineIsTerminal() {
-			tok = l.getToken(token.SEMICOLON, string(l.ch), nil)
+			tok = l.getToken(token.SEMICOLON, string(l.ch))
 		} else {
-			tok = l.getToken(token.EOF, string(l.ch), nil)
+			tok = l.getToken(token.EOF, string(l.ch))
 		}
 
 	default:
@@ -173,19 +172,19 @@ REDO:
 			// can be identier or reserved word
 			lexeme := l.readIdentifier()
 			tokType := token.LookupIdent(lexeme)
-			tok = l.getToken(tokType, lexeme, nil)
+			tok = l.getToken(tokType, lexeme)
 
 		} else if isDigit(l.ch) {
-			lexeme, literal, err := l.readNumber()
+			lexeme, err := l.readNumber()
 			if err != nil {
-				tok = l.getToken(token.ILLEGAL, lexeme, nil)
+				tok = l.getToken(token.ILLEGAL, lexeme)
 				l.error(err)
 				break
 			}
-			tok = l.getToken(token.NUMBER, lexeme, literal)
+			tok = l.getToken(token.NUMBER, lexeme)
 
 		} else {
-			tok = l.getToken(token.ILLEGAL, string(l.ch), nil)
+			tok = l.getToken(token.ILLEGAL, string(l.ch))
 			l.error(fmt.Errorf("Unexpected character"))
 		}
 	}
@@ -194,12 +193,11 @@ REDO:
 	return tok
 }
 
-func (l *Lexer) getToken(t token.TokenType, lexeme string, literal any) token.Token {
+func (l *Lexer) getToken(t token.TokenType, lexeme string) token.Token {
 	tok := token.Token{
-		Type:    t,
-		Lexeme:  lexeme,
-		Literal: literal,
-		Offset:  l.position,
+		Type:   t,
+		Lexeme: lexeme,
+		Pos:    token.Pos{Start: l.position, End: l.readPosition},
 	}
 
 	return tok
@@ -244,7 +242,7 @@ func (l *Lexer) whitespace() *token.Token {
 // handles newline for linenumber and returns a semicolon if the conditions are correct
 func (l *Lexer) newline() *token.Token {
 	if l.newlineIsTerminal() {
-		tok := l.getToken(token.SEMICOLON, string(l.ch), nil)
+		tok := l.getToken(token.SEMICOLON, string(l.ch))
 		l.line += 1
 		l.advance()
 		return &tok
@@ -257,7 +255,7 @@ func (l *Lexer) newline() *token.Token {
 }
 
 // returns the lexeme and the literal value of the string
-func (l *Lexer) readString() (string, string) {
+func (l *Lexer) readString() string {
 	for {
 		if l.peek() != '"' {
 			l.readPosition += 1
@@ -268,13 +266,12 @@ func (l *Lexer) readString() (string, string) {
 		}
 	}
 	lexeme := l.source[l.position:l.readPosition]
-	literal := lexeme[1 : len(lexeme)-1]
 
-	return lexeme, literal
+	return lexeme
 }
 
 // returns the lexeme and literal of string.
-func (l *Lexer) readNumber() (string, float64, error) {
+func (l *Lexer) readNumber() (string, error) {
 	for {
 		if !isDigit(l.peek()) {
 			break
@@ -289,13 +286,13 @@ func (l *Lexer) readNumber() (string, float64, error) {
 
 		// if the next char is not a number, then the token is invalid
 		if !isDigit(l.peek()) {
-			line, col := l.getTokenPostionFromOffset(l.readPosition - 1)
+			line, col := l.getTokenPostionFromOffset(token.Pos{End: l.readPosition - 1})
 
 			err := fmt.Errorf("[%d:%d]: expected digit, got=%s\n",
 				line,
 				col,
 				string(l.peek()))
-			return "", 0, err
+			return "", err
 
 		}
 		// parse decimal digits
@@ -311,9 +308,7 @@ func (l *Lexer) readNumber() (string, float64, error) {
 
 	lexeme := l.source[l.position:l.readPosition]
 
-	literal, _ := strconv.ParseFloat(lexeme, 64)
-
-	return lexeme, literal, nil
+	return lexeme, nil
 }
 
 func (l *Lexer) readIdentifier() string {

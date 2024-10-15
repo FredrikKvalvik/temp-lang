@@ -14,7 +14,6 @@ import (
 )
 
 type Node interface {
-	Literal() any
 	Lexeme() string
 	String() string
 	GetToken() *token.Token

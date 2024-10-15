@@ -79,22 +79,23 @@ func LookupIdent(ident string) TokenType {
 	return IDENT
 }
 
+type Pos struct {
+	Start, End int
+}
 type Token struct {
-	Offset  int       // offset from the start of the source file
-	Type    TokenType // the number of characters from the start of the line to the start of the token
-	Lexeme  string    // the string that was parsed as this token
-	Literal any       // the literal value of the token. int/string/bool/nil
+	Pos    Pos       // offset from the start of the source file
+	Type   TokenType // the number of characters from the start of the line to the start of the token
+	Lexeme string    // the string that was parsed as this token
 }
 
-func NewToken(tokenType TokenType, lexeme string, literal any, offset int) Token {
+func NewToken(tokenType TokenType, lexeme string, pos Pos) Token {
 	return Token{
-		Offset:  offset,
-		Type:    tokenType,
-		Lexeme:  lexeme,
-		Literal: literal,
+		Pos:    pos,
+		Type:   tokenType,
+		Lexeme: lexeme,
 	}
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("[offset: %d] %s: %s", t.Offset, t.Type, t.Lexeme)
+	return fmt.Sprintf("[offset: %d] %s: %s", t.Pos, t.Type, t.Lexeme)
 }

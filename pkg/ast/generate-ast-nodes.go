@@ -188,7 +188,7 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 		f.WriteString("}\n")
 		f.WriteString(fmt.Sprintf(interfaceMethod, "n", name) + "\n")
 		f.WriteString(fmt.Sprintf("func (n *%s) Lexeme() string { return n.Token.Lexeme }\n", name))
-		f.WriteString(fmt.Sprintf("func (n *%s) Literal() any { return n.Token.Literal }\n", name))
+		// f.WriteString(fmt.Sprintf("func (n *%s) Literal() any { return n.Token.Literal }\n", name))
 		f.WriteString(fmt.Sprintf("func (n *%s) GetToken() *token.Token { return &n.Token }\n", name))
 
 		// create space for next struct

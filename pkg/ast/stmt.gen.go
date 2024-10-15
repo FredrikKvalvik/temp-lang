@@ -12,7 +12,6 @@ type LetStmt struct {
 
 func (n *LetStmt) StmtNode()              {}
 func (n *LetStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *LetStmt) Literal() any           { return n.Token.Literal }
 func (n *LetStmt) GetToken() *token.Token { return &n.Token }
 
 type ExpressionStmt struct {
@@ -22,7 +21,6 @@ type ExpressionStmt struct {
 
 func (n *ExpressionStmt) StmtNode()              {}
 func (n *ExpressionStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *ExpressionStmt) Literal() any           { return n.Token.Literal }
 func (n *ExpressionStmt) GetToken() *token.Token { return &n.Token }
 
 type IfStmt struct {
@@ -34,7 +32,6 @@ type IfStmt struct {
 
 func (n *IfStmt) StmtNode()              {}
 func (n *IfStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *IfStmt) Literal() any           { return n.Token.Literal }
 func (n *IfStmt) GetToken() *token.Token { return &n.Token }
 
 type BlockStmt struct {
@@ -44,7 +41,6 @@ type BlockStmt struct {
 
 func (n *BlockStmt) StmtNode()              {}
 func (n *BlockStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *BlockStmt) Literal() any           { return n.Token.Literal }
 func (n *BlockStmt) GetToken() *token.Token { return &n.Token }
 
 type ReturnStmt struct {
@@ -54,7 +50,6 @@ type ReturnStmt struct {
 
 func (n *ReturnStmt) StmtNode()              {}
 func (n *ReturnStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *ReturnStmt) Literal() any           { return n.Token.Literal }
 func (n *ReturnStmt) GetToken() *token.Token { return &n.Token }
 
 type IterStmt struct {
@@ -66,7 +61,6 @@ type IterStmt struct {
 
 func (n *IterStmt) StmtNode()              {}
 func (n *IterStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *IterStmt) Literal() any           { return n.Token.Literal }
 func (n *IterStmt) GetToken() *token.Token { return &n.Token }
 
 type PrintStmt struct {
@@ -76,7 +70,6 @@ type PrintStmt struct {
 
 func (n *PrintStmt) StmtNode()              {}
 func (n *PrintStmt) Lexeme() string         { return n.Token.Lexeme }
-func (n *PrintStmt) Literal() any           { return n.Token.Literal }
 func (n *PrintStmt) GetToken() *token.Token { return &n.Token }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented

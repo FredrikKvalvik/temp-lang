@@ -429,7 +429,7 @@ func TestIndexExpressions(t *testing.T) {
 func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, op token.TokenType, eRight any) bool {
 	t.Helper()
 	if !testLiteralExpression(t, i, expr.Left, eLeft) {
-		t.Errorf("[t: %d] Left: expected=%v, got=%v\n", i, eLeft, expr.Left.Literal())
+		t.Errorf("[t: %d] Left: expected=%v, got=%v\n", i, eLeft, expr.Left.Lexeme())
 		return false
 	}
 	if expr.Operand != op {
@@ -438,7 +438,7 @@ func testBinaryExpression(t *testing.T, i int, expr *ast.BinaryExpr, eLeft any, 
 	}
 
 	if !testLiteralExpression(t, i, expr.Right, eRight) {
-		t.Errorf("[t: %d] Right: expected=%v, got=%v\n", i, eRight, expr.Right.Literal())
+		t.Errorf("[t: %d] Right: expected=%v, got=%v\n", i, eRight, expr.Right.Lexeme())
 		return false
 	}
 
