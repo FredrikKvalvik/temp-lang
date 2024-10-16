@@ -5,8 +5,9 @@ package ast
 import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type IdentifierExpr struct {
-	Token token.Token
-	Value string
+	Token           token.Token
+	Value           string
+	ResolutionDepth int
 }
 
 func (n *IdentifierExpr) ExprNode()              {}

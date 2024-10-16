@@ -9,6 +9,7 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
+	"github.com/fredrikkvalvik/temp-lang/pkg/resolver"
 )
 
 type Repl struct {
@@ -28,6 +29,7 @@ func New(in io.Reader, out io.Writer) *Repl {
 func (r *Repl) Run(env *object.Environment) {
 	s := bufio.NewScanner(r.in)
 
+	resolve := resolver.New(env)
 	for {
 		fmt.Print("> ")
 		scanned := s.Scan()
@@ -46,6 +48,15 @@ func (r *Repl) Run(env *object.Environment) {
 
 		p := parser.New(l)
 		program := p.ParseProgram()
+
+		resolve.Resolve(program)
+		if len(resolve.Errors) > 0 {
+			for _, err := range resolve.Errors {
+				fmt.Printf("err: %v\n", err)
+			}
+			resolve.Errors = []error{}
+			continue
+		}
 
 		if p.DidError() {
 			for _, err := range p.Errors() {

@@ -157,8 +157,9 @@ func (p *Parser) parseCall(left ast.Expr) ast.Expr {
 
 func (p *Parser) parseIdent() ast.Expr {
 	ident := &ast.IdentifierExpr{
-		Token: p.curToken,
-		Value: p.curToken.Lexeme,
+		Token:           p.curToken,
+		Value:           p.curToken.Lexeme,
+		ResolutionDepth: -1,
 	}
 
 	return ident

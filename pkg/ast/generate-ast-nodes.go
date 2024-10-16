@@ -81,6 +81,7 @@ var exprs = []template{
 		name: "Identifier",
 		props: []keyVal{
 			{"Value", "string"},
+			{"ResolutionDepth", "int"},
 		},
 	},
 	{

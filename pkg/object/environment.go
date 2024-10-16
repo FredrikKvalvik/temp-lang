@@ -6,8 +6,11 @@ import (
 
 // environment represent the environment of the current execution scope
 type Environment struct {
+	// is nil for global environment
 	parent *Environment
-	vars   map[string]Object
+
+	// lookup table for the variables declared in the Environment scope
+	vars map[string]Object
 }
 
 func NewEnv(parent *Environment) *Environment {
@@ -30,13 +33,20 @@ func (e *Environment) SetVar(key string, value Object) {
 }
 
 // walks up the env tree to find the first var with name=key
-func (e *Environment) GetVar(key string) Object {
+func (e *Environment) FindVar(key string) Object {
 	val, ok := e.vars[key]
 	if !ok && e.parent != nil {
-		val = e.parent.GetVar(key)
+		val = e.parent.FindVar(key)
 	}
 
 	return val
+}
+func (e *Environment) GetVar(key string, depth int) Object {
+	env := e
+	for range depth {
+		env = env.parent
+	}
+	return env.vars[key]
 }
 
 // move up the parent tree and look for a variable to reassign. return nil if none are found.
@@ -67,6 +77,10 @@ func (e *Environment) varInScope(key string) bool {
 func (e *Environment) IsGlobalEnv() bool {
 	return e.parent == nil
 }
+
+// func (e *Environment) AddResolvedIdentifier(key ast.Expr, depth int) {
+
+// }
 
 func illegalDeclarationError(key string) *ErrorObj {
 	return &ErrorObj{Error: fmt.Errorf(

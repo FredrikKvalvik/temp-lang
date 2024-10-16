@@ -12,6 +12,7 @@ import (
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
 	"github.com/fredrikkvalvik/temp-lang/pkg/parser"
 	"github.com/fredrikkvalvik/temp-lang/pkg/repl"
+	"github.com/fredrikkvalvik/temp-lang/pkg/resolver"
 )
 
 func main() {
@@ -66,6 +67,12 @@ func runProgram(in string, env *object.Environment) (object.Object, error) {
 			errs += fmt.Sprintf("%s\n", err)
 		}
 		return nil, errors.New(errs)
+	}
+
+	r := resolver.New(env)
+	r.Resolve(program)
+	if len(r.Errors) > 0 {
+		return nil, errors.Join(r.Errors...)
 	}
 
 	result := evaluator.Eval(program, env)

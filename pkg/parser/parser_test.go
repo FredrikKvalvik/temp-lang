@@ -31,8 +31,8 @@ func TestLetStatements(t *testing.T) {
 		if len(p.Statements) != 1 {
 			t.Fatalf("[t: %d] wrong number of statements, got=%d, expected=%d\n", i, len(p.Statements), 1)
 		}
-
 		stmt := p.Statements[0]
+
 		if !testLetStatement(t, i, stmt, tt.exptectedName) {
 			return
 		}
@@ -224,15 +224,15 @@ func TestFunctionLiterals(t *testing.T) {
 		expectedArgLen  int
 		expectedBodyLen int
 	}{
-		{"fn() {}",
+		{"(fn() {})",
 			0, 0},
-		{"fn() { 10; }",
+		{"(fn() { 10; })",
 			0, 1},
-		{"fn(a) {}",
+		{"(fn(a) {})",
 			1, 0},
-		{"fn(a, b, c) { }",
+		{"(fn(a, b, c) { })",
 			3, 0},
-		{"fn(a, b, c) { 1; 2; 3}",
+		{"(fn(a, b, c) { 1; 2; 3})",
 			3, 3},
 	}
 
@@ -250,7 +250,7 @@ func TestFunctionLiterals(t *testing.T) {
 		tr.AssertNotNil(expr)
 
 		tr.SetName(fmt.Sprintf("[%d]is functionLiteral", idx))
-		fun, ok := expr.Expression.(*ast.FunctionLiteralExpr)
+		fun, ok := expr.Expression.(*ast.ParenExpr).Expression.(*ast.FunctionLiteralExpr)
 		tr.AssertTrue(ok)
 
 		tr.SetName(fmt.Sprintf("[%d]test function args", idx))
@@ -279,13 +279,13 @@ func TestFunctionCalls(t *testing.T) {
 		{"function(a,b,c)",
 			"function", 3},
 		// anynomous function call without args
-		{"fn() {}()",
+		{"(fn() {})()",
 			"fn() {\n}", 0},
 		// anynomous function call without args
-		{"fn(a) {}(1)",
+		{"(fn(a) {})(1)",
 			"fn(a) {\n}", 1},
 		// anynomous function call with args
-		{"fn(a,b,c) {}(1,2,3)",
+		{"(fn(a,b,c) {})(1,2,3)",
 			"fn(a, b, c) {\n}", 3},
 	}
 

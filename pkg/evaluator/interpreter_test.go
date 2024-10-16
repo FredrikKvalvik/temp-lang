@@ -108,7 +108,7 @@ func TestLetStatement(t *testing.T) {
 
 	res, e := testEvalProgram(tr, input)
 
-	value := e.GetVar("ident")
+	value := e.FindVar("ident")
 
 	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
 	tr.AssertNotNil(value)
@@ -150,7 +150,7 @@ func TestAssignment(t *testing.T) {
 				tr.T.Log(res.Inspect())
 			}
 
-			value := e.GetVar(tt.varName)
+			value := e.FindVar(tt.varName)
 			tr.AssertNotNil(value)
 			tr.AssertEqual(value.Type(), tt.expectedType)
 
@@ -168,7 +168,7 @@ func TestFnLiteralExpression(t *testing.T) {
 
 	res, e := testEvalProgram(tr, input)
 
-	value := e.GetVar("a")
+	value := e.FindVar("a")
 
 	tr.AssertEqual(res.Type(), object.FUNCTION_LITERAL_OBJ)
 	tr.AssertNotNil(value)
@@ -189,7 +189,7 @@ func TestBlockStatement(t *testing.T) {
 	inner, env := testEvalProgram(tr, input)
 	tr.AssertNotNil(env)
 
-	outer := env.GetVar("a")
+	outer := env.FindVar("a")
 
 	tr.SetName("testing outer")
 	tr.AssertNotNil(outer)
@@ -252,8 +252,8 @@ func TestIdentifer(t *testing.T) {
 
 	res, e := testEvalProgram(tr, input)
 
-	a := e.GetVar("a")
-	b := e.GetVar("b")
+	a := e.FindVar("a")
+	b := e.FindVar("b")
 	tr.AssertNotNil(b)
 
 	tr.SetName("testing value `a`")

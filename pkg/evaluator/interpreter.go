@@ -79,12 +79,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		// with the same name as a builtin, we should give
 		// the user declared variable priority
 
-		if val := env.GetVar(n.Value); val != nil {
+		if n.ResolutionDepth >= 0 {
+			return env.GetVar(n.Value, n.ResolutionDepth)
+		}
+
+		if val := env.FindVar(n.Value); val != nil {
 			return val
 		}
+
 		if val, ok := builtins[n.Value]; ok {
 			return val
 		}
+
 		return newError(UseOfUndeclaredError, n.Value)
 
 	case *ast.ReturnStmt:
