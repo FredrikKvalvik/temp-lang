@@ -46,7 +46,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return NIL
 
 	case *ast.BlockStmt:
-		return evalBlockStatment(n, env)
+		scope := object.NewEnv(env)
+		return evalBlockStatment(n, scope)
 
 	case *ast.IterStmt:
 		return evalIterStatement(n, env)
@@ -74,24 +75,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalBinaryExpression(left, right, n.Operand)
 
 	case *ast.IdentifierExpr:
-		// NOTE: we first look for a user-declared variable
-		// this is so that if the use declares a variable
-		// with the same name as a builtin, we should give
-		// the user declared variable priority
-
-		if n.ResolutionDepth >= 0 {
-			return env.GetVar(n.Value, n.ResolutionDepth)
-		}
-
-		if val := env.FindVar(n.Value); val != nil {
-			return val
-		}
-
-		if val, ok := builtins[n.Value]; ok {
-			return val
-		}
-
-		return newError(UseOfUndeclaredError, n.Value)
+		return evalIdentifier(n, env)
 
 	case *ast.ReturnStmt:
 		if env.IsGlobalEnv() {
@@ -167,6 +151,26 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
 	}
+}
+
+func evalIdentifier(n *ast.IdentifierExpr, env *object.Environment) object.Object {
+	// NOTE: we first look for a user-declared variable
+	// this is so that if the use declares a variable
+	// with the same name as a builtin, we should give
+	// the user declared variable priority
+
+	if n.ResolutionDepth > 0 {
+		ret := env.GetVar(n.Value, n.ResolutionDepth)
+		return ret
+
+	} else if val := env.FindVar(n.Value); val != nil {
+		return val
+
+	} else if val, ok := builtins[n.Value]; ok {
+		return val
+	}
+
+	return newError(UseOfUndeclaredError, n.Value)
 }
 
 func evalIndexExpression(left, index object.Object) object.Object {
@@ -384,9 +388,7 @@ func evalProgram(stmts []ast.Stmt, env *object.Environment) object.Object {
 	return result
 }
 
-func evalBlockStatment(b *ast.BlockStmt, env *object.Environment) object.Object {
-	scope := object.NewEnv(env)
-
+func evalBlockStatment(b *ast.BlockStmt, scope *object.Environment) object.Object {
 	var res object.Object = NIL
 
 	for _, stmt := range b.Statements {
@@ -567,7 +569,7 @@ func applyFunction(callee object.Object, args []object.Object) object.Object {
 			scope.DeclareVar(arg.Value, args[idx])
 		}
 
-		evaluated := Eval(fn.Body, scope)
+		evaluated := evalBlockStatment(fn.Body, scope)
 		return unwrapReturn(evaluated)
 
 	default:

@@ -42,11 +42,16 @@ func (e *Environment) FindVar(key string) Object {
 	return val
 }
 func (e *Environment) GetVar(key string, depth int) Object {
+
+	_ = e.FindVar(key)
+
 	env := e
 	for range depth {
 		env = env.parent
 	}
-	return env.vars[key]
+
+	val := env.vars[key]
+	return val
 }
 
 // move up the parent tree and look for a variable to reassign. return nil if none are found.

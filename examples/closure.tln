@@ -1,10 +1,12 @@
 
 let a = "global"
 {
-	fn b() {
-		print a
+	{
+		fn b() {
+			print a
+		}
+		let a = "local"
+		// expect to print "global"
+		b()
 	}
-	let a = "local"
-	// expect to print "global"
-	b()
 }
