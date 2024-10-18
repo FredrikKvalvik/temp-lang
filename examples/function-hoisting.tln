@@ -1,0 +1,6 @@
+
+callMe()
+
+fn callMe() {
+	print "call me maybe"
+}

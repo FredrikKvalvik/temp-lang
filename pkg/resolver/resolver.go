@@ -2,6 +2,9 @@
 // of the program. It checks if returns are valid, clojures
 // act as defined, improve lookup time for variables, resolve imports
 // by populating the environment
+//
+// Resolver will also hoist top level function definitions so that we can define
+// to allow for calling function before their definition
 package resolver
 
 import (
@@ -27,7 +30,8 @@ var (
 	IllegalUseOfSelfInitError         = errors.New("Can't read local variable in its own initializer")
 	IllegalReturnOutsideFunctionError = errors.New("Can't return outside function body")
 
-	UnknownNodeError = errors.New("Unknown node")
+	// error for development. should only be returned when the resolver has not implemented a resolve-case for a node
+	UnknownNodeError = errors.New("Resolution for node not implemented")
 )
 
 type Resolver struct {
@@ -51,6 +55,8 @@ func (r *Resolver) Resolve(node ast.Node) {
 	// fmt.Printf("resolving %T..\n", node)
 	switch n := node.(type) {
 	case *ast.Program:
+		r.hoistFunctions(n)
+
 		r.enterScope()
 		for _, stmt := range n.Statements {
 			r.Resolve(stmt)
@@ -217,4 +223,31 @@ func (r *Resolver) hasScopeType(st ScopeType) bool {
 	}
 
 	return false
+}
+
+// filters the function declarations from the program, and moves them to the top of the
+// stmt list. this will allow the user call a function being defined later in source
+func (r *Resolver) hoistFunctions(program *ast.Program) {
+	functions := []ast.Stmt{}
+	programStmts := []ast.Stmt{}
+
+	for _, stmt := range program.Statements {
+
+		let, ok := stmt.(*ast.LetStmt)
+		if !ok {
+			programStmts = append(programStmts, stmt)
+			continue
+		}
+
+		_, ok = let.Value.(*ast.FunctionLiteralExpr)
+		if !ok {
+			programStmts = append(programStmts, stmt)
+			continue
+		}
+
+		// we now know the stmt is a function declaration
+		functions = append(functions, let)
+	}
+
+	program.Statements = append(functions, programStmts...)
 }
