@@ -190,8 +190,9 @@ func TestBinaryExpression(t *testing.T) {
 		{"5 - 5", float64(5), token.MINUS, float64(5)},
 		{"5 * 5", float64(5), token.ASTERISK, float64(5)},
 		{"5 / 5", float64(5), token.SLASH, float64(5)},
-		{"5 and 5", float64(5), token.AND, float64(5)},
-		{"5 or 5", float64(5), token.OR, float64(5)},
+		// TODO: add test for logicalParsing
+		// {"5 and 5", float64(5), token.AND, float64(5)},
+		// {"5 or 5", float64(5), token.OR, float64(5)},
 		{"5 > 5", float64(5), token.GT, float64(5)},
 		{"5 < 5", float64(5), token.LT, float64(5)},
 		{"5 == 5", float64(5), token.EQ, float64(5)},

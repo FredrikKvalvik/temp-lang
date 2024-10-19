@@ -90,10 +90,11 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GT, p.parseBinary)
 	p.registerInfix(token.EQ, p.parseBinary)
 	p.registerInfix(token.NOT_EQ, p.parseBinary)
-	p.registerInfix(token.ASSIGN, p.parseBinary)
 
 	p.registerInfix(token.AND, p.parseLogical)
 	p.registerInfix(token.OR, p.parseLogical)
+
+	p.registerInfix(token.ASSIGN, p.parseAssign)
 
 	p.registerInfix(token.LPAREN, p.parseCall)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)

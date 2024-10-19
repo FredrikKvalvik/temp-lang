@@ -1,16 +1,20 @@
-let map = fn(list, fun) {
+fn map(list, fun) {
 	let newList = []
+	print "inside map start"
 	each item : list {
+		print item
+
 		let x = fun(item)
 		push(newList, x)
 	}
+	print "inside map end"
 }
 
-let double = fn(n) {
+fn double(n) {
 	return n * 2
 }
 
-let printItem = fn(n) {
+fn printItem(n) {
 	print n
 }
 

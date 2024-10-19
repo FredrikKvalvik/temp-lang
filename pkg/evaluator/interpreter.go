@@ -60,12 +60,6 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalUnaryExpression(right, n.Operand)
 
 	case *ast.BinaryExpr:
-		// TODO: create an ast node for assignment instead of having all the logic inside binary eval
-		switch n.Operand {
-		case token.ASSIGN:
-			return evalAssignment(n, env)
-		}
-
 		left := Eval(n.Left, env)
 		if isError(left) {
 			return left
@@ -99,6 +93,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return left
+
+	case *ast.AssignExpr:
+		return evalAssignment(n, env)
 
 	case *ast.IdentifierExpr:
 		return evalIdentifier(n, env)
@@ -269,17 +266,6 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 		node.Iterable = &ast.BooleanLiteralExpr{Value: true}
 	}
 
-	scope := object.NewEnv(env)
-	var name *ast.IdentifierExpr
-	if node.Name != nil {
-		ident, ok := node.Name.(*ast.IdentifierExpr)
-		if !ok {
-			return &object.ErrorObj{Error: TypeError, Token: node.Name.GetToken()}
-		}
-		scope.DeclareVar(ident.Value, NIL)
-		name = ident
-	}
-
 	iterable := Eval(node.Iterable, env)
 	if isError(iterable) {
 		return iterable
@@ -289,15 +275,26 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	if err != nil {
 		return err
 	}
+	var name *ast.IdentifierExpr
+	if node.Name != nil {
+		ident, ok := node.Name.(*ast.IdentifierExpr)
+		if !ok {
+			return &object.ErrorObj{Error: TypeError, Token: node.Name.GetToken()}
+		}
+		name = ident
+	}
 
 	var result object.Object = NIL
 	for !iterator.Done() {
 		val := iterator.Next()
+
+		scope := object.NewEnv(env)
+
 		if name != nil {
-			scope.SetVar(name.Value, val)
+			scope.DeclareVar(name.Value, val)
 		}
 
-		result = Eval(node.Body, scope)
+		result = evalBlockStatment(node.Body, scope)
 		if isError(result) || result.Type() == object.RETURN_OBJ {
 			return result
 		}
@@ -306,13 +303,13 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	return result
 }
 
-func evalAssignment(node *ast.BinaryExpr, env *object.Environment) object.Object {
-	val := Eval(node.Right, env)
+func evalAssignment(node *ast.AssignExpr, env *object.Environment) object.Object {
+	val := Eval(node.Value, env)
 	if isError(val) {
 		return val
 	}
 
-	switch n := node.Left.(type) {
+	switch n := node.Assignee.(type) {
 	case *ast.IdentifierExpr:
 		val = env.ReassignVar(n.Value, val)
 		return val

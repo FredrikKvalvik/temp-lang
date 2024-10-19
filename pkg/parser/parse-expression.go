@@ -80,6 +80,30 @@ func (p *Parser) parseLogical(left ast.Expr) ast.Expr {
 	return expr
 }
 
+func (p *Parser) parseAssign(left ast.Expr) ast.Expr {
+	//   true   or    false
+	//   left   op    right
+	//          ^
+	expr := &ast.AssignExpr{
+		Token:    p.curToken,
+		Operand:  p.curToken.Type,
+		Assignee: left,
+	}
+
+	// we care about how sticky this operator is
+	stickiness := p.curStickiness()
+
+	// moving to next operand
+	p.advance()
+	//   true   or    false
+	//   left   op    right
+	//                ^
+
+	expr.Value = p.parseExpression(stickiness)
+
+	return expr
+}
+
 func (p *Parser) parseParenPrefix() ast.Expr {
 
 	// ( 1 + 2 ) * 3
