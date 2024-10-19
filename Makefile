@@ -40,6 +40,12 @@ tidy:
 	go mod tidy -v
 	go fmt ./...
 
+## gen: run go generate for project
+.PHONY: gen
+gen:
+	go generate ./...
+	go fmt ./...
+
 ## build: build the application
 .PHONY: build
 build:

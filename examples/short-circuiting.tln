@@ -1,0 +1,9 @@
+
+fn log() {
+	print "i was called"
+	return true
+}
+
+if false and log() {
+	print "i should not be printed"
+}

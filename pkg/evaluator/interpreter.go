@@ -58,9 +58,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 		return evalUnaryExpression(right, n.Operand)
+
 	case *ast.BinaryExpr:
-		// not very clean, but it makes parsing alot easier
-		if n.Operand == token.ASSIGN {
+		// TODO: create an ast node for assignment instead of having all the logic inside binary eval
+		switch n.Operand {
+		case token.ASSIGN:
 			return evalAssignment(n, env)
 		}
 
@@ -73,6 +75,30 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 		return evalBinaryExpression(left, right, n.Operand)
+
+	case *ast.LogicalExpr:
+		left := Eval(n.Left, env)
+		if isError(left) {
+			return left
+		}
+		if left.Type() != object.BOOL_OBJ {
+			return newError(TypeError, left.Inspect()+" is not of type: boolean")
+		}
+
+		if (n.Operand == token.AND && left == TRUE) ||
+			(n.Operand == token.OR && left == FALSE) {
+			right := Eval(n.Right, env)
+			if isError(right) {
+				return right
+			}
+
+			if right.Type() != object.BOOL_OBJ {
+				return newError(TypeError, right.Inspect()+" is not of type: boolean")
+			}
+			return right
+		}
+
+		return left
 
 	case *ast.IdentifierExpr:
 		return evalIdentifier(n, env)

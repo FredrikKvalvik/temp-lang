@@ -127,6 +127,10 @@ func (r *Resolver) Resolve(node ast.Node) {
 		r.Resolve(n.Left)
 		r.Resolve(n.Right)
 
+	case *ast.LogicalExpr:
+		r.Resolve(n.Left)
+		r.Resolve(n.Right)
+
 	case *ast.FunctionLiteralExpr:
 		r.enterScope()
 		r.pushScopeType(FunctionScope)

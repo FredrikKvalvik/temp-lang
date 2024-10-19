@@ -86,13 +86,14 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS, p.parseBinary)
 	p.registerInfix(token.ASTERISK, p.parseBinary)
 	p.registerInfix(token.SLASH, p.parseBinary)
-	p.registerInfix(token.AND, p.parseBinary)
-	p.registerInfix(token.OR, p.parseBinary)
 	p.registerInfix(token.LT, p.parseBinary)
 	p.registerInfix(token.GT, p.parseBinary)
 	p.registerInfix(token.EQ, p.parseBinary)
 	p.registerInfix(token.NOT_EQ, p.parseBinary)
 	p.registerInfix(token.ASSIGN, p.parseBinary)
+
+	p.registerInfix(token.AND, p.parseLogical)
+	p.registerInfix(token.OR, p.parseLogical)
 
 	p.registerInfix(token.LPAREN, p.parseCall)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)

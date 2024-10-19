@@ -62,6 +62,17 @@ func (n *BinaryExpr) ExprNode()              {}
 func (n *BinaryExpr) Lexeme() string         { return n.Token.Lexeme }
 func (n *BinaryExpr) GetToken() *token.Token { return &n.Token }
 
+type LogicalExpr struct {
+	Token   token.Token
+	Operand token.TokenType
+	Left    Expr
+	Right   Expr
+}
+
+func (n *LogicalExpr) ExprNode()              {}
+func (n *LogicalExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *LogicalExpr) GetToken() *token.Token { return &n.Token }
+
 type ParenExpr struct {
 	Token      token.Token
 	Expression Expr
@@ -127,6 +138,7 @@ func typecheckExpr() {
 	_ = Expr(&BooleanLiteralExpr{})
 	_ = Expr(&UnaryExpr{})
 	_ = Expr(&BinaryExpr{})
+	_ = Expr(&LogicalExpr{})
 	_ = Expr(&ParenExpr{})
 	_ = Expr(&FunctionLiteralExpr{})
 	_ = Expr(&CallExpr{})

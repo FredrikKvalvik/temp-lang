@@ -153,7 +153,14 @@ func (b *BinaryExpr) String() string {
 	fmt.Fprintf(&s, "(%s %s %s)", b.Left.String(), b.Lexeme(), b.Right.String())
 
 	return s.String()
+}
 
+func (b *LogicalExpr) String() string {
+	var s strings.Builder
+
+	fmt.Fprintf(&s, "(%s %s %s)", b.Left.String(), b.Lexeme(), b.Right.String())
+
+	return s.String()
 }
 
 func (p *ParenExpr) String() string {

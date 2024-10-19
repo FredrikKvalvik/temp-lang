@@ -118,6 +118,14 @@ var exprs = []template{
 		},
 	},
 	{
+		name: "Logical",
+		props: []keyVal{
+			{"Operand", "token.TokenType"},
+			{"Left", expr},
+			{"Right", expr},
+		},
+	},
+	{
 		name: "Paren",
 		props: []keyVal{
 			{"Expression", expr},
