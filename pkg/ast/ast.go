@@ -163,6 +163,14 @@ func (b *LogicalExpr) String() string {
 	return s.String()
 }
 
+func (b *AssignExpr) String() string {
+	var s strings.Builder
+
+	fmt.Fprintf(&s, "(%s %s %s)", b.Assignee.String(), "=", b.Value.String())
+
+	return s.String()
+}
+
 func (p *ParenExpr) String() string {
 	var s strings.Builder
 

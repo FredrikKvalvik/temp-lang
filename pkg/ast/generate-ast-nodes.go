@@ -126,6 +126,14 @@ var exprs = []template{
 		},
 	},
 	{
+		name: "Assign",
+		props: []keyVal{
+			{"Operand", "token.TokenType"},
+			{"Assignee", expr},
+			{"Value", expr},
+		},
+	},
+	{
 		name: "Paren",
 		props: []keyVal{
 			{"Expression", expr},
