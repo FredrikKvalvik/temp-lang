@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
@@ -30,11 +31,18 @@ func TestBinaryExpression(t *testing.T) {
 		{"10 + 2 * 100",
 			float64(210), object.NUMBER_OBJ},
 
+		{`10 + 2 * "100"`,
+			nil, object.ERROR_OBJ},
+
 		// boolean returns
 		{"10 == 2",
 			false, object.BOOL_OBJ},
 		{"10 != 2",
 			true, object.BOOL_OBJ},
+		{`10 != "hello"`,
+			true, object.BOOL_OBJ},
+		{`10 == "hello"`,
+			false, object.BOOL_OBJ},
 		{`"hello" == "hello"`,
 			true, object.BOOL_OBJ},
 		{`"hello" != "goodbye"`,
@@ -43,6 +51,8 @@ func TestBinaryExpression(t *testing.T) {
 			false, object.BOOL_OBJ},
 		{"10 > 2",
 			true, object.BOOL_OBJ},
+		{`10 > "5"`,
+			nil, object.ERROR_OBJ},
 
 		// string returns
 		{`"hello" + " " + "world"`,
@@ -61,6 +71,36 @@ func TestBinaryExpression(t *testing.T) {
 			tr.AssertEqual(result.Type(), tt.expectedType)
 
 			testAssertType(tr, result, tt.expectedType, tt.expectedVal)
+		})
+	}
+}
+
+func TestLogicalExpression(t *testing.T) {
+
+	tests := []struct {
+		input       string
+		expectedVal bool
+	}{
+		{"true and false",
+			false},
+		{"true or false",
+			true},
+		{"true and true",
+			true},
+		{"true and true and true and true and true and false",
+			false},
+		{"10 > 5 and 2 < 4",
+			true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+
+			result, _ := testEvalProgram(tr, tt.input)
+			tr.T.Log(result)
+
+			testAssertType(tr, result, object.BOOL_OBJ, tt.expectedVal)
 		})
 	}
 }
@@ -120,24 +160,27 @@ func TestAssignment(t *testing.T) {
 
 	tests := []struct {
 		input         string
-		varName       string
 		expectedType  object.ObjectType
 		expectedValue any
 	}{
 		{"let a = 10; a = 100",
-			"a",
 			object.NUMBER_OBJ, float64(100),
 		},
 		{`let b = 10; b = "hello"`,
-			"b",
 			object.STRING_OBJ, "hello",
 		},
 		{`let c = ""
 			{
 				c = "from scope"
 			}`,
-			"c",
 			object.STRING_OBJ, "from scope",
+		},
+		{`let c = ["outer"]
+			{
+				c[0] = "list value assigned from scope"
+			}
+			 c[0]`,
+			object.STRING_OBJ, "list value assigned from scope",
 		},
 	}
 
@@ -145,16 +188,16 @@ func TestAssignment(t *testing.T) {
 		t.Run(tt.input, func(t *testing.T) {
 			tr := tester.New(t, "")
 
-			res, e := testEvalProgram(tr, tt.input)
+			res, _ := testEvalProgram(tr, tt.input)
+			fmt.Printf("res: %v\n", res)
 			if res.Type() == object.ERROR_OBJ {
 				tr.T.Log(res.Inspect())
 			}
 
-			value := e.FindVar(tt.varName)
-			tr.AssertNotNil(value)
-			tr.AssertEqual(value.Type(), tt.expectedType)
+			tr.AssertNotNil(res)
+			tr.AssertEqual(res.Type(), tt.expectedType)
 
-			testAssertType(tr, value, tt.expectedType, tt.expectedValue)
+			testAssertType(tr, res, tt.expectedType, tt.expectedValue)
 
 		})
 	}
