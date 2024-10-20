@@ -19,13 +19,13 @@ func (p *Parser) expectCurError(expect token.TokenType) {
 func (p *Parser) expectError(tok *token.Token, expect token.TokenType) error {
 	lcStr := lineColString(p.l, tok)
 
-	return fmt.Errorf("%s expected `%s`, got=`%s`\n", lcStr, expect, tok.Type)
+	return fmt.Errorf("%s expected `%s`, got=`%s`", lcStr, expect, tok.Type)
 }
 
 func (p *Parser) noParsletError(tok *token.Token) {
 	lcStr := lineColString(p.l, tok)
 
-	err := fmt.Errorf("%s could not parser tok=%s\n", lcStr, tok.Type)
+	err := fmt.Errorf("%s could not parser tok=%s", lcStr, tok.Type)
 	p.errors = append(p.errors, err)
 }
 

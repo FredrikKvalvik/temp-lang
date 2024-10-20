@@ -1,11 +1,19 @@
-let callMe = fn(fun) {
-
+fn callMe (fun) {
 	fun("hello world")
 	return
 }
 
+fn printer(text) {
+	print text
+}
+
 callMe(fn(text) { 
-	fn() {
-		print text	
-	}()
+
+	(fn() {
+		print text
+	})()
+
 })
+
+
+callMe(printer)

@@ -1,0 +1,14 @@
+
+fn getCounter() {
+  let i = 0
+  return fn() {
+    i = i + 1
+    return i
+  }
+}
+
+let counter = getCounter()
+
+print counter()
+print counter()
+print counter()

@@ -52,7 +52,6 @@ func New(env *object.Environment) *Resolver {
 }
 
 func (r *Resolver) Resolve(node ast.Node) {
-	// fmt.Printf("resolving %T..\n", node)
 	switch n := node.(type) {
 	case *ast.Program:
 		// Program entry point
@@ -98,7 +97,9 @@ func (r *Resolver) Resolve(node ast.Node) {
 		if !r.hasScopeType(FunctionScope) {
 			r.Errors = append(r.Errors, IllegalReturnOutsideFunctionError)
 		}
-		r.Resolve(n.Value)
+		if n.Value != nil {
+			r.Resolve(n.Value)
+		}
 
 	case *ast.LetStmt:
 		if _, ok := n.Value.(*ast.FunctionLiteralExpr); ok {
@@ -123,6 +124,12 @@ func (r *Resolver) Resolve(node ast.Node) {
 	case *ast.BinaryExpr:
 		r.Resolve(n.Left)
 		r.Resolve(n.Right)
+
+	case *ast.UnaryExpr:
+		r.Resolve(n.Right)
+
+	case *ast.ParenExpr:
+		r.Resolve(n.Expression)
 
 	case *ast.LogicalExpr:
 		r.Resolve(n.Left)
