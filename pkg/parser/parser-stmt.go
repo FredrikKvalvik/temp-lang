@@ -12,6 +12,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		node = p.parseLetStatment()
 	case token.FUNCTION:
 		node = p.parseFunctionStatment()
+	case token.IMPORT:
+		node = p.parseImportStatement()
 	case token.IF:
 		node = p.parseIfStatement()
 	case token.LBRACE:
@@ -69,6 +71,10 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	p.consume(token.SEMICOLON)
 
 	return letStmt
+}
+
+func (p *Parser) parseImportStatement() *ast.LetStmt {
+	return nil
 }
 
 // syntactic sugar for declaring a function variable

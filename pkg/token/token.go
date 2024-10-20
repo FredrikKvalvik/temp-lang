@@ -47,6 +47,7 @@ const (
 
 	// Keywords
 	FUNCTION
+	IMPORT
 	EACH
 	LET
 	TRUE
@@ -59,6 +60,7 @@ const (
 
 var keywords = map[string]TokenType{
 	"fn":     FUNCTION,
+	"import": IMPORT,
 	"let":    LET,
 	"true":   TRUE,
 	"false":  FALSE,

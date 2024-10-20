@@ -58,6 +58,15 @@ func (l *LetStmt) String() string {
 	return s.String()
 }
 
+func (l *ImportStmt) String() string {
+	var s strings.Builder
+
+	// TODO: update String when let is is fully implemented
+	fmt.Fprintf(&s, "import %s %s\n", l.Name.String(), l.Path)
+
+	return s.String()
+}
+
 func (e *ExpressionStmt) String() string {
 	var s strings.Builder
 

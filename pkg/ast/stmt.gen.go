@@ -14,6 +14,16 @@ func (n *LetStmt) StmtNode()              {}
 func (n *LetStmt) Lexeme() string         { return n.Token.Lexeme }
 func (n *LetStmt) GetToken() *token.Token { return &n.Token }
 
+type ImportStmt struct {
+	Token token.Token
+	Name  *IdentifierExpr
+	Path  string
+}
+
+func (n *ImportStmt) StmtNode()              {}
+func (n *ImportStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *ImportStmt) GetToken() *token.Token { return &n.Token }
+
 type ExpressionStmt struct {
 	Token      token.Token
 	Expression Expr
@@ -75,6 +85,7 @@ func (n *PrintStmt) GetToken() *token.Token { return &n.Token }
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
 func typecheckStmt() {
 	_ = Stmt(&LetStmt{})
+	_ = Stmt(&ImportStmt{})
 	_ = Stmt(&ExpressionStmt{})
 	_ = Stmt(&IfStmt{})
 	_ = Stmt(&BlockStmt{})

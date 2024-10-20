@@ -35,6 +35,13 @@ var stmts = []template{
 		},
 	},
 	{
+		name: "Import",
+		props: []keyVal{
+			{"Name", "*Identifier" + expr},
+			{"Path", "string"},
+		},
+	},
+	{
 		name: "Expression",
 		props: []keyVal{
 			{"Expression", expr},
