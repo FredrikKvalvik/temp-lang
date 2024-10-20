@@ -73,8 +73,36 @@ func (p *Parser) parseLetStatment() *ast.LetStmt {
 	return letStmt
 }
 
-func (p *Parser) parseImportStatement() *ast.LetStmt {
-	return nil
+func (p *Parser) parseImportStatement() *ast.ImportStmt {
+	// import ident "hei"
+	// ^
+	importStmt := &ast.ImportStmt{
+		Token: p.curToken,
+	}
+
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	// import ident "hei"
+	//        ^
+	importStmt.Name = &ast.IdentifierExpr{
+		Token:           p.curToken,
+		Value:           p.curToken.Lexeme,
+		ResolutionDepth: 0,
+	}
+
+	if !p.expectPeek(token.STRING) {
+		return nil
+	}
+	// import ident "hei"
+	//              ^
+	importStmt.Path = p.curToken.Lexeme[1 : len(p.curToken.Lexeme)-1]
+
+	if !p.expectPeek(token.SEMICOLON) {
+		return nil
+	}
+
+	return importStmt
 }
 
 // syntactic sugar for declaring a function variable

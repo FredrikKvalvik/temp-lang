@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -379,6 +380,42 @@ func TestMapLiteralExpressions(t *testing.T) {
 			tr.AssertTrue(ok)
 
 			tr.AssertEqual(len(mapLit.KeyValues), len(tt.expected))
+		})
+	}
+}
+
+func TestImportStmt(t *testing.T) {
+	tests := []struct {
+		input        string
+		expectedName string
+		expectedPath string
+	}{
+		{`import ident "path"`,
+			"ident", "path"},
+		{`import http "http";`,
+			"http", "http"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+			l := lexer.New(tt.input)
+			p := New(l)
+
+			res := p.ParseProgram()
+
+			if len(p.Errors()) > 0 {
+				tr.T.Log("did log")
+				tr.T.Errorf("parser error\n%s", errors.Join(p.errors...))
+			}
+
+			tr.AssertEqual(len(res.Statements), 1, "expect 1 stamtement in program")
+
+			imp := res.Statements[0].(*ast.ImportStmt)
+			tr.AssertEqual(imp.GetToken().Type, token.IMPORT, "expect the statement to be ImportStmt")
+
+			tr.AssertEqual(imp.Name.Value, tt.expectedName, fmt.Sprintf("expect import name: %s == %s", imp.Name.Value, tt.expectedName))
+			tr.AssertEqual(imp.Path, tt.expectedPath, fmt.Sprintf("expect import path: %s == %s", imp.Path, tt.expectedPath))
 		})
 	}
 }
