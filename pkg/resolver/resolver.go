@@ -55,13 +55,10 @@ func (r *Resolver) Resolve(node ast.Node) {
 	// fmt.Printf("resolving %T..\n", node)
 	switch n := node.(type) {
 	case *ast.Program:
+		// Program entry point
 		r.hoistFunctions(n)
 
-		r.enterScope()
-		for _, stmt := range n.Statements {
-			r.Resolve(stmt)
-		}
-		r.leaveScope()
+		r.resolveStmtList(n.Statements)
 		return
 
 	case *ast.BlockStmt:
@@ -156,14 +153,22 @@ func (r *Resolver) Resolve(node ast.Node) {
 	case *ast.ListLiteralExpr:
 		r.resolveExprList(n.Items)
 
+	case *ast.MapLiteralExpr:
+		for key, value := range n.KeyValues {
+			r.Resolve(key)
+			r.Resolve(value)
+		}
+
+	case *ast.IndexExpr:
+		r.Resolve(n.Left)
+		r.Resolve(n.Index)
+
 	case *ast.StringLiteralExpr:
 	case *ast.NumberLiteralExpr:
 	case *ast.BooleanLiteralExpr:
 		// do nothing
 	default:
 		r.Errors = append(r.Errors, fmt.Errorf("%w: %T", UnknownNodeError, n))
-
-		return
 	}
 }
 
