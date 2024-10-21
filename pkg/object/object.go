@@ -40,8 +40,8 @@ type ModuleType int
 
 const (
 	_ ModuleType = iota
-	NATIVE
-	FILE
+	NATIVE_MODULE
+	FILE_MODULE
 )
 
 func (n *NilObj) Inspect() string     { return "nil" }

@@ -28,6 +28,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		value := Eval(n.Value, env)
 		return env.DeclareVar(key, value)
 
+	case *ast.ImportStmt:
+		mod := &object.ModuleObj{
+			Name:       n.Name.Value,
+			ModuleType: object.NATIVE_MODULE,
+		}
+		return mod
+
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
 
