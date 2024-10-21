@@ -29,6 +29,7 @@ type Expr interface {
 	ExprNode() // Dummy method to make go treat Expr and Stmt differently
 }
 
+// program is the ast from one source file
 type Program struct {
 	Statements []Stmt
 }
