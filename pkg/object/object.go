@@ -16,9 +16,10 @@ type Object interface {
 }
 
 type BuiltinFn func(args ...Object) Object
-type ObjectType int
 
 type MapPairs = map[HashKey]KeyValuePair
+
+type ObjectType int
 
 const (
 	_                    ObjectType = iota
@@ -31,7 +32,16 @@ const (
 	LIST_OBJ                        // collection if objects in an ordered list
 	MAP_OBJ                         // Map is a datatype for storing key-value pairs
 	BUILTIN_OBJ                     // Builtin function
+	MODULE_OBJ                      // Module is an object that holds the references to a unit of code that has been imported by a caller
 	ERROR_OBJ                       // runtime error
+)
+
+type ModuleType int
+
+const (
+	_ ModuleType = iota
+	NATIVE
+	FILE
 )
 
 func (n *NilObj) Inspect() string     { return "nil" }
@@ -89,5 +99,7 @@ func (b *MapObj) Inspect() string {
 }
 
 func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
+
+func (b *ModuleObj) Inspect() string { return fmt.Sprintf("[Module %s]", b.Name) }
 
 func (b *ErrorObj) Inspect() string { return b.Error.Error() }

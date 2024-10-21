@@ -2,9 +2,10 @@
 
 package object
 
-import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
-
-import "github.com/fredrikkvalvik/temp-lang/pkg/token"
+import (
+	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
+	"github.com/fredrikkvalvik/temp-lang/pkg/token"
+)
 
 type BooleanObj struct {
 	Value bool
@@ -55,6 +56,13 @@ type MapObj struct {
 
 func (n *MapObj) Type() ObjectType { return MAP_OBJ }
 
+type ModuleObj struct {
+	Name       string
+	ModuleType ModuleType
+}
+
+func (n *ModuleObj) Type() ObjectType { return MODULE_OBJ }
+
 type BuiltinObj struct {
 	Fn   BuiltinFn
 	Name string
@@ -79,6 +87,7 @@ func typecheck() {
 	_ = Object(&ReturnObj{})
 	_ = Object(&ListObj{})
 	_ = Object(&MapObj{})
+	_ = Object(&ModuleObj{})
 	_ = Object(&BuiltinObj{})
 	_ = Object(&ErrorObj{})
 }

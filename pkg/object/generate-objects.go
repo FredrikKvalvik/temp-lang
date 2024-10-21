@@ -82,6 +82,14 @@ var objects = []template{
 		},
 	},
 	{
+		name: "Module",
+		typ:  object.MODULE_OBJ,
+		props: []keyVal{
+			{"Name", "string"},
+			{"ModuleType", "ModuleType"},
+		},
+	},
+	{
 		name: "Builtin",
 		typ:  object.BUILTIN_OBJ,
 		props: []keyVal{
