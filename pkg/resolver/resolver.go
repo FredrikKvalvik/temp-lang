@@ -29,10 +29,16 @@ var (
 	IllegalDefinitionError            = errors.New("Can't define variable that is not declared")
 	IllegalUseOfSelfInitError         = errors.New("Can't read local variable in its own initializer")
 	IllegalReturnOutsideFunctionError = errors.New("Can't return outside function body")
+	IllegalImportError                = errors.New("Can only import in global scope")
 
 	// error for development. should only be returned when the resolver has not implemented a resolve-case for a node
 	UnknownNodeError = errors.New("Resolution for node not implemented")
 )
+
+// if importPath == stdPath, resolve import to stdLib, else resolve to file path
+var stdPaths = []string{
+	"http",
+}
 
 type Resolver struct {
 	scope     Stack[map[string]bool]
@@ -59,6 +65,13 @@ func (r *Resolver) Resolve(node ast.Node) {
 
 		r.resolveStmtList(n.Statements)
 		return
+
+	case *ast.ImportStmt:
+		if !r.scope.IsEmpty() {
+			r.Errors = append(r.Errors, IllegalImportError)
+			return
+		}
+		// TODO: implement import resolution
 
 	case *ast.BlockStmt:
 		r.enterScope()
