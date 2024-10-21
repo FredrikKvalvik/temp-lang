@@ -71,6 +71,10 @@ func (r *Resolver) Resolve(node ast.Node) {
 			r.Errors = append(r.Errors, IllegalImportError)
 			return
 		}
+		if slices.Index(stdPaths, n.Path) >= 0 {
+			// add logic for
+
+		}
 		// TODO: implement import resolution
 
 	case *ast.BlockStmt:

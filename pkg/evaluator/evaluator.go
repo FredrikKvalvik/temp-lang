@@ -29,6 +29,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return env.DeclareVar(key, value)
 
 	case *ast.ImportStmt:
+		// TODO: implement module logic
 		mod := &object.ModuleObj{
 			Name:       n.Name.Value,
 			ModuleType: object.NATIVE_MODULE,
