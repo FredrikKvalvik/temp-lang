@@ -2,10 +2,9 @@
 
 package object
 
-import (
-	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
-	"github.com/fredrikkvalvik/temp-lang/pkg/token"
-)
+import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
+
+import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type BooleanObj struct {
 	Value bool
@@ -78,7 +77,7 @@ type ErrorObj struct {
 func (n *ErrorObj) Type() ObjectType { return ERROR_OBJ }
 
 // this is gives us a compile time check to see of all the interafaces has been properly implemented
-func typecheck() {
+func _() {
 	_ = Object(&BooleanObj{})
 	_ = Object(&NilObj{})
 	_ = Object(&NumberObj{})

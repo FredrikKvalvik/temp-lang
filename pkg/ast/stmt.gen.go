@@ -83,7 +83,7 @@ func (n *PrintStmt) Lexeme() string         { return n.Token.Lexeme }
 func (n *PrintStmt) GetToken() *token.Token { return &n.Token }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
-func typecheckStmt() {
+func _() {
 	_ = Stmt(&LetStmt{})
 	_ = Stmt(&ImportStmt{})
 	_ = Stmt(&ExpressionStmt{})

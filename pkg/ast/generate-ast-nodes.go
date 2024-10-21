@@ -220,7 +220,7 @@ func generateNodes(interfaceName, interfaceMethod string, tmpl []template) strin
 	}
 
 	fmt.Fprint(&f, "// this is gives us a compile time check to see of all the interafaces has ben properly implemented\n")
-	fmt.Fprintf(&f, "func typecheck%s() {\n", interfaceName)
+	fmt.Fprintf(&f, "func _() {\n")
 	for _, s := range tmpl {
 		name := s.name + interfaceName
 

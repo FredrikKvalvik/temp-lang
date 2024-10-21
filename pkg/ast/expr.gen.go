@@ -142,7 +142,7 @@ func (n *IndexExpr) Lexeme() string         { return n.Token.Lexeme }
 func (n *IndexExpr) GetToken() *token.Token { return &n.Token }
 
 // this is gives us a compile time check to see of all the interafaces has ben properly implemented
-func typecheckExpr() {
+func _() {
 	_ = Expr(&IdentifierExpr{})
 	_ = Expr(&NumberLiteralExpr{})
 	_ = Expr(&StringLiteralExpr{})
