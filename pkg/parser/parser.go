@@ -79,6 +79,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.LBRACKET, p.parseListLiteralExpression)
 	p.registerPrefix(token.LBRACE, p.parseMapLiteralExpression)
 
+	// complex literals
+	p.registerInfix(token.LPAREN, p.parseCall)
+	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+
 	// prefix
 	p.registerPrefix(token.BANG, p.parsePrefix)
 	p.registerPrefix(token.MINUS, p.parsePrefix)
@@ -94,13 +98,15 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.EQ, p.parseBinary)
 	p.registerInfix(token.NOT_EQ, p.parseBinary)
 
+	// get
+	p.registerInfix(token.DOT, p.parseGetExpression)
+
+	// logical
 	p.registerInfix(token.AND, p.parseLogical)
 	p.registerInfix(token.OR, p.parseLogical)
 
+	// assign
 	p.registerInfix(token.ASSIGN, p.parseAssign)
-
-	p.registerInfix(token.LPAREN, p.parseCall)
-	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
 	return p
 }
@@ -175,6 +181,8 @@ func (p *Parser) peekTokenIs(typ token.TokenType) bool {
 	return p.peekToken.Type == typ
 }
 
+// TODO: add error message to expect if it fails
+//
 // advances if the typ == peekToken.Type and return true
 // if not, return false and stay
 func (p *Parser) expectPeek(typ token.TokenType) bool {

@@ -308,8 +308,23 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 }
 
 func (p *Parser) parseGetExpression(left ast.Expr) ast.Expr {
+	// obj . ident
+	//     ^
+	get := &ast.GetExpr{
+		Token: p.curToken,
+		Obj:   left,
+	}
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	// obj . ident
+	//       ^
+	get.Name = &ast.IdentifierExpr{
+		Token: p.curToken,
+		Value: p.curToken.Lexeme,
+	}
 
-	return nil
+	return get
 }
 
 func (p *Parser) parseIndexExpression(left ast.Expr) ast.Expr {

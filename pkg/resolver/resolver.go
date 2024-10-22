@@ -193,6 +193,9 @@ func (r *Resolver) Resolve(node ast.Node) {
 		r.leaveScope()
 		r.popScopeType()
 
+	case *ast.GetExpr:
+		r.Resolve(n.Obj)
+
 	case *ast.CallExpr:
 		r.Resolve(n.Callee)
 		r.resolveExprList(n.Arguments)

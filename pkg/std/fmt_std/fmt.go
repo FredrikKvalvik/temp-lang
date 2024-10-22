@@ -14,8 +14,8 @@ var Module = object.ModuleObj{
 	Vars:       vars,
 }
 var vars = map[string]object.Object{
-	"print": &object.BuiltinObj{
-		Name: "print",
+	"println": &object.BuiltinObj{
+		Name: "println",
 		Fn: func(args ...object.Object) object.Object {
 			var str strings.Builder
 
