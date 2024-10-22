@@ -20,14 +20,8 @@ var vars = map[string]object.Object{
 			var str strings.Builder
 
 			for _, arg := range args {
-				switch v := arg.(type) {
-				case *object.NumberObj:
-					fmt.Fprint(&str, v.Value)
-					// TODO: implement print for each type of value
-
-				default:
-					fmt.Fprint(&str, v.Inspect())
-				}
+				str.WriteString(toString(arg))
+				str.WriteString(" ")
 			}
 			str.WriteString("\n")
 
@@ -35,4 +29,21 @@ var vars = map[string]object.Object{
 			return nil
 		},
 	},
+}
+
+func toString(obj object.Object) string {
+
+	switch v := obj.(type) {
+	case *object.NumberObj:
+		return fmt.Sprint(v.Value)
+	case *object.StringObj:
+		return fmt.Sprint(v.Value)
+	case *object.BooleanObj:
+		return fmt.Sprintf("%v", v.Value)
+	case *object.NilObj:
+		return "nil"
+
+	default:
+		return v.Inspect()
+	}
 }

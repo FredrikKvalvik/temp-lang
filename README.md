@@ -43,6 +43,15 @@ about how programming languages are made.
   - pop - remove the last element of list
   - len - return length of list/map/string
   - str - return the value as its string representation
+- [x] module system with importing from std lib/another file. requires:
+  - language support for accessing members of namespaces (syntax, parsing and resolving)
+  - expanding the internal typing to support multiple sources
+  - import resoultion
+- [x] some form of std lib implemented with the language
+  - [ ] http
+  - [ ] math
+  - [ ] fmt
+  - [ ] ...
 
 ### upcoming features / TODOs
 
@@ -52,14 +61,6 @@ about how programming languages are made.
   - should only be valid when used in each stmts.
   - could also just be a builtin function that creates an iterator for the range
 - [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
-- [ ] some form of std lib implemented with the language
-  - [ ] http
-  - [ ] math
-  - [ ] ...
-- [ ] module system with importing from std lib/another file. requires:
-  - language support for accessing members of namespaces (syntax, parsing and resolving)
-  - expanding the internal typing to support multiple sources
-  - inport resoultion
 - [ ] formatted strings with print statment
 
 ## about
