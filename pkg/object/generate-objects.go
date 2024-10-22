@@ -87,6 +87,7 @@ var objects = []template{
 		props: []keyVal{
 			{"Name", "string"},
 			{"ModuleType", "ModuleType"},
+			{"Vars", "map[string]Object"},
 		},
 	},
 	{
