@@ -195,9 +195,10 @@ REDO:
 
 func (l *Lexer) getToken(t token.TokenType, lexeme string) token.Token {
 	tok := token.Token{
+
 		Type:   t,
 		Lexeme: lexeme,
-		Pos:    token.Pos{Start: l.position, End: l.readPosition},
+		Pos:    token.Pos{Src: &l.source, Start: l.position, End: l.readPosition},
 	}
 
 	return tok
@@ -286,7 +287,7 @@ func (l *Lexer) readNumber() (string, error) {
 
 		// if the next char is not a number, then the token is invalid
 		if !isDigit(l.peek()) {
-			line, col := l.getTokenPostionFromOffset(token.Pos{End: l.readPosition - 1})
+			line, col := l.getTokenPostionFromOffset(token.Pos{Src: &l.source, Start: l.position, End: l.readPosition - 1})
 
 			err := fmt.Errorf("[%d:%d]: expected digit, got=%s\n",
 				line,
