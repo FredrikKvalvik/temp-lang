@@ -82,8 +82,37 @@ func LookupIdent(ident string) TokenType {
 }
 
 type Pos struct {
+	Src        *string
 	Start, End int
 }
+
+func (p *Pos) Position() (int, int) {
+	col := 1
+	line := 1
+
+	position := 0
+	// increment col for each loop.
+	// when we see a '\n', reset col and keep moving
+	// return col at end
+	for position < p.Start {
+		if (*p.Src)[position] == '\n' {
+			line += 1
+			col = 1
+		} else {
+			col += 1
+		}
+
+		position += 1
+	}
+
+	return line, col
+}
+
+func (p Pos) String() string {
+	line, col := p.Position()
+	return fmt.Sprintf("[%d:%d]", line, col)
+}
+
 type Token struct {
 	Pos    Pos       // The postion of the lexeme in the source
 	Type   TokenType // the number of characters from the start of the line to the start of the token
@@ -99,5 +128,5 @@ func NewToken(tokenType TokenType, lexeme string, pos Pos) Token {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("[offset: %d] %s: %s", t.Pos, t.Type, t.Lexeme)
+	return fmt.Sprintf("%s %s: %s", t.Pos, t.Type, t.Lexeme)
 }
