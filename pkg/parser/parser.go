@@ -18,6 +18,8 @@ const (
 	PRODUCT     //* /
 	PREFIX      //-X or !X
 	CALL        // myFunction(X)
+	GET         // obj.property
+	GROUPING    // ( expression )
 	INDEX       // array[index]
 )
 
@@ -33,8 +35,9 @@ var stickinessMap = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
-	token.FUNCTION: PREFIX,
-	token.LPAREN:   CALL,
+	token.FUNCTION: CALL,
+	token.DOT:      GET,
+	token.LPAREN:   GROUPING,
 	token.LBRACKET: INDEX,
 }
 
