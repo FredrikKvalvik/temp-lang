@@ -58,6 +58,7 @@ func (n *MapObj) Type() ObjectType { return MAP_OBJ }
 type ModuleObj struct {
 	Name       string
 	ModuleType ModuleType
+	Vars       map[string]Object
 }
 
 func (n *ModuleObj) Type() ObjectType { return MODULE_OBJ }

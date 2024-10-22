@@ -10,10 +10,13 @@ package resolver
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"slices"
 
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/object"
+	"github.com/fredrikkvalvik/temp-lang/pkg/std/fmt_std"
+	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
 
 type ScopeType int
@@ -25,25 +28,34 @@ const (
 )
 
 var (
-	IllegalDeclarationError           = errors.New("Can't a declare two variables with the same name in the same scope")
-	IllegalDefinitionError            = errors.New("Can't define variable that is not declared")
-	IllegalUseOfSelfInitError         = errors.New("Can't read local variable in its own initializer")
-	IllegalReturnOutsideFunctionError = errors.New("Can't return outside function body")
-	IllegalImportError                = errors.New("Can only import in global scope")
+	IllegalDeclarationError             = errors.New("Can't a declare two variables with the same name in the same scope")
+	IllegalDefinitionError              = errors.New("Can't define variable that is not declared")
+	IllegalUseOfSelfInitError           = errors.New("Can't read local variable in its own initializer")
+	IllegalReturnOutsideFunctionError   = errors.New("Can't return outside function body")
+	IllegalScopedImportError            = errors.New("Can only import in global scope")
+	IllegalImportAfterDeclarationsError = errors.New("Can only import at the beginning of the file")
 
 	// error for development. should only be returned when the resolver has not implemented a resolve-case for a node
 	UnknownNodeError = errors.New("Resolution for node not implemented")
 )
 
+func (r *Resolver) newError(pos token.Pos, err error) {
+	r.Errors = append(r.Errors, fmt.Errorf("%s %w", pos, err))
+}
+
 // if importPath == stdPath, resolve import to stdLib, else resolve to file path
-var stdPaths = []string{
-	"http",
+var stdModules = map[string]*object.ModuleObj{
+	"fmt": &fmt_std.Module,
 }
 
 type Resolver struct {
 	scope     Stack[map[string]bool]
 	scopeType Stack[ScopeType]
 	globalEnv *object.Environment
+
+	// we are done parsing imports when we resolve any other stmt.
+	// imports need to be at the top of the file
+	// doneResolvingImports bool
 
 	Errors []error
 }
@@ -59,23 +71,34 @@ func New(env *object.Environment) *Resolver {
 
 func (r *Resolver) Resolve(node ast.Node) {
 	switch n := node.(type) {
+	// Program entry point
 	case *ast.Program:
-		// Program entry point
+		r.resolveImports()
 		r.hoistFunctions(n)
 
 		r.resolveStmtList(n.Statements)
 		return
 
 	case *ast.ImportStmt:
+		// parse all imports.
 		if !r.scope.IsEmpty() {
-			r.Errors = append(r.Errors, IllegalImportError)
+			// r.newError(n.Token.Pos, IllegalScopedImportError)
+			r.Errors = append(r.Errors, IllegalScopedImportError)
 			return
 		}
-		if slices.Index(stdPaths, n.Path) >= 0 {
-			// add logic for
-
-		}
 		// TODO: implement import resolution
+		for key := range maps.Keys(stdModules) {
+			if key == n.Path {
+				r.globalEnv.DeclareVar(key, stdModules[key])
+			}
+		}
+		// if maps.Index(stdModules, n.Path) >= 0 {
+		// 	// add logic for
+
+		// }
+		// if an import is seen here, that means the the user has imported a module
+		// after after other delcarations. that is an error
+		// r.newError(n.Token.Pos, IllegalImportAfterDeclarationsError)
 
 	case *ast.BlockStmt:
 		r.enterScope()
@@ -112,7 +135,7 @@ func (r *Resolver) Resolve(node ast.Node) {
 
 	case *ast.ReturnStmt:
 		if !r.hasScopeType(FunctionScope) {
-			r.Errors = append(r.Errors, IllegalReturnOutsideFunctionError)
+			r.newError(n.Token.Pos, IllegalReturnOutsideFunctionError)
 		}
 		if n.Value != nil {
 			r.Resolve(n.Value)
@@ -134,7 +157,7 @@ func (r *Resolver) Resolve(node ast.Node) {
 			return
 		}
 		if defined, declared := r.scope.Peek()[n.Value]; declared && !defined {
-			r.Errors = append(r.Errors, IllegalUseOfSelfInitError)
+			r.newError(n.Token.Pos, IllegalUseOfSelfInitError)
 		}
 		r.resolveLocal(n)
 
@@ -287,4 +310,6 @@ func (r *Resolver) hoistFunctions(program *ast.Program) {
 	}
 
 	program.Statements = append(functions, programStmts...)
+}
+func (r *Resolver) resolveImports() {
 }

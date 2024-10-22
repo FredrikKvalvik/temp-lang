@@ -29,12 +29,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return env.DeclareVar(key, value)
 
 	case *ast.ImportStmt:
-		// TODO: implement module logic
-		mod := &object.ModuleObj{
-			Name:       n.Name.Value,
-			ModuleType: object.NATIVE_MODULE,
-		}
-		return mod
+		// resolver should already have resolved the import
+		return NIL
+		// // TODO: implement module logic
+		// mod := &object.ModuleObj{
+		// 	Name:       n.Name.Value,
+		// 	ModuleType: object.NATIVE_MODULE,
+		// }
+		// return mod
 
 	case *ast.ExpressionStmt:
 		return Eval(n.Expression, env)
