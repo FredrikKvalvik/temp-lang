@@ -113,6 +113,16 @@ func (n *CallExpr) ExprNode()              {}
 func (n *CallExpr) Lexeme() string         { return n.Token.Lexeme }
 func (n *CallExpr) GetToken() *token.Token { return &n.Token }
 
+type GetExpr struct {
+	Token token.Token
+	Obj   Expr
+	Name  *IdentifierExpr
+}
+
+func (n *GetExpr) ExprNode()              {}
+func (n *GetExpr) Lexeme() string         { return n.Token.Lexeme }
+func (n *GetExpr) GetToken() *token.Token { return &n.Token }
+
 type ListLiteralExpr struct {
 	Token token.Token
 	Items []Expr
@@ -154,6 +164,7 @@ func _() {
 	_ = Expr(&ParenExpr{})
 	_ = Expr(&FunctionLiteralExpr{})
 	_ = Expr(&CallExpr{})
+	_ = Expr(&GetExpr{})
 	_ = Expr(&ListLiteralExpr{})
 	_ = Expr(&MapLiteralExpr{})
 	_ = Expr(&IndexExpr{})

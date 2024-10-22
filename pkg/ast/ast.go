@@ -222,6 +222,10 @@ func (n *CallExpr) String() string {
 	return s.String()
 }
 
+func (n *GetExpr) String() string {
+	return fmt.Sprintf("%s.%s", n.Obj.String(), n.Name.String())
+}
+
 func (n *IndexExpr) String() string {
 	var str strings.Builder
 
@@ -246,6 +250,7 @@ func (n *ListLiteralExpr) String() string {
 
 	return str.String()
 }
+
 func (n *MapLiteralExpr) String() string {
 	return "MAP LIT TODO"
 }

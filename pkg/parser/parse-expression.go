@@ -307,6 +307,11 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expr {
 	return list
 }
 
+func (p *Parser) parseGetExpression(left ast.Expr) ast.Expr {
+
+	return nil
+}
+
 func (p *Parser) parseIndexExpression(left ast.Expr) ast.Expr {
 	// list [ expr ]
 	//      ^

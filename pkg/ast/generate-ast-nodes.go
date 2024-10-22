@@ -161,6 +161,13 @@ var exprs = []template{
 		},
 	},
 	{
+		name: "Get",
+		props: []keyVal{
+			{"Obj", expr},
+			{"Name", "*Identifier" + expr},
+		},
+	},
+	{
 		name: "ListLiteral",
 		props: []keyVal{
 			{"Items", "[]" + expr},
