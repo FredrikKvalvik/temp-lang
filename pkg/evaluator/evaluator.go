@@ -157,6 +157,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalIndexExpression(left, index)
 
+	case *ast.GetExpr:
+		obj := Eval(n.Obj, env)
+		if isError(obj) {
+			return obj
+		}
+		if obj.Type() == object.MODULE_OBJ {
+			module := obj.(*object.ModuleObj)
+			property, ok := module.Vars[n.Name.Value]
+			if !ok {
+				return newError(UseOfUndeclaredError, fmt.Sprintf("propert `%s` does not exist in module `%s`", n.Name.Value, module.Name))
+			}
+			return property
+		}
+		return NIL
+
 	case *ast.ListLiteralExpr:
 		list := &object.ListObj{}
 		list.Values = evalExpressions(n.Items, env)

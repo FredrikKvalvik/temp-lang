@@ -29,7 +29,9 @@ var vars = map[string]object.Object{
 					fmt.Fprint(&str, v.Inspect())
 				}
 			}
-			fmt.Fprint(os.Stdout, str)
+			str.WriteString("\n")
+
+			fmt.Fprint(os.Stdout, str.String())
 			return nil
 		},
 	},
