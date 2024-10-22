@@ -19,14 +19,25 @@ var vars = map[string]object.Object{
 		Fn: func(args ...object.Object) object.Object {
 			var str strings.Builder
 
-			for _, arg := range args {
-				str.WriteString(toString(arg))
-				str.WriteString(" ")
-			}
+			str.WriteString(objectsToString(args...))
 			str.WriteString("\n")
 
 			fmt.Fprint(os.Stdout, str.String())
 			return nil
+		},
+	},
+
+	"string": &object.BuiltinObj{
+		Name: "string",
+		Fn: func(args ...object.Object) object.Object {
+			strObj := &object.StringObj{}
+
+			var str strings.Builder
+			str.WriteString(objectsToString(args...))
+
+			strObj.Value = str.String()
+
+			return strObj
 		},
 	},
 }
@@ -46,4 +57,18 @@ func toString(obj object.Object) string {
 	default:
 		return v.Inspect()
 	}
+}
+
+func objectsToString(objs ...object.Object) string {
+
+	var str strings.Builder
+
+	for idx, arg := range objs {
+		str.WriteString(toString(arg))
+		if idx != len(objs)-1 {
+			str.WriteString(" ")
+		}
+	}
+
+	return str.String()
 }

@@ -1,3 +1,7 @@
 import fmt "fmt"
 
 fmt.println("hello world", 120, false)
+
+let a = fmt.string([1,2,3])
+
+fmt.println(a)
