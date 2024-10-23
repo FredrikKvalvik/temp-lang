@@ -51,6 +51,7 @@ about how programming languages are made.
   - [ ] http
   - [ ] math
   - [ ] fmt
+  - [ ] iteration lib - iter
   - [ ] ...
 
 ### upcoming features / TODOs
@@ -61,6 +62,7 @@ about how programming languages are made.
   - should only be valid when used in each stmts.
   - could also just be a builtin function that creates an iterator for the range
 - [ ] error messages on runtime errors that help you identify your error by pointing to the error in source code
+- [ ] async primitive of some sort.
 - [ ] formatted strings with print statment
 
 ## about
