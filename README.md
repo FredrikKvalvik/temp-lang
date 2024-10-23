@@ -57,6 +57,7 @@ about how programming languages are made.
 ### upcoming features / TODOs
 
 - [ ] \[IDEA\] add range/slice operator for indexing and loops
+- [ ] allow for pull iteration with `iteratorObj` by exposing the internal `next()` and `done()` methods as properies of iteratorObj
   - syntax could be be something like `expr -> expr`
   - should support ranging positive and negative direction
   - should only be valid when used in each stmts.

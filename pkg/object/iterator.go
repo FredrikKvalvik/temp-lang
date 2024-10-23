@@ -194,6 +194,9 @@ func newRangeIterator(start, end, step int) *RangeIter {
 }
 func (ri *RangeIter) Type() IteratorType { return RANGE_ITER }
 func (ri *RangeIter) Next() Object {
+	if ri.Done() {
+		return nil
+	}
 
 	n := &NumberObj{Value: float64(ri.index)}
 	ri.index += ri.step

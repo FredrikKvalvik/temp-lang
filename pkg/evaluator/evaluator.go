@@ -170,6 +170,33 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			}
 			return property
 		}
+		if obj.Type() == object.ITERATOR_OBJ {
+			iterator := obj.(*object.IteratorObj)
+			switch n.Name.Value {
+
+			case "next":
+				return &object.BuiltinObj{
+					Name: "next",
+					Fn: func(args ...object.Object) object.Object {
+						if len(args) != 0 {
+							return &object.ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", object.ArityError, len(args))}
+						}
+						return iterator.Iterator.Next()
+					},
+				}
+			case "done":
+				return &object.BuiltinObj{
+					Name: "done",
+					Fn: func(args ...object.Object) object.Object {
+						if len(args) != 0 {
+							return &object.ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", object.ArityError, len(args))}
+						}
+						return boolObject(iterator.Iterator.Done())
+					},
+				}
+			}
+			return newError(UseOfUndeclaredError, fmt.Sprintf("propert `%s` does not exist on `%s`", n.Name.Value, iterator.Inspect()))
+		}
 		return NIL
 
 	case *ast.ListLiteralExpr:

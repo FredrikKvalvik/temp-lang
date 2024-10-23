@@ -1,5 +1,22 @@
 import fmt "fmt"
 
-each n : range(0, 90, 9) {
+each n : range(90, 0, 9) {
 	fmt.println(n)
 }
+
+fmt.println()
+
+each n : range(100, 200, 10) {
+	fmt.println(n)
+}
+
+let a = range(0, 4)
+fmt.println(a, "iterator is stateful")
+
+fmt.println(a.done(), a.next())
+fmt.println(a.done(), a.next())
+fmt.println(a.done(), a.next())
+fmt.println(a.done(), a.next())
+fmt.println(a.done(), a.next())
+
+fmt.println(a, "is no done and will no longer be iterable")

@@ -99,7 +99,29 @@ func (b *MapObj) Inspect() string {
 	return str.String()
 }
 
-func (b *IteratorObj) Inspect() string { return fmt.Sprintf("[Iterator]") }
+func (b *IteratorObj) Inspect() string { return fmt.Sprintf("[Iterator %s]", b.Iterator.Type()) }
+func (b *IteratorObj) Next() *BuiltinObj {
+	return &BuiltinObj{
+		Name: "next",
+		Fn: func(args ...Object) Object {
+			if len(args) != 0 {
+				return &ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", ArityError, len(args))}
+			}
+			return b.Iterator.Next()
+		},
+	}
+}
+func (b *IteratorObj) Done() *BuiltinObj {
+	return &BuiltinObj{
+		Name: "done",
+		Fn: func(args ...Object) Object {
+			if len(args) != 0 {
+				return &ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", ArityError, len(args))}
+			}
+			return &BooleanObj{Value: b.Iterator.Done()}
+		},
+	}
+}
 
 func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
 
