@@ -13,11 +13,12 @@ func _() {
 	_ = x[BOOLEAN_ITER-2]
 	_ = x[LIST_ITER-3]
 	_ = x[MAP_ITER-4]
+	_ = x[RANGE_ITER-5]
 }
 
-const _IteratorType_name = "NUMBER_ITERSTRING_ITERBOOLEAN_ITERLIST_ITERMAP_ITER"
+const _IteratorType_name = "NUMBER_ITERSTRING_ITERBOOLEAN_ITERLIST_ITERMAP_ITERRANGE_ITER"
 
-var _IteratorType_index = [...]uint8{0, 11, 22, 34, 43, 51}
+var _IteratorType_index = [...]uint8{0, 11, 22, 34, 43, 51, 61}
 
 func (i IteratorType) String() string {
 	if i < 0 || i >= IteratorType(len(_IteratorType_index)-1) {

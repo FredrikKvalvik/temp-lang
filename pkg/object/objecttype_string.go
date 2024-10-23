@@ -17,13 +17,14 @@ func _() {
 	_ = x[LIST_OBJ-7]
 	_ = x[MAP_OBJ-8]
 	_ = x[BUILTIN_OBJ-9]
-	_ = x[MODULE_OBJ-10]
-	_ = x[ERROR_OBJ-11]
+	_ = x[ITERATOR_OBJ-10]
+	_ = x[MODULE_OBJ-11]
+	_ = x[ERROR_OBJ-12]
 }
 
-const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJRETURN_OBJLIST_OBJMAP_OBJBUILTIN_OBJMODULE_OBJERROR_OBJ"
+const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJRETURN_OBJLIST_OBJMAP_OBJBUILTIN_OBJITERATOR_OBJMODULE_OBJERROR_OBJ"
 
-var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 65, 73, 80, 91, 101, 110}
+var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 65, 73, 80, 91, 103, 113, 122}
 
 func (i ObjectType) String() string {
 	i -= 1

@@ -70,6 +70,12 @@ type BuiltinObj struct {
 
 func (n *BuiltinObj) Type() ObjectType { return BUILTIN_OBJ }
 
+type IteratorObj struct {
+	Iterator Iterator
+}
+
+func (n *IteratorObj) Type() ObjectType { return ITERATOR_OBJ }
+
 type ErrorObj struct {
 	Error error
 	Token *token.Token
@@ -89,5 +95,6 @@ func _() {
 	_ = Object(&MapObj{})
 	_ = Object(&ModuleObj{})
 	_ = Object(&BuiltinObj{})
+	_ = Object(&IteratorObj{})
 	_ = Object(&ErrorObj{})
 }

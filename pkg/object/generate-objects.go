@@ -99,6 +99,13 @@ var objects = []template{
 		},
 	},
 	{
+		name: "Iterator",
+		typ:  object.ITERATOR_OBJ,
+		props: []keyVal{
+			{"Iterator", "Iterator"},
+		},
+	},
+	{
 		name: "Error",
 		typ:  object.ERROR_OBJ,
 		props: []keyVal{

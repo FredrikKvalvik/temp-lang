@@ -98,3 +98,60 @@ func StrBuiltin(args ...Object) Object {
 
 	return &StringObj{arg.Inspect()}
 }
+
+// Arity: 2-3
+//
+//	Arg0: number
+//	Arg1: number
+//	Arg2: number
+//
+// pop removes the last element from a list and returns it.
+// if pop is used on an empty list, return nil
+func RangeBuiltin(args ...Object) Object {
+	if len(args) < 2 || len(args) > 3 {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected=2-3, got=%d", ArityError, len(args))}
+	}
+
+	startObj, ok := args[0].(*NumberObj)
+	if !ok {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[0].Type())}
+	}
+	endObj, ok := args[1].(*NumberObj)
+	if !ok {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[1].Type())}
+	}
+
+	if !isIntegral(startObj.Value) {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, startObj.Value)}
+	}
+	if !isIntegral(endObj.Value) {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, endObj.Value)}
+	}
+
+	start := int(startObj.Value)
+	end := int(endObj.Value)
+	step := 1
+	isNegative := start > end
+
+	if len(args) == 3 {
+		stepObj, ok := args[2].(*NumberObj)
+		if !ok {
+			return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[2].Type())}
+		}
+		if !isIntegral(stepObj.Value) {
+			return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, stepObj.Value)}
+		}
+		if step < 0 {
+			return &ErrorObj{Error: fmt.Errorf("%w: step value must be a none-zero, positive number", TypeError)}
+		}
+
+		step = int(stepObj.Value)
+	}
+	if isNegative {
+		step = -step
+	}
+
+	return &IteratorObj{
+		Iterator: newRangeIterator(start, end, step),
+	}
+}

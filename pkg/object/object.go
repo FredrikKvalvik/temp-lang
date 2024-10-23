@@ -32,6 +32,7 @@ const (
 	LIST_OBJ                        // collection if objects in an ordered list
 	MAP_OBJ                         // Map is a datatype for storing key-value pairs
 	BUILTIN_OBJ                     // Builtin function
+	ITERATOR_OBJ                    // a wrapper for returning iterators from builtin functions
 	MODULE_OBJ                      // Module is an object that holds the references to a unit of code that has been imported by a caller
 	ERROR_OBJ                       // runtime error
 )
@@ -97,6 +98,8 @@ func (b *MapObj) Inspect() string {
 
 	return str.String()
 }
+
+func (b *IteratorObj) Inspect() string { return fmt.Sprintf("[Iterator]") }
 
 func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
 

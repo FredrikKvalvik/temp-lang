@@ -1,5 +1,5 @@
-import http "http"
+import fmt "fmt"
 
-each ch : "hello world" {
-	print ch
+each n : range(0, 90, 9) {
+	fmt.println(n)
 }

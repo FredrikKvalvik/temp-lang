@@ -16,6 +16,7 @@ const (
 	BOOLEAN_ITER
 	LIST_ITER
 	MAP_ITER
+	RANGE_ITER
 )
 
 // return true while iterator is returning items. return false when end of loop is finisjed
@@ -40,6 +41,10 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 		return newListIterator(it), nil
 	case *MapObj:
 		return newMapIterator(it), nil
+
+	// used for arbitrary iterators
+	case *IteratorObj:
+		return it.Iterator, nil
 
 	default:
 		return nil, &ErrorObj{Error: fmt.Errorf("%s is not iterable", iterable.Type())}
@@ -165,4 +170,41 @@ func (mi *MapIter) Done() bool { return mi.idx >= len(mi.pairs) }
 // helper to check if value is a whole number
 func isIntegral(val float64) bool {
 	return val == float64(int(val))
+}
+
+// Range
+
+type RangeIter struct {
+	start int // iterator starts
+	end   int // iterator ends
+	step  int // increment for the loop
+
+	index int // current index
+}
+
+func newRangeIterator(start, end, step int) *RangeIter {
+
+	return &RangeIter{
+		start: start,
+		end:   end,
+		step:  step,
+
+		index: start,
+	}
+}
+func (ri *RangeIter) Type() IteratorType { return RANGE_ITER }
+func (ri *RangeIter) Next() Object {
+
+	n := &NumberObj{Value: float64(ri.index)}
+	ri.index += ri.step
+	return n
+}
+func (ri *RangeIter) Done() bool {
+	if ri.start > ri.end {
+		// means we are iterating in negative direction
+		return ri.index <= int(ri.end)
+
+	} else {
+		return ri.index >= int(ri.end)
+	}
 }
