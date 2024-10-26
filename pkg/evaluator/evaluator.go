@@ -313,11 +313,6 @@ func evalIndexMapListExpression(left, index object.Object) object.Object {
 }
 
 func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Object {
-	if node.Iterable == nil {
-		// when no iterable is found, default to infinite loop
-		node.Iterable = &ast.BooleanLiteralExpr{Value: true}
-	}
-
 	iterable := Eval(node.Iterable, env)
 	if isError(iterable) {
 		return iterable
@@ -327,6 +322,7 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	if err != nil {
 		return err
 	}
+
 	var name *ast.IdentifierExpr
 	if node.Name != nil {
 		ident, ok := node.Name.(*ast.IdentifierExpr)

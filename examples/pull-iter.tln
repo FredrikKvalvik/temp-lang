@@ -1,0 +1,14 @@
+import fmt "fmt"
+
+let numberIterator = iter(10)
+
+fmt.println(numberIterator)
+fmt.println(numberIterator.next())
+
+let strIterator = iter("hello world!")
+fmt.println(strIterator)
+fmt.println(strIterator.next())
+
+each strIterator.done() != true {
+	fmt.println(strIterator.next())
+}

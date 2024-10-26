@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
 )
@@ -278,21 +280,18 @@ func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 
 	p.advance()
 
-	// handle case where there is no name or iterable
-	// return early
 	if p.curTokenIs(token.LBRACE) {
-		// each { ... }
-		//      ^
-		// return with no name or iterable set
-		body := p.parseBlockStatement()
-		each.Body = body
-		return each
+		p.errors = append(p.errors, fmt.Errorf("%w: expected expression after each", ParseError))
+		return nil
 	}
 
 	// each items { ... }
 	// each item : items { ... }
 	//      ^
 	first := p.parseExpression(LOWEST)
+	if first == nil {
+		return nil
+	}
 	// each items { ... }
 	// each  item : items { ... }
 	//          ^
@@ -306,6 +305,9 @@ func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 		//             ^
 
 		iterable := p.parseExpression(LOWEST)
+		if iterable == nil {
+			return nil
+		}
 		// each item : items { ... }
 		//                 ^
 		each.Iterable = iterable

@@ -35,8 +35,8 @@ func NewIterator(iterable Object) (Iterator, *ErrorObj) {
 			return nil, &ErrorObj{Error: fmt.Errorf("Number iterator must be whole number, got=%v", it.Value)}
 		}
 		return newNumberIterator(it), nil
-	case *BooleanObj:
-		return newBooleanIterator(it), nil
+	// case *BooleanObj:
+	// 	return newBooleanIterator(it), nil
 	case *ListObj:
 		return newListIterator(it), nil
 	case *MapObj:
@@ -103,22 +103,22 @@ func (ni *NumberIter) Next() Object {
 }
 func (ni *NumberIter) Done() bool { return ni.index >= int(ni.number.Value) }
 
-// BOOLEAN_ITER
+// // BOOLEAN_ITER
 
-type BooleanIter struct {
-	bool *BooleanObj
-}
+// type BooleanIter struct {
+// 	bool *BooleanObj
+// }
 
-func newBooleanIterator(bool *BooleanObj) *BooleanIter {
-	return &BooleanIter{
-		bool: bool,
-	}
-}
-func (i *BooleanIter) Type() IteratorType { return BOOLEAN_ITER }
-func (ni *BooleanIter) Next() Object {
-	return ni.bool
-}
-func (ni *BooleanIter) Done() bool { return !ni.bool.Value }
+// func newBooleanIterator(bool *BooleanObj) *BooleanIter {
+// 	return &BooleanIter{
+// 		bool: bool,
+// 	}
+// }
+// func (i *BooleanIter) Type() IteratorType { return BOOLEAN_ITER }
+// func (ni *BooleanIter) Next() Object {
+// 	return ni.bool
+// }
+// func (ni *BooleanIter) Done() bool { return !ni.bool.Value }
 
 // LIST_ITER
 
@@ -194,10 +194,6 @@ func newRangeIterator(start, end, step int) *RangeIter {
 }
 func (ri *RangeIter) Type() IteratorType { return RANGE_ITER }
 func (ri *RangeIter) Next() Object {
-	if ri.Done() {
-		return nil
-	}
-
 	n := &NumberObj{Value: float64(ri.index)}
 	ri.index += ri.step
 	return n

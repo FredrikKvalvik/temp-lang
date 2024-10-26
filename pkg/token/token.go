@@ -86,6 +86,7 @@ type Pos struct {
 	Start, End int
 }
 
+// returns the line:column pair for the token
 func (p *Pos) Position() (int, int) {
 	col := 1
 	line := 1

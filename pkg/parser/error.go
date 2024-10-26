@@ -1,10 +1,14 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/fredrikkvalvik/temp-lang/pkg/lexer"
 	"github.com/fredrikkvalvik/temp-lang/pkg/token"
+)
+
+var (
+	ParseError = errors.New("Parse error")
 )
 
 func (p *Parser) expectPeekError(expect token.TokenType) {
@@ -17,13 +21,13 @@ func (p *Parser) expectCurError(expect token.TokenType) {
 }
 
 func (p *Parser) expectError(tok *token.Token, expect token.TokenType) error {
-	lcStr := lineColString(p.l, tok)
+	lcStr := lineColString(tok)
 
 	return fmt.Errorf("%s expected `%s`, got=`%s`", lcStr, expect, tok.Type)
 }
 
 func (p *Parser) noParsletError(tok *token.Token) {
-	lcStr := lineColString(p.l, tok)
+	lcStr := lineColString(tok)
 
 	err := fmt.Errorf("%s could not parser tok=%s", lcStr, tok.Type)
 	p.errors = append(p.errors, err)
@@ -36,13 +40,7 @@ func (p *Parser) recover() {
 	}
 }
 
-func lineColString(l *lexer.Lexer, tok *token.Token) string {
-	line, col := getLineCol(l, tok)
+func lineColString(tok *token.Token) string {
+	line, col := tok.Pos.Position()
 	return fmt.Sprintf("[%d:%d]", line, col)
-}
-
-func getLineCol(l *lexer.Lexer, tok *token.Token) (int, int) {
-	line, col := l.GetTokenPosition(tok)
-
-	return line, col
 }

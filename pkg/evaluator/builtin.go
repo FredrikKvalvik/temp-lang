@@ -8,4 +8,5 @@ var builtins = map[string]*object.BuiltinObj{
 	"pop":   {Name: "pop", Fn: object.PopBuiltin},
 	"str":   {Name: "str", Fn: object.StrBuiltin},
 	"range": {Name: "range", Fn: object.RangeBuiltin},
+	"iter":  {Name: "iter", Fn: object.IterBuiltin},
 }

@@ -155,3 +155,24 @@ func RangeBuiltin(args ...Object) Object {
 		Iterator: newRangeIterator(start, end, step),
 	}
 }
+
+// Arity: 1
+//
+// Arg0: any
+//
+// returns an iterator based on the argument
+func IterBuiltin(args ...Object) Object {
+	if len(args) != 1 {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
+	}
+	arg := args[0]
+
+	iterator, err := NewIterator(arg)
+	if err != nil {
+		return err
+	}
+
+	return &IteratorObj{
+		Iterator: iterator,
+	}
+}
