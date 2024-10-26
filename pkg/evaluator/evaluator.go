@@ -43,6 +43,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.PrintStmt:
 		return evalPrintStatment(n, env)
+
 	case *ast.IfStmt:
 		condition := Eval(n.Condition, env)
 		if isError(condition) {
@@ -61,6 +62,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.IterStmt:
 		return evalIterStatement(n, env)
+
+		// TODO: Implement while loop logic
+	case *ast.WhileStmt:
+		return evalWhileStatement(n, env)
 
 	case *ast.UnaryExpr:
 		right := Eval(n.Right, env)
@@ -226,6 +231,40 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		fmt.Printf("%v\n", n)
 		return unknownNodeError(node)
 	}
+}
+
+func evalWhileStatement(n *ast.WhileStmt, env *object.Environment) object.Object {
+	var res object.Object = NIL
+	for {
+
+		// Eval condition
+		var condition object.Object
+		if n.Condition != nil {
+			condition = Eval(n.Condition, env)
+
+			if isError(condition) {
+				return condition
+			}
+			if condition.Type() != object.BOOL_OBJ {
+				return newError(TypeError, "while statement expects boolean value, got="+condition.Type().String())
+			}
+
+		} else {
+			condition = TRUE
+		}
+
+		// break if condition != true
+		if condition != TRUE {
+			break
+		}
+
+		// eval body when condition == true
+		res = Eval(n.Body, env)
+		if isError(res) || res.Type() == object.RETURN_OBJ {
+			break
+		}
+	}
+	return res
 }
 
 func evalIdentifier(n *ast.IdentifierExpr, env *object.Environment) object.Object {

@@ -115,6 +115,14 @@ func (r *Resolver) Resolve(node ast.Node) {
 			r.Resolve(n.Else)
 		}
 
+	case *ast.WhileStmt:
+		if n.Condition != nil {
+			r.Resolve(n.Condition)
+		}
+		r.pushScopeType(IterScope)
+		r.Resolve(n.Body)
+		r.popScopeType()
+
 	case *ast.IterStmt:
 		if n.Name != nil {
 			r.Resolve(n.Name)
