@@ -219,6 +219,31 @@ func TestBinaryExpression(t *testing.T) {
 
 }
 
+func TestWhileStatement(t *testing.T) {
+	tests := []struct {
+		input string
+	}{
+		{"while {}"},
+		{"while true {}"},
+		{"while false {}"},
+		{"while 1 > 0 {}"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			tr := tester.New(t, "")
+			res := testParseProgram(tt.input)
+
+			tr.AssertNotNil(res, "the program must be non-nil")
+			tr.AssertEqual(len(res.Statements), 1, "expect a single stmt")
+			whileStmt, ok := res.Statements[0].(*ast.WhileStmt)
+			tr.AssertTrue(ok, "statment must be whileStmt")
+
+			tr.AssertNotNil(whileStmt.Body)
+		})
+	}
+}
+
 func TestFunctionLiterals(t *testing.T) {
 
 	tests := []struct {

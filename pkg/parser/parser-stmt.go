@@ -24,6 +24,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		node = p.parseReturnStatement()
 	case token.EACH:
 		node = p.parseIteratorStatement()
+	case token.WHILE:
+		node = p.parseWhileStatement()
 	case token.PRINT:
 		node = p.parsePrintStatement()
 
@@ -326,6 +328,33 @@ func (p *Parser) parseIteratorStatement() *ast.IterStmt {
 	each.Body = body
 
 	return each
+}
+
+func (p *Parser) parseWhileStatement() *ast.WhileStmt {
+	// while expr { ... }
+	// ^
+	while := &ast.WhileStmt{
+		Token: p.curToken,
+	}
+	p.advance()
+
+	if !p.curTokenIs(token.LBRACE) {
+		// while expr { ... }
+		//       ^
+		while.Condition = p.parseExpression(LOWEST)
+		// while expr { ... }
+		//          ^
+		if !p.expectPeek(token.LBRACE) {
+			return nil
+		}
+	}
+
+	// while { ... }
+	//       ^
+	while.Body = p.parseBlockStatement()
+	// while { ... }
+	//             ^
+	return while
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStmt {
