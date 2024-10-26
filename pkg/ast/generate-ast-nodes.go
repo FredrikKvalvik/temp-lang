@@ -76,6 +76,13 @@ var stmts = []template{
 		},
 	},
 	{
+		name: "While",
+		props: []keyVal{
+			{"Condition", expr},
+			{"Body", "*Block" + stmt},
+		},
+	},
+	{
 		name: "Print",
 		props: []keyVal{
 			{"Expressions", "[]" + expr},

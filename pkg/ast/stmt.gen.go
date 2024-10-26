@@ -73,6 +73,16 @@ func (n *IterStmt) StmtNode()              {}
 func (n *IterStmt) Lexeme() string         { return n.Token.Lexeme }
 func (n *IterStmt) GetToken() *token.Token { return &n.Token }
 
+type WhileStmt struct {
+	Token     token.Token
+	Condition Expr
+	Body      *BlockStmt
+}
+
+func (n *WhileStmt) StmtNode()              {}
+func (n *WhileStmt) Lexeme() string         { return n.Token.Lexeme }
+func (n *WhileStmt) GetToken() *token.Token { return &n.Token }
+
 type PrintStmt struct {
 	Token       token.Token
 	Expressions []Expr
@@ -91,5 +101,6 @@ func _() {
 	_ = Stmt(&BlockStmt{})
 	_ = Stmt(&ReturnStmt{})
 	_ = Stmt(&IterStmt{})
+	_ = Stmt(&WhileStmt{})
 	_ = Stmt(&PrintStmt{})
 }

@@ -49,6 +49,7 @@ const (
 	FUNCTION
 	IMPORT
 	EACH
+	WHILE
 	LET
 	TRUE
 	FALSE
@@ -70,6 +71,7 @@ var keywords = map[string]TokenType{
 	"and":    AND,
 	"or":     OR,
 	"each":   EACH,
+	"while":  WHILE,
 	"print":  PRINT,
 }
 

@@ -128,12 +128,24 @@ func (s *IterStmt) String() string {
 	fmt.Fprint(&str, "each")
 
 	switch {
-	case s.Iterable == nil && s.Name == nil:
-		fmt.Fprintf(&str, " ")
 	case s.Iterable != nil && s.Name == nil:
 		fmt.Fprintf(&str, " %s ", s.Iterable.String())
 	case s.Iterable != nil && s.Name != nil:
 		fmt.Fprintf(&str, " %s : %s ", s.Name.String(), s.Iterable.String())
+	}
+
+	fmt.Fprint(&str, s.Body.String())
+
+	return str.String()
+}
+
+func (s *WhileStmt) String() string {
+	var str strings.Builder
+
+	fmt.Fprint(&str, "while ")
+
+	if s.Condition != nil {
+		fmt.Fprintf(&str, "%s ", s.Condition.String())
 	}
 
 	fmt.Fprint(&str, s.Body.String())
