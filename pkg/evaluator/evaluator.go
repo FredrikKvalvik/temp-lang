@@ -186,6 +186,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			}
 			return property
 		}
+		// TODO: make this more generic
 		if obj.Type() == object.OBJ_ITERATOR {
 			iterator := obj.(*object.IteratorObj)
 			switch n.Name.Value {
