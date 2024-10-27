@@ -8,17 +8,16 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[NUMBER_ITER-0]
-	_ = x[STRING_ITER-1]
-	_ = x[BOOLEAN_ITER-2]
-	_ = x[LIST_ITER-3]
-	_ = x[MAP_ITER-4]
-	_ = x[RANGE_ITER-5]
+	_ = x[ITER_NUMBER-0]
+	_ = x[ITER_STRING-1]
+	_ = x[ITER_LIST-2]
+	_ = x[ITER_MAP-3]
+	_ = x[ITER_RANGE-4]
 }
 
-const _IteratorType_name = "NUMBER_ITERSTRING_ITERBOOLEAN_ITERLIST_ITERMAP_ITERRANGE_ITER"
+const _IteratorType_name = "ITER_NUMBERITER_STRINGITER_LISTITER_MAPITER_RANGE"
 
-var _IteratorType_index = [...]uint8{0, 11, 22, 34, 43, 51, 61}
+var _IteratorType_index = [...]uint8{0, 11, 22, 31, 39, 49}
 
 func (i IteratorType) String() string {
 	if i < 0 || i >= IteratorType(len(_IteratorType_index)-1) {

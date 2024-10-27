@@ -2,10 +2,9 @@
 
 package object
 
-import (
-	"github.com/fredrikkvalvik/temp-lang/pkg/ast"
-	"github.com/fredrikkvalvik/temp-lang/pkg/token"
-)
+import "github.com/fredrikkvalvik/temp-lang/pkg/ast"
+
+import "github.com/fredrikkvalvik/temp-lang/pkg/token"
 
 type BooleanObj struct {
 	Value bool

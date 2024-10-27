@@ -11,12 +11,11 @@ import (
 type IteratorType int
 
 const (
-	NUMBER_ITER IteratorType = iota
-	STRING_ITER
-	BOOLEAN_ITER
-	LIST_ITER
-	MAP_ITER
-	RANGE_ITER
+	ITER_NUMBER IteratorType = iota
+	ITER_STRING
+	ITER_LIST
+	ITER_MAP
+	ITER_RANGE
 )
 
 // return true while iterator is returning items. return false when end of loop is finisjed
@@ -60,7 +59,7 @@ func newStringIterator(str *StringObj) *StringIter {
 	return &StringIter{reader: r}
 }
 
-func (si *StringIter) Type() IteratorType { return STRING_ITER }
+func (si *StringIter) Type() IteratorType { return ITER_STRING }
 
 func (si *StringIter) Next() Object {
 	if si.Done() {
@@ -92,7 +91,7 @@ func newNumberIterator(num *NumberObj) *NumberIter {
 		number: num,
 	}
 }
-func (i *NumberIter) Type() IteratorType { return NUMBER_ITER }
+func (i *NumberIter) Type() IteratorType { return ITER_NUMBER }
 func (ni *NumberIter) Next() Object {
 
 	n := &NumberObj{Value: float64(ni.index)}
@@ -113,7 +112,7 @@ func newListIterator(list *ListObj) *ListIter {
 		values: list.Values,
 	}
 }
-func (i *ListIter) Type() IteratorType { return LIST_ITER }
+func (i *ListIter) Type() IteratorType { return ITER_LIST }
 func (li *ListIter) Next() Object {
 	value := li.values[li.idx]
 	li.idx++
@@ -138,7 +137,7 @@ func newMapIterator(m *MapObj) *MapIter {
 	}
 }
 
-func (mi *MapIter) Type() IteratorType { return MAP_ITER }
+func (mi *MapIter) Type() IteratorType { return ITER_MAP }
 
 func (mi *MapIter) Next() Object {
 	value := mi.pairs[mi.idx]
@@ -172,7 +171,7 @@ func newRangeIterator(start, end, step int) *RangeIter {
 		index: start,
 	}
 }
-func (ri *RangeIter) Type() IteratorType { return RANGE_ITER }
+func (ri *RangeIter) Type() IteratorType { return ITER_RANGE }
 func (ri *RangeIter) Next() Object {
 	n := &NumberObj{Value: float64(ri.index)}
 	ri.index += ri.step
