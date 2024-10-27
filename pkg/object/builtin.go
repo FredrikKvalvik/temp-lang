@@ -10,7 +10,17 @@ var (
 	TypeError  = errors.New("invalid type")
 )
 
-// util for builtin functions to return an error if check evaluates to false
+type ErrorBuf struct {
+	Err *ErrorObj
+}
+
+func (e *ErrorBuf) Run(errFn func() *ErrorObj) {
+	if e.Err == nil {
+		e.Err = errFn()
+	}
+}
+
+// util for builtin functions to return an error if check evaluates to false. return nil on ok
 func CheckArity(args []Object, arity int) *ErrorObj {
 	if len(args) != arity {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected %d args, got %d", ArityError, arity, len(args))}
@@ -18,10 +28,18 @@ func CheckArity(args []Object, arity int) *ErrorObj {
 	return nil
 }
 
-// util for builtin functions to return an error if check evaluates to false
+// util for builtin functions to return an error if check evaluates to false. return nil on ok
 func CheckObjectType(obj Object, typ ObjectType) *ErrorObj {
 	if obj.Type() != typ {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected %s, got %s", TypeError, typ, obj.Type())}
+	}
+	return nil
+}
+
+// util for builtin functions to return an error if check evaluates to false. return nil on ok
+func CheckIntegral(n float64) *ErrorObj {
+	if !isIntegral(n) {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected integer, but %v is float", TypeError, n)}
 	}
 	return nil
 }
@@ -80,13 +98,15 @@ func PushBuiltin(args ...Object) Object {
 // pop removes the last element from a list and returns it.
 // if pop is used on an empty list, return nil
 func PopBuiltin(args ...Object) Object {
-	if len(args) != 1 {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
+	var ebuf ErrorBuf
+
+	ebuf.Run(func() *ErrorObj { return CheckArity(args, 1) })
+	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[0], OBJ_LIST) })
+	if ebuf.Err != nil {
+		return ebuf.Err
 	}
+
 	arg := args[0]
-	if arg.Type() != OBJ_LIST {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected list, got=%s", TypeError, arg.Type())}
-	}
 
 	list := arg.(*ListObj)
 
@@ -107,15 +127,15 @@ func PopBuiltin(args ...Object) Object {
 // pop removes the last element from a list and returns it.
 // if pop is used on an empty list, return nil
 func StrBuiltin(args ...Object) Object {
-	if len(args) != 1 {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
+	if err := CheckArity(args, 1); err != nil {
+		return err
 	}
 	arg := args[0]
 
 	return &StringObj{arg.Inspect()}
 }
 
-// Arity: 2-3
+// Arity: 3
 //
 //	Arg0: number
 //	Arg1: number
@@ -124,45 +144,40 @@ func StrBuiltin(args ...Object) Object {
 // pop removes the last element from a list and returns it.
 // if pop is used on an empty list, return nil
 func RangeBuiltin(args ...Object) Object {
-	if len(args) < 2 || len(args) > 3 {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected=2-3, got=%d", ArityError, len(args))}
+	var ebuf ErrorBuf
+
+	ebuf.Run(func() *ErrorObj { return CheckArity(args, 3) })
+	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[0], OBJ_NUMBER) })
+	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[1], OBJ_NUMBER) })
+	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[2], OBJ_NUMBER) })
+
+	if ebuf.Err != nil {
+		return ebuf.Err
 	}
 
-	startObj, ok := args[0].(*NumberObj)
-	if !ok {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[0].Type())}
-	}
-	endObj, ok := args[1].(*NumberObj)
-	if !ok {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[1].Type())}
-	}
+	startObj := args[0].(*NumberObj)
+	endObj := args[1].(*NumberObj)
+	stepObj := args[2].(*NumberObj)
 
-	if !isIntegral(startObj.Value) {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, startObj.Value)}
-	}
-	if !isIntegral(endObj.Value) {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, endObj.Value)}
+	ebuf.Run(func() *ErrorObj { return CheckIntegral(startObj.Value) })
+	ebuf.Run(func() *ErrorObj { return CheckIntegral(endObj.Value) })
+	ebuf.Run(func() *ErrorObj { return CheckIntegral(stepObj.Value) })
+	ebuf.Run(func() *ErrorObj {
+		if stepObj.Value >= 0 {
+			return &ErrorObj{Error: fmt.Errorf("%w: step value must be a none-zero, positive number", TypeError)}
+		}
+		return nil
+	})
+
+	if ebuf.Err != nil {
+		return ebuf.Err
 	}
 
 	start := int(startObj.Value)
 	end := int(endObj.Value)
-	step := 1
+	step := int(stepObj.Value)
 	isNegative := start > end
 
-	if len(args) == 3 {
-		stepObj, ok := args[2].(*NumberObj)
-		if !ok {
-			return &ErrorObj{Error: fmt.Errorf("%w: expected number, got=%s", TypeError, args[2].Type())}
-		}
-		if !isIntegral(stepObj.Value) {
-			return &ErrorObj{Error: fmt.Errorf("%w: expected number to be integer, got=%v", TypeError, stepObj.Value)}
-		}
-		if step < 0 {
-			return &ErrorObj{Error: fmt.Errorf("%w: step value must be a none-zero, positive number", TypeError)}
-		}
-
-		step = int(stepObj.Value)
-	}
 	if isNegative {
 		step = -step
 	}
