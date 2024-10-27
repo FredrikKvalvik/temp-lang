@@ -10,11 +10,11 @@ var (
 	TypeError  = errors.New("invalid type")
 )
 
-type ErrorBuf struct {
-	Err *ErrorObj
+type ErrorBuf[T interface{}] struct {
+	Err *T
 }
 
-func (e *ErrorBuf) Run(errFn func() *ErrorObj) {
+func (e *ErrorBuf[T]) Run(errFn func() *T) {
 	if e.Err == nil {
 		e.Err = errFn()
 	}
@@ -98,7 +98,7 @@ func PushBuiltin(args ...Object) Object {
 // pop removes the last element from a list and returns it.
 // if pop is used on an empty list, return nil
 func PopBuiltin(args ...Object) Object {
-	var ebuf ErrorBuf
+	var ebuf ErrorBuf[ErrorObj]
 
 	ebuf.Run(func() *ErrorObj { return CheckArity(args, 1) })
 	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[0], OBJ_LIST) })
@@ -144,7 +144,7 @@ func StrBuiltin(args ...Object) Object {
 // pop removes the last element from a list and returns it.
 // if pop is used on an empty list, return nil
 func RangeBuiltin(args ...Object) Object {
-	var ebuf ErrorBuf
+	var ebuf ErrorBuf[ErrorObj]
 
 	ebuf.Run(func() *ErrorObj { return CheckArity(args, 3) })
 	ebuf.Run(func() *ErrorObj { return CheckObjectType(args[0], OBJ_NUMBER) })
@@ -193,8 +193,8 @@ func RangeBuiltin(args ...Object) Object {
 //
 // returns an iterator based on the argument
 func IterBuiltin(args ...Object) Object {
-	if len(args) != 1 {
-		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
+	if err := CheckArity(args, 1); err != nil {
+		return err
 	}
 	arg := args[0]
 
