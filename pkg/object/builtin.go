@@ -10,6 +10,22 @@ var (
 	TypeError  = errors.New("invalid type")
 )
 
+// util for builtin functions to return an error if check evaluates to false
+func CheckArity(args []Object, arity int) *ErrorObj {
+	if len(args) != arity {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected %d args, got %d", ArityError, arity, len(args))}
+	}
+	return nil
+}
+
+// util for builtin functions to return an error if check evaluates to false
+func CheckObjectType(obj Object, typ ObjectType) *ErrorObj {
+	if obj.Type() != typ {
+		return &ErrorObj{Error: fmt.Errorf("%w: expected %s, got %s", TypeError, typ, obj.Type())}
+	}
+	return nil
+}
+
 // Arity: 1
 //
 // Arg0: list | map | string
