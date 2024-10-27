@@ -50,7 +50,11 @@ func toString(obj object.Object) string {
 	case *object.StringObj:
 		return fmt.Sprint(v.Value)
 	case *object.BooleanObj:
-		return fmt.Sprintf("%v", v.Value)
+		if v.Value {
+			return "true"
+		} else {
+			return "false"
+		}
 	case *object.NilObj:
 		return "nil"
 
@@ -63,11 +67,8 @@ func objectsToString(objs ...object.Object) string {
 
 	var str strings.Builder
 
-	for idx, arg := range objs {
+	for _, arg := range objs {
 		str.WriteString(toString(arg))
-		if idx != len(objs)-1 {
-			str.WriteString(" ")
-		}
 	}
 
 	return str.String()

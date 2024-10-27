@@ -529,7 +529,6 @@ func evalUnaryExpression(right object.Object, op token.TokenType) object.Object 
 		return &object.NumberObj{Value: -right.(*object.NumberObj).Value}
 
 	case right.Type() == object.OBJ_BOOL && op == token.BANG:
-		fmt.Print(right)
 		if right == TRUE {
 			return FALSE
 		} else {
