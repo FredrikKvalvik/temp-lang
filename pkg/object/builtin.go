@@ -163,7 +163,7 @@ func RangeBuiltin(args ...Object) Object {
 	ebuf.Run(func() *ErrorObj { return CheckIntegral(endObj.Value) })
 	ebuf.Run(func() *ErrorObj { return CheckIntegral(stepObj.Value) })
 	ebuf.Run(func() *ErrorObj {
-		if stepObj.Value >= 0 {
+		if stepObj.Value <= 0 {
 			return &ErrorObj{Error: fmt.Errorf("%w: step value must be a none-zero, positive number", TypeError)}
 		}
 		return nil
