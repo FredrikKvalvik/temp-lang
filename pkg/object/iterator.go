@@ -164,7 +164,6 @@ type RangeIter struct {
 }
 
 func newRangeIterator(start, end, step int) *RangeIter {
-
 	return &RangeIter{
 		start: start,
 		end:   end,

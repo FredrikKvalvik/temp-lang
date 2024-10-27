@@ -22,19 +22,20 @@ type MapPairs = map[HashKey]KeyValuePair
 type ObjectType int
 
 const (
-	_                    ObjectType = iota
-	BOOL_OBJ                        // representes true and false
-	NIL_OBJ                         // sentinel value for "no value"
-	NUMBER_OBJ                      // number object is any float64-representable number
-	STRING_OBJ                      // represents a string value
-	FUNCTION_LITERAL_OBJ            // represents a function object
-	RETURN_OBJ                      // internal type for propagating return values
-	LIST_OBJ                        // collection if objects in an ordered list
-	MAP_OBJ                         // Map is a datatype for storing key-value pairs
-	BUILTIN_OBJ                     // Builtin function
-	ITERATOR_OBJ                    // a wrapper for returning iterators from builtin functions
-	MODULE_OBJ                      // Module is an object that holds the references to a unit of code that has been imported by a caller
-	ERROR_OBJ                       // runtime error
+	_ ObjectType = iota
+
+	BOOL_OBJ             // representes true and false
+	NIL_OBJ              // sentinel value for "no value"
+	NUMBER_OBJ           // number object is any float64-representable number
+	STRING_OBJ           // represents a string value
+	FUNCTION_LITERAL_OBJ // represents a function object
+	RETURN_OBJ           // internal type for propagating return values
+	LIST_OBJ             // collection if objects in an ordered list
+	MAP_OBJ              // Map is a datatype for storing key-value pairs
+	BUILTIN_OBJ          // Builtin function
+	ITERATOR_OBJ         // a wrapper for returning iterators from builtin functions
+	MODULE_OBJ           // Module is an object that holds the references to a unit of code that has been imported by a caller
+	ERROR_OBJ            // runtime error
 )
 
 type ModuleType int
@@ -100,28 +101,6 @@ func (b *MapObj) Inspect() string {
 }
 
 func (b *IteratorObj) Inspect() string { return fmt.Sprintf("[Iterator %s]", b.Iterator.Type()) }
-func (b *IteratorObj) Next() *BuiltinObj {
-	return &BuiltinObj{
-		Name: "next",
-		Fn: func(args ...Object) Object {
-			if len(args) != 0 {
-				return &ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", ArityError, len(args))}
-			}
-			return b.Iterator.Next()
-		},
-	}
-}
-func (b *IteratorObj) Done() *BuiltinObj {
-	return &BuiltinObj{
-		Name: "done",
-		Fn: func(args ...Object) Object {
-			if len(args) != 0 {
-				return &ErrorObj{Error: fmt.Errorf("%w: expected 0 args, got=%d", ArityError, len(args))}
-			}
-			return &BooleanObj{Value: b.Iterator.Done()}
-		},
-	}
-}
 
 func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Name) }
 
