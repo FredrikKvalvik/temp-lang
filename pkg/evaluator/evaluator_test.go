@@ -21,46 +21,46 @@ func TestBinaryExpression(t *testing.T) {
 	}{
 		// number returns
 		{"2+2",
-			float64(4), object.NUMBER_OBJ},
+			float64(4), object.OBJ_NUMBER},
 		{"2-2",
-			float64(0), object.NUMBER_OBJ},
+			float64(0), object.OBJ_NUMBER},
 		{"10 / 2",
-			float64(5), object.NUMBER_OBJ},
+			float64(5), object.OBJ_NUMBER},
 		{"10 * 2",
-			float64(20), object.NUMBER_OBJ},
+			float64(20), object.OBJ_NUMBER},
 		{"10 + 2 * 100",
-			float64(210), object.NUMBER_OBJ},
+			float64(210), object.OBJ_NUMBER},
 
 		{`10 + 2 * "100"`,
-			nil, object.ERROR_OBJ},
+			nil, object.OBJ_ERROR},
 
 		// boolean returns
 		{"10 == 2",
-			false, object.BOOL_OBJ},
+			false, object.OBJ_BOOL},
 		{"10 != 2",
-			true, object.BOOL_OBJ},
+			true, object.OBJ_BOOL},
 		{`10 != "hello"`,
-			true, object.BOOL_OBJ},
+			true, object.OBJ_BOOL},
 		{`10 == "hello"`,
-			false, object.BOOL_OBJ},
+			false, object.OBJ_BOOL},
 		{`"hello" == "hello"`,
-			true, object.BOOL_OBJ},
+			true, object.OBJ_BOOL},
 		{`"hello" != "goodbye"`,
-			true, object.BOOL_OBJ},
+			true, object.OBJ_BOOL},
 		{"10 < 2",
-			false, object.BOOL_OBJ},
+			false, object.OBJ_BOOL},
 		{"10 > 2",
-			true, object.BOOL_OBJ},
+			true, object.OBJ_BOOL},
 		{`10 > "5"`,
-			nil, object.ERROR_OBJ},
+			nil, object.OBJ_ERROR},
 
 		// string returns
 		{`"hello" + " " + "world"`,
-			"hello world", object.STRING_OBJ},
+			"hello world", object.OBJ_STRING},
 
 		// error returns
 		{`"hello" - " world"`,
-			nil, object.ERROR_OBJ},
+			nil, object.OBJ_ERROR},
 	}
 
 	for _, tt := range tests {
@@ -100,7 +100,7 @@ func TestLogicalExpression(t *testing.T) {
 			result, _ := testEvalProgram(tr, tt.input)
 			tr.T.Log(result)
 
-			testAssertType(tr, result, object.BOOL_OBJ, tt.expectedVal)
+			testAssertType(tr, result, object.OBJ_BOOL, tt.expectedVal)
 		})
 	}
 }
@@ -114,17 +114,17 @@ func TestUnaryExpressions(t *testing.T) {
 		expectedValue any
 	}{
 		{"!false",
-			object.BOOL_OBJ, true},
+			object.OBJ_BOOL, true},
 		{"!true",
-			object.BOOL_OBJ, false},
+			object.OBJ_BOOL, false},
 		{"!!true",
-			object.BOOL_OBJ, true},
+			object.OBJ_BOOL, true},
 		{"-10",
-			object.NUMBER_OBJ, float64(-10)},
+			object.OBJ_NUMBER, float64(-10)},
 		{"--10",
-			object.NUMBER_OBJ, float64(10)},
+			object.OBJ_NUMBER, float64(10)},
 		{"-true",
-			object.ERROR_OBJ, nil},
+			object.OBJ_ERROR, nil},
 	}
 
 	for _, tt := range tests {
@@ -150,9 +150,9 @@ func TestLetStatement(t *testing.T) {
 
 	value := e.FindVar("ident")
 
-	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(res.Type(), object.OBJ_NUMBER)
 	tr.AssertNotNil(value)
-	tr.AssertEqual(value.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(value.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(value.(*object.NumberObj).Value, float64(10))
 }
 
@@ -164,23 +164,23 @@ func TestAssignment(t *testing.T) {
 		expectedValue any
 	}{
 		{"let a = 10; a = 100",
-			object.NUMBER_OBJ, float64(100),
+			object.OBJ_NUMBER, float64(100),
 		},
 		{`let b = 10; b = "hello"`,
-			object.STRING_OBJ, "hello",
+			object.OBJ_STRING, "hello",
 		},
 		{`let c = ""
 			{
 				c = "from scope"
 			}`,
-			object.STRING_OBJ, "from scope",
+			object.OBJ_STRING, "from scope",
 		},
 		{`let c = ["outer"]
 			{
 				c[0] = "list value assigned from scope"
 			}
 			 c[0]`,
-			object.STRING_OBJ, "list value assigned from scope",
+			object.OBJ_STRING, "list value assigned from scope",
 		},
 	}
 
@@ -190,7 +190,7 @@ func TestAssignment(t *testing.T) {
 
 			res, _ := testEvalProgram(tr, tt.input)
 			fmt.Printf("res: %v\n", res)
-			if res.Type() == object.ERROR_OBJ {
+			if res.Type() == object.OBJ_ERROR {
 				tr.T.Log(res.Inspect())
 			}
 
@@ -213,9 +213,9 @@ func TestFnLiteralExpression(t *testing.T) {
 
 	value := e.FindVar("a")
 
-	tr.AssertEqual(res.Type(), object.FUNCTION_LITERAL_OBJ)
+	tr.AssertEqual(res.Type(), object.OBJ_FUNCTION_LITERAL)
 	tr.AssertNotNil(value)
-	tr.AssertEqual(value.Type(), object.FUNCTION_LITERAL_OBJ)
+	tr.AssertEqual(value.Type(), object.OBJ_FUNCTION_LITERAL)
 	tr.AssertEqual(len(value.(*object.FnLiteralObj).Parameters), 0)
 	tr.AssertEqual(len(value.(*object.FnLiteralObj).Body.Statements), 1)
 }
@@ -236,12 +236,12 @@ func TestBlockStatement(t *testing.T) {
 
 	tr.SetName("testing outer")
 	tr.AssertNotNil(outer)
-	tr.AssertEqual(outer.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(outer.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(outer.(*object.NumberObj).Value, float64(10))
 
 	tr.SetName("testing inner")
 	tr.AssertNotNil(inner)
-	tr.AssertEqual(inner.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(inner.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(inner.(*object.NumberObj).Value, float64(5))
 
 }
@@ -260,7 +260,7 @@ func TestIfStatement(t *testing.T) {
 	res, _ := testEvalProgram(tr, input)
 
 	tr.AssertNotNil(res)
-	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
+	tr.AssertEqual(res.Type(), object.OBJ_BOOL)
 	tr.AssertEqual(res.(*object.BooleanObj).Value, true)
 
 }
@@ -279,7 +279,7 @@ func TestElseStatement(t *testing.T) {
 	res, _ := testEvalProgram(tr, input)
 
 	tr.AssertNotNil(res)
-	tr.AssertEqual(res.Type(), object.BOOL_OBJ)
+	tr.AssertEqual(res.Type(), object.OBJ_BOOL)
 	tr.AssertEqual(res.(*object.BooleanObj).Value, false)
 }
 
@@ -301,17 +301,17 @@ func TestIdentifer(t *testing.T) {
 
 	tr.SetName("testing value `a`")
 	tr.AssertNotNil(a)
-	tr.AssertEqual(a.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(a.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(a.(*object.NumberObj).Value, float64(10))
 
 	tr.SetName("testing value `b`")
 	tr.AssertNotNil(b)
-	tr.AssertEqual(b.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(b.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(b.(*object.NumberObj).Value, float64(20))
 
 	tr.SetName(`testing result`)
 	tr.AssertNotEqual(res, NIL)
-	tr.AssertEqual(res.Type(), object.NUMBER_OBJ)
+	tr.AssertEqual(res.Type(), object.OBJ_NUMBER)
 	tr.AssertEqual(res.(*object.NumberObj).Value, float64(30))
 
 }
@@ -360,29 +360,29 @@ func TestBuiltinFunctions(t *testing.T) {
 
 			switch tt.expected.(type) {
 			case float64:
-				tr.AssertEqual(result.Type(), object.NUMBER_OBJ, "result type must equal NUMBER_OBJ")
+				tr.AssertEqual(result.Type(), object.OBJ_NUMBER, "result type must equal NUMBER_OBJ")
 				tr.AssertEqual(result.(*object.NumberObj).Value, tt.expected, "result must equal expected value")
 
 			case string:
-				tr.AssertEqual(result.Type(), object.STRING_OBJ, "result type must equal STRING_OBJ")
+				tr.AssertEqual(result.Type(), object.OBJ_STRING, "result type must equal STRING_OBJ")
 				tr.AssertEqual(result.(*object.StringObj).Value, tt.expected, "result must equal expected value")
 
 			case []float64:
-				tr.AssertEqual(result.Type(), object.LIST_OBJ)
+				tr.AssertEqual(result.Type(), object.OBJ_LIST)
 				values := result.(*object.ListObj).Values
 				expected := tt.expected.([]float64)
 
 				tr.AssertEqual(len(values), len(expected))
 				for idx, eVal := range expected {
-					testAssertType(tr, values[idx], object.NUMBER_OBJ, eVal)
+					testAssertType(tr, values[idx], object.OBJ_NUMBER, eVal)
 				}
 
 			case *object.NilObj:
-				tr.AssertEqual(result.Type(), object.NIL_OBJ)
+				tr.AssertEqual(result.Type(), object.OBJ_NIL)
 				tr.AssertEqual(result, tt.expected)
 
 			case error:
-				tr.AssertEqual(result.Type(), object.ERROR_OBJ, "result type must equal expected type")
+				tr.AssertEqual(result.Type(), object.OBJ_ERROR, "result type must equal expected type")
 				err := result.(*object.ErrorObj).Error
 				tr.AssertTrue(errors.Is(err, tt.expected.(error)), "assert that error is of correct type")
 
@@ -402,13 +402,13 @@ func testAssertType(
 	tr.T.Helper()
 
 	switch expectedType {
-	case object.NUMBER_OBJ:
+	case object.OBJ_NUMBER:
 		tr.AssertEqual(value.(*object.NumberObj).Value, expectedValue)
-	case object.STRING_OBJ:
+	case object.OBJ_STRING:
 		tr.AssertEqual(value.(*object.StringObj).Value, expectedValue)
-	case object.BOOL_OBJ:
+	case object.OBJ_BOOL:
 		tr.AssertEqual(value.(*object.BooleanObj).Value, expectedValue)
-	case object.ERROR_OBJ:
+	case object.OBJ_ERROR:
 		// TODO: check error message
 	default:
 		tr.T.Errorf("Unexpected object type=%s\n", value.Type())

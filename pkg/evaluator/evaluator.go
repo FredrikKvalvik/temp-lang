@@ -90,7 +90,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(left) {
 			return left
 		}
-		if left.Type() != object.BOOL_OBJ {
+		if left.Type() != object.OBJ_BOOL {
 			err := newError(TypeError, left.Inspect()+" is not of type: boolean")
 			return enrichError(err, &EnrichErrorParams{n.Left.GetToken()})
 		}
@@ -102,7 +102,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 				return right
 			}
 
-			if right.Type() != object.BOOL_OBJ {
+			if right.Type() != object.OBJ_BOOL {
 				err := newError(TypeError, right.Inspect()+" is not of type: boolean")
 				return enrichError(err, &EnrichErrorParams{n.Right.GetToken()})
 			}
@@ -178,7 +178,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(obj) {
 			return obj
 		}
-		if obj.Type() == object.MODULE_OBJ {
+		if obj.Type() == object.OBJ_MODULE {
 			module := obj.(*object.ModuleObj)
 			property, ok := module.Vars[n.Name.Value]
 			if !ok {
@@ -186,7 +186,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			}
 			return property
 		}
-		if obj.Type() == object.ITERATOR_OBJ {
+		if obj.Type() == object.OBJ_ITERATOR {
 			iterator := obj.(*object.IteratorObj)
 			switch n.Name.Value {
 
@@ -256,7 +256,7 @@ func evalWhileStatement(n *ast.WhileStmt, env *object.Environment) object.Object
 			if isError(condition) {
 				return condition
 			}
-			if condition.Type() != object.BOOL_OBJ {
+			if condition.Type() != object.OBJ_BOOL {
 				return newError(TypeError, "while statement expects boolean value, got="+condition.Type().String())
 			}
 
@@ -271,7 +271,7 @@ func evalWhileStatement(n *ast.WhileStmt, env *object.Environment) object.Object
 
 		// eval body when condition == true
 		res = Eval(n.Body, env)
-		if isError(res) || res.Type() == object.RETURN_OBJ {
+		if isError(res) || res.Type() == object.OBJ_RETURN {
 			break
 		}
 	}
@@ -300,11 +300,11 @@ func evalIdentifier(n *ast.IdentifierExpr, env *object.Environment) object.Objec
 
 func evalIndexExpression(left, index object.Object) object.Object {
 	switch {
-	case left.Type() == object.LIST_OBJ && index.Type() == object.NUMBER_OBJ:
+	case left.Type() == object.OBJ_LIST && index.Type() == object.OBJ_NUMBER:
 		return evalIndexListExpression(left, index)
-	case left.Type() == object.STRING_OBJ && index.Type() == object.NUMBER_OBJ:
+	case left.Type() == object.OBJ_STRING && index.Type() == object.OBJ_NUMBER:
 		return evalIndexStringExpression(left, index)
-	case left.Type() == object.MAP_OBJ:
+	case left.Type() == object.OBJ_MAP:
 		return evalIndexMapListExpression(left, index)
 
 	default:
@@ -393,7 +393,7 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 		}
 
 		result = evalBlockStatment(node.Body, scope)
-		if isError(result) || result.Type() == object.RETURN_OBJ {
+		if isError(result) || result.Type() == object.OBJ_RETURN {
 			return result
 		}
 	}
@@ -429,11 +429,11 @@ func evalAssignment(node *ast.AssignExpr, env *object.Environment) object.Object
 }
 
 func evalIndexAssignment(assignee, index, value object.Object) object.Object {
-	if assignee.Type() == object.LIST_OBJ && index.Type() == object.NUMBER_OBJ {
+	if assignee.Type() == object.OBJ_LIST && index.Type() == object.OBJ_NUMBER {
 		return evalIndexListAssignment(index, assignee, value)
 	}
 
-	if assignee.Type() == object.MAP_OBJ {
+	if assignee.Type() == object.OBJ_MAP {
 		return evalIndexHashAssignment(index, assignee, value)
 	}
 
@@ -514,7 +514,7 @@ func evalBlockStatment(b *ast.BlockStmt, scope *object.Environment) object.Objec
 
 	for _, stmt := range b.Statements {
 		res = Eval(stmt, scope)
-		if isError(res) || res.Type() == object.RETURN_OBJ {
+		if isError(res) || res.Type() == object.OBJ_RETURN {
 			return res
 		}
 	}
@@ -525,10 +525,10 @@ func evalBlockStatment(b *ast.BlockStmt, scope *object.Environment) object.Objec
 func evalUnaryExpression(right object.Object, op token.TokenType) object.Object {
 
 	switch {
-	case right.Type() == object.NUMBER_OBJ && op == token.MINUS:
+	case right.Type() == object.OBJ_NUMBER && op == token.MINUS:
 		return &object.NumberObj{Value: -right.(*object.NumberObj).Value}
 
-	case right.Type() == object.BOOL_OBJ && op == token.BANG:
+	case right.Type() == object.OBJ_BOOL && op == token.BANG:
 		fmt.Print(right)
 		if right == TRUE {
 			return FALSE
@@ -543,10 +543,10 @@ func evalUnaryExpression(right object.Object, op token.TokenType) object.Object 
 func evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
 
 	switch {
-	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+	case left.Type() == object.OBJ_STRING && right.Type() == object.OBJ_STRING:
 		return evalStringBinaryExpression(left.(*object.StringObj), op, right.(*object.StringObj))
 
-	case left.Type() == object.NUMBER_OBJ && right.Type() == object.NUMBER_OBJ:
+	case left.Type() == object.OBJ_NUMBER && right.Type() == object.OBJ_NUMBER:
 		return evalNumberBinaryExpression(left.(*object.NumberObj), op, right.(*object.NumberObj))
 
 	case op == token.EQ:
@@ -670,14 +670,14 @@ func evalKeyValueExpressions(expressionMap map[ast.Expr]ast.Expr, env *object.En
 func applyFunction(callee object.Object, args []object.Object) object.Object {
 
 	switch callee.Type() {
-	case object.BUILTIN_OBJ:
+	case object.OBJ_BUILTIN:
 		val := callee.(*object.BuiltinObj).Fn(args...)
 		if val != nil {
 			return val
 		}
 		return NIL
 
-	case object.FUNCTION_LITERAL_OBJ:
+	case object.OBJ_FUNCTION_LITERAL:
 		fn := callee.(*object.FnLiteralObj)
 		if len(fn.Parameters) != len(args) {
 			return &object.ErrorObj{

@@ -31,7 +31,7 @@ var (
 // TODO: add line:col numbers to errors
 
 func isError(obj object.Object) bool {
-	if obj != nil && obj.Type() == object.ERROR_OBJ {
+	if obj != nil && obj.Type() == object.OBJ_ERROR {
 		return true
 	}
 	return false

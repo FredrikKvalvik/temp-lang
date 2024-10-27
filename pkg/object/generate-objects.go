@@ -27,7 +27,7 @@ type template struct {
 var objects = []template{
 	{
 		name: "Boolean",
-		typ:  object.BOOL_OBJ,
+		typ:  object.OBJ_BOOL,
 		props: []keyVal{
 			{"Value", "bool"},
 		},
@@ -35,25 +35,25 @@ var objects = []template{
 	{
 		name:  "Nil",
 		props: []keyVal{},
-		typ:   object.NIL_OBJ,
+		typ:   object.OBJ_NIL,
 	},
 	{
 		name: "Number",
-		typ:  object.NUMBER_OBJ,
+		typ:  object.OBJ_NUMBER,
 		props: []keyVal{
 			{"Value", "float64"},
 		},
 	},
 	{
 		name: "String",
-		typ:  object.STRING_OBJ,
+		typ:  object.OBJ_STRING,
 		props: []keyVal{
 			{"Value", "string"},
 		},
 	},
 	{
 		name: "FnLiteral",
-		typ:  object.FUNCTION_LITERAL_OBJ,
+		typ:  object.OBJ_FUNCTION_LITERAL,
 		props: []keyVal{
 			{"Parameters", "[]*ast.IdentifierExpr"},
 			{"Body", "*ast.BlockStmt"},
@@ -62,28 +62,28 @@ var objects = []template{
 	},
 	{
 		name: "Return",
-		typ:  object.RETURN_OBJ,
+		typ:  object.OBJ_RETURN,
 		props: []keyVal{
 			{"Value", "Object"},
 		},
 	},
 	{
 		name: "List",
-		typ:  object.LIST_OBJ,
+		typ:  object.OBJ_LIST,
 		props: []keyVal{
 			{"Values", "[]Object"},
 		},
 	},
 	{
 		name: "Map",
-		typ:  object.MAP_OBJ,
+		typ:  object.OBJ_MAP,
 		props: []keyVal{
 			{"Pairs", "map[HashKey]KeyValuePair"},
 		},
 	},
 	{
 		name: "Module",
-		typ:  object.MODULE_OBJ,
+		typ:  object.OBJ_MODULE,
 		props: []keyVal{
 			{"Name", "string"},
 			{"ModuleType", "ModuleType"},
@@ -92,7 +92,7 @@ var objects = []template{
 	},
 	{
 		name: "Builtin",
-		typ:  object.BUILTIN_OBJ,
+		typ:  object.OBJ_BUILTIN,
 		props: []keyVal{
 			{"Fn", "BuiltinFn"},
 			{"Name", "string"},
@@ -100,14 +100,14 @@ var objects = []template{
 	},
 	{
 		name: "Iterator",
-		typ:  object.ITERATOR_OBJ,
+		typ:  object.OBJ_ITERATOR,
 		props: []keyVal{
 			{"Iterator", "Iterator"},
 		},
 	},
 	{
 		name: "Error",
-		typ:  object.ERROR_OBJ,
+		typ:  object.OBJ_ERROR,
 		props: []keyVal{
 			{"Error", "error"},
 			{"Token", "*token.Token"},
@@ -136,7 +136,6 @@ func generateObjects(tmpl []template) string {
 
 		f.WriteString(fmt.Sprintf("type %s struct {\n", name))
 
-		// f.WriteString(fmt.Sprintf("\t%s\n", interfaceName))
 		for _, kv := range s.props {
 			f.WriteString(fmt.Sprintf("\t%s %s\n", kv.key, kv.value))
 		}

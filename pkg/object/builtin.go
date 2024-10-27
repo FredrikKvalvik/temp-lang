@@ -47,7 +47,7 @@ func PushBuiltin(args ...Object) Object {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected target list and item(s), got=%d", ArityError, len(args))}
 	}
 	list := args[0]
-	if list.Type() != LIST_OBJ {
+	if list.Type() != OBJ_LIST {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected list, got=%s", TypeError, list.Type())}
 	}
 
@@ -68,7 +68,7 @@ func PopBuiltin(args ...Object) Object {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected=%d, got=%d", ArityError, 1, len(args))}
 	}
 	arg := args[0]
-	if arg.Type() != LIST_OBJ {
+	if arg.Type() != OBJ_LIST {
 		return &ErrorObj{Error: fmt.Errorf("%w: expected list, got=%s", TypeError, arg.Type())}
 	}
 

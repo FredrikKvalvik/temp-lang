@@ -31,7 +31,7 @@ func main() {
 			return
 		}
 
-		if res.Type() == object.ERROR_OBJ {
+		if res.Type() == object.OBJ_ERROR {
 			fmt.Println(res.Inspect())
 			return
 		}

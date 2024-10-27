@@ -8,21 +8,21 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[BOOL_OBJ-1]
-	_ = x[NIL_OBJ-2]
-	_ = x[NUMBER_OBJ-3]
-	_ = x[STRING_OBJ-4]
-	_ = x[FUNCTION_LITERAL_OBJ-5]
-	_ = x[RETURN_OBJ-6]
-	_ = x[LIST_OBJ-7]
-	_ = x[MAP_OBJ-8]
-	_ = x[BUILTIN_OBJ-9]
-	_ = x[ITERATOR_OBJ-10]
-	_ = x[MODULE_OBJ-11]
-	_ = x[ERROR_OBJ-12]
+	_ = x[OBJ_BOOL-1]
+	_ = x[OBJ_NIL-2]
+	_ = x[OBJ_NUMBER-3]
+	_ = x[OBJ_STRING-4]
+	_ = x[OBJ_FUNCTION_LITERAL-5]
+	_ = x[OBJ_RETURN-6]
+	_ = x[OBJ_LIST-7]
+	_ = x[OBJ_MAP-8]
+	_ = x[OBJ_BUILTIN-9]
+	_ = x[OBJ_ITERATOR-10]
+	_ = x[OBJ_MODULE-11]
+	_ = x[OBJ_ERROR-12]
 }
 
-const _ObjectType_name = "BOOL_OBJNIL_OBJNUMBER_OBJSTRING_OBJFUNCTION_LITERAL_OBJRETURN_OBJLIST_OBJMAP_OBJBUILTIN_OBJITERATOR_OBJMODULE_OBJERROR_OBJ"
+const _ObjectType_name = "OBJ_BOOLOBJ_NILOBJ_NUMBEROBJ_STRINGOBJ_FUNCTION_LITERALOBJ_RETURNOBJ_LISTOBJ_MAPOBJ_BUILTINOBJ_ITERATOROBJ_MODULEOBJ_ERROR"
 
 var _ObjectType_index = [...]uint8{0, 8, 15, 25, 35, 55, 65, 73, 80, 91, 103, 113, 122}
 

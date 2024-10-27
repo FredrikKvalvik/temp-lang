@@ -24,18 +24,18 @@ type ObjectType int
 const (
 	_ ObjectType = iota
 
-	BOOL_OBJ             // representes true and false
-	NIL_OBJ              // sentinel value for "no value"
-	NUMBER_OBJ           // number object is any float64-representable number
-	STRING_OBJ           // represents a string value
-	FUNCTION_LITERAL_OBJ // represents a function object
-	RETURN_OBJ           // internal type for propagating return values
-	LIST_OBJ             // collection if objects in an ordered list
-	MAP_OBJ              // Map is a datatype for storing key-value pairs
-	BUILTIN_OBJ          // Builtin function
-	ITERATOR_OBJ         // a wrapper for returning iterators from builtin functions
-	MODULE_OBJ           // Module is an object that holds the references to a unit of code that has been imported by a caller
-	ERROR_OBJ            // runtime error
+	OBJ_BOOL             // representes true and false
+	OBJ_NIL              // sentinel value for "no value"
+	OBJ_NUMBER           // number object is any float64-representable number
+	OBJ_STRING           // represents a string value
+	OBJ_FUNCTION_LITERAL // represents a function object
+	OBJ_RETURN           // internal type for propagating return values
+	OBJ_LIST             // collection if objects in an ordered list
+	OBJ_MAP              // Map is a datatype for storing key-value pairs
+	OBJ_BUILTIN          // Builtin function
+	OBJ_ITERATOR         // a wrapper for returning iterators from builtin functions
+	OBJ_MODULE           // Module is an object that holds the references to a unit of code that has been imported by a caller
+	OBJ_ERROR            // runtime error
 )
 
 type ModuleType int

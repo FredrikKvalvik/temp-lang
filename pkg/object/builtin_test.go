@@ -50,7 +50,7 @@ func TestLenBuiltin(t *testing.T) {
 			result := LenBuiltin(tt.input...)
 
 			tr.AssertNotNil(result, "result should not be nil")
-			tr.AssertNotEqual(result.Type(), ERROR_OBJ, "result should not be of type error")
+			tr.AssertNotEqual(result.Type(), OBJ_ERROR, "result should not be of type error")
 			tr.AssertEqual(result.(*NumberObj).Value, tt.expectedValue, "test length equal to expected")
 		})
 	}
