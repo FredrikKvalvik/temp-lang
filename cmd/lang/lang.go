@@ -68,8 +68,6 @@ func runProgram(in string, env *object.Environment) (object.Object, error) {
 		}
 		return nil, errors.New(errs)
 	}
-	// fmt.Printf("%s\n", program)
-	// return nil, nil
 
 	r := resolver.New(env)
 	r.Resolve(program)

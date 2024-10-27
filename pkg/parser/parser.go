@@ -17,8 +17,8 @@ const (
 	SUM         //+ -
 	PRODUCT     //* /
 	PREFIX      //-X or !X
-	CALL        // myFunction(X)
 	GET         // obj.property
+	CALL        // myFunction(X)
 	GROUPING    // ( expression )
 	INDEX       // array[index]
 )

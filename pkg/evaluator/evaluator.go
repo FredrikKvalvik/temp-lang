@@ -149,7 +149,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return args[0]
 		}
 
-		return applyFunction(callee, args)
+		res := applyFunction(callee, args)
+		if isError(res) {
+			return enrichError(res.(*object.ErrorObj), &EnrichErrorParams{&n.Token})
+		}
+		return res
 
 	case *ast.ParenExpr:
 		return Eval(n.Expression, env)
@@ -157,13 +161,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.IndexExpr:
 		left := Eval(n.Left, env)
 		if isError(left) {
-			return left
+			return enrichError(left.(*object.ErrorObj), &EnrichErrorParams{n.Left.GetToken()})
 		}
 		index := Eval(n.Index, env)
 		if isError(index) {
-			return index
+			return enrichError(index.(*object.ErrorObj), &EnrichErrorParams{n.Index.GetToken()})
 		}
-		return evalIndexExpression(left, index)
+		res := evalIndexExpression(left, index)
+		if isError(res) {
+			return enrichError(res.(*object.ErrorObj), &EnrichErrorParams{n.GetToken()})
+		}
+		return res
 
 	case *ast.GetExpr:
 		obj := Eval(n.Obj, env)
@@ -203,7 +211,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 					},
 				}
 			}
-			return newError(UseOfUndeclaredError, fmt.Sprintf("propert `%s` does not exist on `%s`", n.Name.Value, iterator.Inspect()))
+			return newError(UseOfUndeclaredError, fmt.Sprintf("property `%s` does not exist on `%s`", n.Name.Value, iterator.Inspect()))
 		}
 		return NIL
 
@@ -529,7 +537,7 @@ func evalUnaryExpression(right object.Object, op token.TokenType) object.Object 
 		}
 	}
 
-	return typeMismatchUnaryError(op, right)
+	return newError(TypeError, fmt.Sprintf("%s expects boolean value, got %s", op, right))
 }
 
 func evalBinaryExpression(left, right object.Object, op token.TokenType) object.Object {
