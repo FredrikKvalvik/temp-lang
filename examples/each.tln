@@ -10,7 +10,7 @@ each n : range(100, 200, 10) {
 	fmt.println(n)
 }
 
-let a = range(0, 4)
+let a = range(0, 4, 1)
 fmt.println(a, "iterator is stateful")
 
 while !a.done() {
