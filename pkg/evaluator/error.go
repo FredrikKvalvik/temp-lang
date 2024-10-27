@@ -45,6 +45,18 @@ func newError(err RuntimeError, msgs ...string) *object.ErrorObj {
 	return &object.ErrorObj{Error: errors.Join(errs...)}
 }
 
+type EnrichErrorParams struct {
+	Tok *token.Token
+}
+
+// adds more information the the error if possible
+func enrichError(err *object.ErrorObj, params *EnrichErrorParams) *object.ErrorObj {
+	if err.Token == nil {
+		err.Token = params.Tok
+	}
+	return err
+}
+
 func illegalOpError(left object.Object, op token.TokenType, right object.Object) *object.ErrorObj {
 	return &object.ErrorObj{
 		Error: fmt.Errorf("%w: %s %s %s", IllegalOperationError, left, op, right),

@@ -13,10 +13,8 @@ each n : range(100, 200, 10) {
 let a = range(0, 4)
 fmt.println(a, "iterator is stateful")
 
-fmt.println(a.done(), a.next())
-fmt.println(a.done(), a.next())
-fmt.println(a.done(), a.next())
-fmt.println(a.done(), a.next())
-fmt.println(a.done(), a.next())
+while !(a.done()) {
+	fmt.println(a.next())
+}
 
 fmt.println(a, "is no done and will no longer be iterable")

@@ -91,7 +91,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return left
 		}
 		if left.Type() != object.BOOL_OBJ {
-			return newError(TypeError, left.Inspect()+" is not of type: boolean")
+			err := newError(TypeError, left.Inspect()+" is not of type: boolean")
+			return enrichError(err, &EnrichErrorParams{n.Left.GetToken()})
 		}
 
 		if (n.Operand == token.AND && left == TRUE) ||
@@ -102,7 +103,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			}
 
 			if right.Type() != object.BOOL_OBJ {
-				return newError(TypeError, right.Inspect()+" is not of type: boolean")
+				err := newError(TypeError, right.Inspect()+" is not of type: boolean")
+				return enrichError(err, &EnrichErrorParams{n.Right.GetToken()})
 			}
 			return right
 		}
@@ -117,7 +119,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.ReturnStmt:
 		if env.IsGlobalEnv() {
-			return &object.ErrorObj{Error: IllegalGlobalReturnError}
+			return &object.ErrorObj{Error: IllegalGlobalReturnError, Token: n.GetToken()}
 		}
 		// exit early when returning without an expression
 		if n.Value == nil {
@@ -126,7 +128,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		value := Eval(n.Value, env)
 		if isError(value) {
-			return value
+			return enrichError(value.(*object.ErrorObj),
+				&EnrichErrorParams{Tok: n.Value.GetToken()})
 		}
 		return &object.ReturnObj{Value: value}
 
@@ -366,7 +369,7 @@ func evalIterStatement(node *ast.IterStmt, env *object.Environment) object.Objec
 	if node.Name != nil {
 		ident, ok := node.Name.(*ast.IdentifierExpr)
 		if !ok {
-			return &object.ErrorObj{Error: TypeError, Token: node.Name.GetToken()}
+			return &object.ErrorObj{Error: fmt.Errorf("%w: exptected identifier, got=%s", TypeError, node.Name), Token: node.Name.GetToken()}
 		}
 		name = ident
 	}

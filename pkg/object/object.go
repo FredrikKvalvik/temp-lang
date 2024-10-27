@@ -127,4 +127,11 @@ func (b *BuiltinObj) Inspect() string { return fmt.Sprintf("[builtin %s]", b.Nam
 
 func (b *ModuleObj) Inspect() string { return fmt.Sprintf("[Module %s]", b.Name) }
 
-func (b *ErrorObj) Inspect() string { return b.Error.Error() }
+func (b *ErrorObj) Inspect() string {
+	if b.Token != nil {
+		line, col := b.Token.Pos.Position()
+		return fmt.Sprintf("[%d:%d] %s", line, col, b.Error.Error())
+	} else {
+		return b.Error.Error()
+	}
+}
